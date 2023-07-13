@@ -7,8 +7,8 @@
 # 
 # Written by Adi Zohar, October 2020, Amended Aug 2023
 #
-# Git Location     = https://github.com/oracle/oci-python-sdk/tree/master/examples/usage_reports_to_adw
-# Git Raw Location = https://raw.githubusercontent.com/oracle/oci-python-sdk/master/examples/usage_reports_to_adw
+# Git Location     = https://github.com/oracle-samples/usage-reports-to-adw
+# Git Raw Location = https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main
 #
 # If script fail, please add the policies and re-run
 #
@@ -29,8 +29,7 @@ export PYTHONUNBUFFERED=TRUE
 export WALLET=$HOME/wallet.zip
 export WALLET_FOLDER=$HOME/ADWCUSG
 export DATE=`date '+%Y%m%d_%H%M%S'`
-#export GIT=https://raw.githubusercontent.com/oracle/oci-python-sdk/master/examples/usage_reports_to_adw
-export GIT=https://raw.githubusercontent.com/adizohar/oci-python-sdk/test/examples/usage_reports_to_adw
+export GIT=https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main
 
 # Env Variables for database connectivity
 export CLIENT_HOME=/usr/lib/oracle/current/client64

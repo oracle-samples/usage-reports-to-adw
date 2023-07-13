@@ -117,7 +117,7 @@ Login to Usage2adw VM
 
 ## 4. How to upgrade the usage2adw application and APEX
 ```
-bash -c "export usage2adw_param=-upgrade_app; $(curl -L https://raw.githubusercontent.com/oracle/oci-python-sdk/master/examples/usage_reports_to_adw/usage2adw_setup.sh)"
+bash -c "export usage2adw_param=-upgrade_app; $(curl -L https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh)"
 ```
 
 ## 5. How to Refresh the Autonomous Database Wallet for the usage2adw application
@@ -272,8 +272,7 @@ echo "This is a test message" | mail -s "Test" -r "report@oracleemaildelivery.co
 # Required if previous clone not includes run_daily_report.sh
 cd $HOME
 sudo yum install -y git
-git clone https://github.com/oracle/oci-python-sdk
-ln -s oci-python-sdk/examples/usage_reports_to_adw .
+git clone https://github.com/oracle-samples/usage-reports-to-adw usage_reports_to_adw
 cd usage_reports_to_adw/shell_scripts
 chmod +x run_daily_report.sh
 ```
@@ -450,7 +449,7 @@ Edit crontab using crontab -e and add/update the below: (If exist remove the # b
 Download run_load_showoci_csv_to_adw.sh if not exist
 
 ```
-wget https://raw.githubusercontent.com/oracle/oci-python-sdk/master/examples/usage_reports_to_adw/shell_scripts/run_load_showoci_csv_to_adw.sh -O /home/opc/usage_reports_to_adw/shell_scripts/run_load_showoci_csv_to_adw.sh
+wget https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh -O /home/opc/usage_reports_to_adw/shell_scripts/run_load_showoci_csv_to_adw.sh
 chmod +x /home/opc/usage_reports_to_adw/shell_scripts/run_load_showoci_csv_to_adw.sh 
 ```
 

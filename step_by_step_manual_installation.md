@@ -114,14 +114,12 @@ export TNS_ADMIN=$HOME/ADWCUSG
 source $HOME/.bashrc
 ```
 
-## 8. Clone the OCI Python SDK Repo from Git Hub
+## 8. Clone the GitHub Repo
 
 ```
 cd $HOME
 sudo yum install -y git
-git clone https://github.com/oracle/oci-python-sdk
-ln -s oci-python-sdk/examples/usage_reports_to_adw .
-ln -s oci-python-sdk/examples/showoci .
+git clone https://github.com/oracle-samples/usage-reports-to-adw usage_reports_to_adw
 cd usage_reports_to_adw
 ```
 
@@ -270,7 +268,7 @@ Development Menu -> Oracle APEX
    
 ## 18. Import APEX application
 
-Right Click and Download [usage2adw_demo_apex_app](https://raw.githubusercontent.com/oracle/oci-python-sdk/master/examples/usage_reports_to_adw/usage2adw_demo_apex_app.sql) from github.
+Right Click and Download [usage2adw_demo_apex_app](https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_demo_apex_app.sql) from github.
 
 ```
    APEX Top Menu -> App Builder -> Import

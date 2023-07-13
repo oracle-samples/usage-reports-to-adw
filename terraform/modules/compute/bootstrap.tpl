@@ -45,9 +45,9 @@ runcmd:
   - sleep 20
 
   # Continue Setup using initial_setup.sh
-  # - curl -H 'Cache-Control: no-cache, no-store' -o /home/opc/usage_reports_to_adw/initial_setup.sh https://raw.githubusercontent.com/adizohar/oci-python-sdk/test/examples/usage_reports_to_adw/usage2adw_setup.sh >> $LOG
+  # - curl -H 'Cache-Control: no-cache, no-store' -o /home/opc/usage_reports_to_adw/initial_setup.sh https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh >> $LOG
 
-  - wget https://raw.githubusercontent.com/adizohar/oci-python-sdk/test/examples/usage_reports_to_adw/usage2adw_setup.sh -O $APPDIR/initial_setup.sh >>$LOG
+  - wget https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh -O $APPDIR/initial_setup.sh >>$LOG
   - chown opc:opc $APPDIR/initial_setup.sh
   - chmod +x $APPDIR/initial_setup.sh
   - su - opc -c '/home/opc/usage_reports_to_adw/initial_setup.sh -setup_full' >>$LOG

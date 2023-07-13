@@ -100,7 +100,7 @@ The script will install Python3, Git and python packages - oci, oracledb and req
 Install Oracle Database Instance Client, Update .bashrc and Clone the Python SDK
 
 ```
-bash -c "export usage2adw_param=-setup_ol8_packages; $(curl -L https://raw.githubusercontent.com/oracle/oci-python-sdk/master/examples/usage_reports_to_adw/usage2adw_setup.sh)"
+bash -c "export usage2adw_param=-setup_ol8_packages; $(curl -L https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh)"
 ```
 
 ## 8. Setup Credentials
