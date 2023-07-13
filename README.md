@@ -1,44 +1,107 @@
-*This repository acts as a template for all of Oracle’s GitHub repositories. It contains information about the guidelines for those repositories. All files and sections contained in this template are mandatory, and a GitHub app ensures alignment with these guidelines. To get started with a new repository, replace the italic paragraphs with the respective text for your project.*
+# Usage2ADW - Oracle Cloud Infrastructure Usage and Cost Reports to Autonomous Database Tool
 
-# Project name
+## Introduction
+usage2adw is a tool which uses the Python SDK to extract the usage and cost reports from your tenant and load it to Oracle Autonomous Database. (DbaaS can be used as well)
+Authentication to OCI by User or instance principals.
 
-*Describe your project's features, functionality and target audience*
+It uses APEX for Visualization and generates Daily e-mail report.
 
-## Installation
+**DISCLAIMER - This is not an official Oracle application,  It does not supported by Oracle Support, It should NOT be used for utilization calculation purposes, and rather OCI's official
+[cost analysis](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/costanalysisoverview.htm) 
+and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm) features should be used instead.**
 
-*Provide detailed step-by-step installation instructions. You can name this section **How to Run** or **Getting Started** instead of **Installation** if that's more acceptable for your project*
+**Developed by Adi Zohar, 2020-2023**
 
-## Documentation
+## Main Features
+- Usage Current State
+- Usage Over Time
+- Cost Analysis
+- Cost Over Time
+- Rate Card for Used Product
+- ShowOCI Data (If Enabled)
 
-*Developer-oriented documentation can be published on GitHub, but all product documentation must be published on <https://docs.oracle.com>*
+## Cost Reports
+![](img/screen_4.png)
+![](img/screen_5.png)
+![](img/screen_6.png)
+![](img/screen_7.png)
 
-## Examples
+## Rate Card
+![](img/screen_8.png)
 
-*Describe any included examples or provide a link to a demo/tutorial*
+## Usage Reports
+![](img/screen_1.png)
+![](img/screen_2.png)
+![](img/screen_3.png)
 
-## Help
+## Daily E-Mail Report
+![](img/report_05.png)
 
-*Inform users on where to get help or how to receive official support from Oracle (if applicable)*
+## Usage Reports Overview
+A usage report is a comma-separated value (CSV) file that can be used to get a detailed breakdown of resources in Oracle Cloud Infrastructure for audit or invoice reconciliation.
+
+## How Usage Reports Work
+The usage report is automatically generated daily, and is stored in an Oracle-owned Object Storage bucket. It contains one row per each Oracle Cloud Infrastructure resource (such as instance, Object Storage bucket, VNIC) per hour along with consumption information, metadata, and tags. Usage reports generally contain 24 hours of usage data, although occasionally a usage report may contain late-arriving data that is older than 24 hours.
+
+More information can be found at [usagereportsoverview.htm](https://docs.cloud.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm)
+
+## Installaton Documentations
+
+1. [Step by Step using Resource Management and Terraform](step_by_step_terraform.md)
+
+2. [Step by Step Installation](step_by_step_installation.md)
+
+3. [Step by Step Manual Installation](step_by_step_manual_installation.md)
+
+4. [How to Do Guide](step_by_step_howto.md)
+
+## OCI SDK Modules and API used:
+
+- IdentityClient.list_compartments - Policy COMPARTMENT_INSPECT
+- IdentityClient.get_tenancy       - Policy TENANCY_INSPECT
+- ObjectStorageClient.list_objects - Policy OBJECT_INSPECT
+- ObjectStorageClient.get_object   - Policy OBJECT_READ
+- SecretsClient.get_secret_bundle  - Policy SECRET_BUNDLE_READ
+
+- Rest API Used - https://docs.oracle.com/en-us/iaas/Content/GSG/Tasks/signingup_topic-Estimating_Costs.htm#accessing_list_pricing
+
+
+## Database Tables
+
+- OCI_USAGE - Raw data of the usage reports
+- OCI_USAGE_STATS - Summary Stats of the Usage Report for quick query if only filtered by tenant and date
+- OCI_USAGE_TAG_KEYS - Tag keys of the usage reports
+- OCI_COST - Raw data of the cost reports
+- OCI_COST_STATS - Summary Stats of the Cost Report for quick query if only filtered by tenant and date
+- OCI_COST_TAG_KEYS - Tag keys of the cost reports
+- OCI_COST_REFERENCE - Reference table of the cost filter keys - SERVICE, REGION, COMPARTMENT, PRODUCT, SUBSCRIPTION
+- OCI_PRICE_LIST - Hold the price list and the cost per product 
+- OCI_LOAD_STATUS - Has the load file statistics
+
+## 3rd Party Dependencies including tested versions
+
+- Python 3.9.13_2
+- oracledb 1.3.0
+- requests 2.28.2
+- OCI Python SDK 2.98.0
 
 ## Contributing
 
-*If your project has specific contribution requirements, update the CONTRIBUTING.md file to ensure those requirements are clearly explained*
-
-This project welcomes contributions from the community. Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
+Usage2ADW utility is an open source project.
+Oracle gratefully acknowledges the contributions to Usage2ADW utility that have been made by the community.
+Before submitting a pull request, please [review our contribution guide](./CONTRIBUTING.md)
 
 ## Security
 
 Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
 
+## Known Issues
+None
+
 ## License
 
-*The correct copyright notice format for both documentation and software is*
-    "Copyright (c) [year,] year Oracle and/or its affiliates."
-*You must include the year the content was first released (on any platform) and the most recent year in which it was revised*
+Copyright (c) 2023, Oracle and/or its affiliates. 
+Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 
-Copyright (c) 2023 Oracle and/or its affiliates.
+See [LICENSE](./LICENSE.txt) for details.
 
-*Replace this statement if your project is not licensed under the UPL*
-
-Released under the Universal Permissive License v1.0 as shown at
-<https://oss.oracle.com/licenses/upl/>.
