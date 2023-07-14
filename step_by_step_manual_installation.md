@@ -1,7 +1,7 @@
 # Usage2ADW - Oracle Cloud Infrastructure Usage and Cost Reports to Autonomous Database with APEX Reporting
 
 ## Step by Step Manual installation Guide on OCI VM and Autonomous Data Warehouse Database
-usage2adw is a tool which uses the Python SDK to extract the usage reports from your tenant and load it to Oracle Autonomous Database.
+Usage2adw is a tool which uses the Python SDK to extract the usage reports from your tenant and load it to Oracle Autonomous Database.
 
 Oracle Application Express (APEX) will be used for reporting.  
 
@@ -53,7 +53,8 @@ Create Policy
 --> Statement 4 = Allow dynamic-group UsageDownloadGroup to inspect tenancies in tenancy
 --> Statement 5 = Allow dynamic-group UsageDownloadGroup to read autonomous-databases in compartment {APPCOMP} 
 --> Statement 6 = Allow dynamic-group UsageDownloadGroup to read secret-bundles in compartment {APPCOMP}
-*** Please don't change the usage report tenant OCID, it is fixed.
+
+*** Please don't change the usage report tenant OCID, it is fixed for oc1, if you are running on oc2..oc9 please obtain the proper ocid.
 ```
 
 ## 4. Deploy Autonomous Data Warehouse Database
@@ -82,7 +83,7 @@ Using the SSH key you provided, SSH to the linux machine from step #1
 ssh opc@UsageVM
 ```
 
-## 6. Install Python 3.9 OCI packages,
+## 6. Install Python 3.9 OCI packages
 
 ```
 sudo dnf module install python39
@@ -98,11 +99,13 @@ python3 -m pip install --upgrade oci oracledb requests
 ```
 # Please refer to the download site for Manual installation = https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
 
-4. install oracle instant client 21
-sudo dnf install oracle-instantclient-release-el8
-sudo dnf install oracle-instantclient-basic
-sudo dnf install oracle-instantclient-sqlplus
-sudo ln -s /usr/lib/oracle/21 /usr/lib/oracle/current
+4. install oracle instant client 19
+sudo dnf install -y libnsl
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-basic-19.19.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-sqlplus-19.19.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-tools-19.19.0.0.0-1.x86_64.rpm
+sudo rm -f /usr/lib/oracle/current
+sudo ln -s /usr/lib/oracle/19.19 /usr/lib/oracle/current
 
 # setup oracle home variables
 # Add the below to $HOME/.bashrc:
@@ -176,7 +179,7 @@ SQL> exit
 
 ## 12. Setup Credentials
 
-This script will ask for Database Name, Admin Password, Application Password and Extract Start Date
+This script will ask for Database Name, Secret Id for Application Password and Extract Start Date
 
 ```
 /home/opc/usage_reports_to_adw/usage2adw_setup.sh -setup_credential
@@ -187,8 +190,8 @@ This script will ask for Database Name, Admin Password, Application Password and
 ```
 # if you want to skip 14 to 18, execute the script /home/opc/usage_reports_to_adw/usage2adw_setup.sh -setup_app
 
-# Please amend the password for the USAGE schema and load the data
-python3 usage2adw.py -ip -du USAGE -dp <password> -dn adwcusg_low
+# Load the data:
+/home/opc/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
 ```
 
 ## 14. Open Autonomous Database APEX Application
@@ -315,24 +318,24 @@ Right Click and Download [usage2adw_demo_apex_app](https://raw.githubusercontent
 
 ## 20. Schedule a crontab job to execute the load daily
 ```
-    # Amend the oracle instance client path run_multi_daily_usage2adw.sh according to your environment. i.e. 18.3 or later
-    $HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
+# Amend the oracle instance client path run_multi_daily_usage2adw.sh according to your environment. i.e. 18.3 or later
+$HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
 
-	# change execution permission
-	chmod +x $HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
- 
-	# Test the execution
-	$HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
-   
-    # add crontab that execute every night
-    0 0 * * * timeout 6h /home/opc/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh > /home/opc/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw_crontab_run.txt 2>&1
+# change execution permission
+chmod +x $HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
+
+# Test the execution
+$HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
+
+# add crontab that execute every night
+0 0 * * * timeout 6h /home/opc/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh > /home/opc/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw_crontab_run.txt 2>&1
 ```
 
 ## Additional Contents
 Please Visit [How To File](step_by_step_howto.md)
 
 
-## License                                                                                              
-                                                                                                        
-Copyright (c) 2023, Oracle and/or its affiliates.                                                       
-Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
+## License
+
+Copyright (c) 2023, Oracle and/or its affiliates.
+Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/

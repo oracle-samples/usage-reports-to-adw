@@ -1,7 +1,7 @@
 # Usage2ADW - Oracle Cloud Infrastructure Usage and Cost Reports to Autonomous Database with APEX Reporting
 
 ## Step by Step Manual installation Guide on OCI VM and Autonomous Data Warehouse Database
-usage2adw is a tool which uses the Python SDK to extract the usage reports from your tenant and load it to Oracle Autonomous Database.
+Usage2adw is a tool which uses the Python SDK to extract the usage reports from your tenant and load it to Oracle Autonomous Database.
 
 Oracle Application Express (APEX) will be used for reporting.  
 
@@ -54,7 +54,8 @@ Allow dynamic-group UsageDownloadGroup to inspect compartments in tenancy
 Allow dynamic-group UsageDownloadGroup to inspect tenancies in tenancy
 Allow dynamic-group UsageDownloadGroup to read autonomous-databases in compartment {APPCOMP} 
 Allow dynamic-group UsageDownloadGroup to read secret-bundles in compartment {APPCOMP}
-*** Please don't change the usage report tenant OCID, it is fixed.
+
+*** Please don't change the usage report tenant OCID, it is fixed for oc1, if you are running on oc2..oc9 please obtain the proper ocid.
 ```
 
 ## 4. Deploy Autonomous Data Warehouse Database
@@ -136,13 +137,13 @@ Password = Password you defined for the application
 ## 11. Login to Apex Application
 
 ```
-    Press on App Builder on the Left side
-    Press on the application "Usage and Cost Report"
-    Execute the application
-    Bookmark this page for future use
+Press on App Builder on the Left side
+Press on the application "Usage and Cost Report"
+Execute the application
+Bookmark this page for future use
 
-    User = Usage
-    Password = Password you defined for the application
+User = Usage
+Password = Password you defined for the application
 
 ```
 

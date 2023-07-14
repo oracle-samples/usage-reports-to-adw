@@ -101,7 +101,7 @@ GenerateWalletFromADB()
    echo "" | tee -a $LOG
    echo "${number}. Generate database wallet and extract." | tee -a $LOG
 
-   if [ -z "${database_id}"]
+   if [ -z "${database_id}" ]
    then
       echo "DATABASE_ID parameter does not exist in the $CREDFILE" | tee -a $LOG
       echo "Please run $SCRIPT -setup_credential to set it up" | tee -a $LOG

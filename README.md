@@ -1,7 +1,7 @@
 # Usage2ADW - Oracle Cloud Infrastructure Usage and Cost Reports to Autonomous Database Tool
 
 ## Introduction
-usage2adw is a tool which uses the Python SDK to extract the usage and cost reports from your tenant and load it to Oracle Autonomous Database. (DbaaS can be used as well)
+Usage2adw is a tool which uses the Python SDK to extract the usage and cost reports from your tenant and load it to Oracle Autonomous Database. (DbaaS can be used as well)
 Authentication to OCI by User or instance principals.
 
 It uses APEX for Visualization and generates Daily e-mail report.
@@ -45,15 +45,15 @@ The usage report is automatically generated daily, and is stored in an Oracle-ow
 
 More information can be found at [usagereportsoverview.htm](https://docs.cloud.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm)
 
-## Installaton Documentations
+## Installation Documentations
 
-1. [Step by Step using Resource Management and Terraform](step_by_step_terraform.md)
+1. [Step by Step using Resource Management (Terraform)](step_by_step_terraform.md)
 
 2. [Step by Step Installation](step_by_step_installation.md)
 
 3. [Step by Step Manual Installation](step_by_step_manual_installation.md)
 
-4. [How to Do Guide](step_by_step_howto.md)
+4. [Step by Step How to File](step_by_step_howto.md)
 
 ## OCI SDK Modules and API used:
 
@@ -63,7 +63,7 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 - ObjectStorageClient.get_object   - Policy OBJECT_READ
 - SecretsClient.get_secret_bundle  - Policy SECRET_BUNDLE_READ
 
-- Rest API Used - https://docs.oracle.com/en-us/iaas/Content/GSG/Tasks/signingup_topic-Estimating_Costs.htm#accessing_list_pricing
+- Rest API Used - [Accessing List Pricing](https://docs.oracle.com/en-us/iaas/Content/GSG/Tasks/signingup_topic-Estimating_Costs.htm#accessing_list_pricing)
 
 
 ## Database Tables
@@ -75,7 +75,7 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 - OCI_COST_STATS - Summary Stats of the Cost Report for quick query if only filtered by tenant and date
 - OCI_COST_TAG_KEYS - Tag keys of the cost reports
 - OCI_COST_REFERENCE - Reference table of the cost filter keys - SERVICE, REGION, COMPARTMENT, PRODUCT, SUBSCRIPTION
-- OCI_PRICE_LIST - Hold the price list and the cost per product 
+- OCI_PRICE_LIST - Has the price list and the cost per product
 - OCI_LOAD_STATUS - Has the load file statistics
 
 ## 3rd Party Dependencies including tested versions

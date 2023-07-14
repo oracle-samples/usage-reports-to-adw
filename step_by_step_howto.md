@@ -116,13 +116,24 @@ Login to Usage2adw VM
 ```
 
 ## 4. How to upgrade the usage2adw application and APEX
+
+Recommend only from version 23.8.1 or above.
+
 ```
 bash -c "export usage2adw_param=-upgrade_app; $(curl -L https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh)"
 ```
 
 ## 5. How to Refresh the Autonomous Database Wallet for the usage2adw application
 
-### 5a. Download Autonomus Database Wallet - If you provisioned the usaege2adw before Nov 2022:
+### 5a. If provisioned after July 2023
+
+```
+    # On the Usage2ADW VM:
+    cd usage_reports_to_adw
+    ./usage2adw_setup.sh -download_wallet
+```
+
+### 5b. Download Autonomus Database Wallet - If you provisioned before July 2023:
 
 ```
    # On OCI -> MENU -> Autonomous Data Warehouse -> ADWCUSG
@@ -132,17 +143,6 @@ bash -c "export usage2adw_param=-upgrade_app; $(curl -L https://raw.githubuserco
    --> Specify the Password
    --> Download the wallet to wallet.zip
    --> Copy the Wallet to the Linux folder /home/opc with the name wallet.zip
-```
-
-### 5b. Download Autonomus Database Wallet using oci cli if you provisioned the usage2adw after Nov 2022.
-```
-   # Download command exist in the boot.log
-   ---> Login to the usage2adw vm using ssh using opc user
-   ---> Check the boot.log content using below script
-   ---> Command to download the wallet appears similar to the below, please adjust the admin password if you changed it
-   grep autonomous-database boot.log
-   oci db autonomous-database generate-wallet --autonomous-database-id ocid1.autonomousdatabase.oc1.iad.anuwclxxxxx --password yyyyyyy --file /home/opc/wallet.zip --auth instance_principal
-   ---> Run the command, if any error follow the manual download section 5a above
 ```
 
 ### Replace existing wallet folder
@@ -162,17 +162,21 @@ bash -c "export usage2adw_param=-upgrade_app; $(curl -L https://raw.githubuserco
 
 If you deployed usage2adw before Jan 2022 you may need to download new Oracle Instant Client - check next section
 
-## 6. How to upgrade Oracle Instant Client to Version 19.18
+## 6. How to upgrade Oracle Instant Client to Version 19.19 (Apr 2023)
 
 ```
-   sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1918000/oracle-instantclient19.18-basic-19.18.0.0.0-1.x86_64.rpm
-   sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1918000/oracle-instantclient19.18-sqlplus-19.18.0.0.0-1.x86_64.rpm
-   sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1918000/oracle-instantclient19.18-tools-19.18.0.0.0-1.x86_64.rpm
-   sudo rm -f /usr/lib/oracle/current
-   sudo ln -s /usr/lib/oracle/19.18 /usr/lib/oracle/current
+# If Oracle Linux 8 please run the below to install glibc:
+sudo dnf install -y libnsl
 
-   # Check by running the application
-   $HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
+# Install 19.19:
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-basic-19.19.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-sqlplus-19.19.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-tools-19.19.0.0.0-1.x86_64.rpm
+sudo rm -f /usr/lib/oracle/current
+sudo ln -s /usr/lib/oracle/19.19 /usr/lib/oracle/current
+
+# Check by running the application
+$HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
 ```
 
 ## 7. How to schedule daily report
@@ -489,7 +493,7 @@ Example: adi19c_low
 sqlplus admin@connect_string
 ```
 
-### 10.4. Unloack the USAGE account if locked
+### 10.4. Unlock the USAGE account if locked
 
 ```
 ALTER USER USAGE ACCOUNT UNLOCK;
@@ -504,14 +508,16 @@ ALTER USER USAGE IDENTIFIED BY NEW_PASSWORD;
 ### 10.5. Update application credential
 
 ```
-Browse the config file /home/opc/usage_reports_to_adw/config.user find the secret parameter DATABASE_SECRET_ID
-Login to OCI console, Navigate to Security - Vault - Secrets
-Update the secret to the new password
-Check the password by running on the VM:
-/home/opc/usage_reports_to_adw/usage2adw_setup -check_passwords
+# Browse the config file /home/opc/usage_reports_to_adw/config.user find the secret parameter DATABASE_SECRET_ID
+# Login to OCI console, Navigate to Security - Vault - Secrets
+
+# Update the secret to the new password
+# Check the password by running on the VM:
+
+/home/opc/usage_reports_to_adw/shell_scripts/run_table_size_info.sh
 ```
 
-### 10.6. Test the application:
+### 10.6. Test the application
 
 ```
 /home/opc/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
@@ -521,7 +527,7 @@ Check the password by running on the VM:
 
 Login to VM
 ```
-/home/opc/usage_reports_to_adw/usage2adw_setup -truncate_tables
+/home/opc/usage_reports_to_adw/usage2adw_setup.sh -truncate_tables
 ```
 
 ## 12. Application Flags and Sample Execution
