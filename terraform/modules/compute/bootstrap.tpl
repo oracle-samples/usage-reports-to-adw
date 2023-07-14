@@ -44,8 +44,9 @@ runcmd:
   - echo "Waiting 20 seconds..." >> $LOG
   - sleep 20
 
-  # Continue Setup using initial_setup.sh
-  # - curl -H 'Cache-Control: no-cache, no-store' -o /home/opc/usage_reports_to_adw/initial_setup.sh https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh >> $LOG
+  # Continue Setup using initial_setup.sh and post info into initial_setup.txt
+  - echo "https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh -O $APPDIR/initial_setup.sh" > $APPDIR/initial_setup.txt
+  - echo "/home/opc/usage_reports_to_adw/initial_setup.sh -setup_full" >> $APPDIR/initial_setup.txt
 
   - wget https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh -O $APPDIR/initial_setup.sh >>$LOG
   - chown opc:opc $APPDIR/initial_setup.sh

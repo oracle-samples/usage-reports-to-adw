@@ -86,7 +86,7 @@ output "APEX_Admin_Workspace_URL" {
   value = module.adb.apex_url
 }
 
-output "DB Secret Id" {
+output "DB_Secret_Id" {
   value = var.db_secret_id
 }
 
