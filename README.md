@@ -102,10 +102,6 @@ Before submitting a pull request, please [review our contribution guide](./CONTR
 
 Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
 
-## Known Issues
-
-None
-
 ## License
 
 Copyright (c) 2023, Oracle and/or its affiliates. 
