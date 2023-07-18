@@ -40,7 +40,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 -- Application Export:
 --   Application:     100
 --   Name:            OCI Usage and Cost Report
---   Date and Time:   21:00 Friday May 26, 2023
+--   Date and Time:   15:42 Tuesday July 18, 2023
 --   Exported By:     USAGE
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -125,7 +125,7 @@ wwv_imp_workspace.create_flow(
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Usage2ADW 23.05.20'
+,p_flow_version=>'Usage2ADW 23.08.01'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -147,7 +147,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'OCI Usage and Cost Report'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230526205921'
+,p_last_upd_yyyymmddhh24miss=>'20230718154022'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
 ,p_print_server_type=>'INSTANCE'
@@ -17606,7 +17606,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'U'
 ,p_page_component_map=>'13'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230526120450'
+,p_last_upd_yyyymmddhh24miss=>'20230718154022'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(17131501807059044)
@@ -17828,7 +17828,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P1_VERSION'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(28851420211457556)
-,p_item_default=>'23.05.20'
+,p_item_default=>'23.08.01'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_protection_level=>'S'
 ,p_attribute_01=>'Y'
@@ -17872,16 +17872,16 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(28851420211457556)
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'Usage and Cost Reports to Autonomous database version &P1_VERSION.<br><br>',
-'Created by <b>Adi Zohar</b>, Feb 2020-May 2023<br><br><br>',
-'Application github <a target=_new href="https://github.com/oracle/oci-python-sdk/blob/master/examples/usage_reports_to_adw">link</a>, ',
-'How To Manual <a target=_new href="https://github.com/oracle/oci-python-sdk/blob/master/examples/usage_reports_to_adw/step_by_step_howto.md">link</a>, ',
+'Created by <b>Adi Zohar</b>, Feb 2020-Aug 2023<br><br><br>',
+'Application github <a target=_new href="https://github.com/oracle-samples/usage-reports-to-adw">link</a>, ',
+'How To Manual <a target=_new href="https://github.com/oracle-samples/usage-reports-to-adw/blob/main/step_by_step_howto.md">link</a>, ',
 '',
 'Please check <a target=_new href="https://github.com/oracle/oci-python-sdk/blob/master/examples/showoci">ShowOCI</a>.<br>',
 '',
 '<br>Total Storage Used <FONT COLOR="BLUE"><b>&P1_STORAGE_GB. GB</FONT></b><br>',
 '<br>Total <FONT COLOR="BLUE"><b>&A_OCI_RESOURCES_COUNT.</FONT></b> Resource IDs and Names from ShowOCI.<br>',
 '<H6><b>DISCLAIMER - This is not an official Oracle application.<br>',
-'For any issue or suggestion please open ticket at <a target=_new href="https://github.com/oracle/oci-python-sdk/issues">GitHub Issues</a><b></H6>',
+'For any issue or suggestion please open ticket at <a target=_new href="https://github.com/oracle-samples/usage-reports-to-adw/issues">GitHub Issues</a><b></H6>',
 '',
 '<H6>Copyright (c) 2023, Oracle and/or its affiliates.<br>',
 'Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/',
