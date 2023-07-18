@@ -170,9 +170,14 @@ ReadVariablesFromCredfile()
       exit 1
    fi
    rm -f $log
-   export db_app_password=`python3 usage2adw_retrieve_secret.py -t $database_secret_tenant -secret $database_secret_id | grep "^Secret=" | sed -s 's/Secret=//'`
+   export db_app_password=`python3 ${APPDIR}/usage2adw_retrieve_secret.py -t $database_secret_tenant -secret $database_secret_id | grep "^Secret=" | sed -s 's/Secret=//'`
 
-
+   if [ -z "${db_app_password}" ]
+   then
+      echo "Error Retrieving Secret from KMS Vault Service. Abort." | tee -a $LOG
+      exit 1
+   fi
+   echo "Secret Retrieved from KMS Vault Service." | tee -a $LOG
    echo "" | tee -a $LOG
 }
 
@@ -246,7 +251,6 @@ EnableAPEXApplication()
    slog=$LOGDIR/enable_apex_application_${DATE}.log
    echo "   Internal LOG=$slog" | tee -a $LOG
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
-   spool $slog
 
    define pass=${db_app_password}
    ---------------------------------------------------
@@ -298,7 +302,7 @@ EnableAPEXApplication()
    @/home/opc/usage_reports_to_adw/usage2adw_demo_apex_app.sql
 
    spool off
-" | sqlplus -s USAGE/${db_app_password}@${db_db_name} >> $LOG
+" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
@@ -497,11 +501,10 @@ SetupApp()
    echo "   exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');" | tee -a $LOG
    
    echo "set lines 199 trimsp on pages 0 feed on
-   spool $slog
    create user usage identified by ${db_app_password};
    grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;
    exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');
-" | sqlplus -s ADMIN/${db_app_password}@${db_db_name} >> $LOG
+" | sqlplus -s ADMIN/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `grep ORA- $slog | egrep -v 'ORA-01920|ORA-20987|06512'| wc -l` > 0 )); then
       echo "   Error creating USAGE user, please check log $slog, aborting." | tee -a $LOG
@@ -518,7 +521,6 @@ SetupApp()
    echo "5. Create Usage2ADW Tables" | tee -a $LOG
    echo "   Internal LOG=$slog" | tee -a $LOG
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
-   spool $slog
    -------------------------------
    -- OCI_USAGE
    -------------------------------
@@ -709,7 +711,7 @@ SetupApp()
    );
 
    spool off
-" | sqlplus -s USAGE/${db_app_password}@${db_db_name} >> $LOG
+" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
@@ -791,7 +793,6 @@ DropTables()
    echo "Dropping Usage2ADW Application Tables." | tee -a $LOG
    echo "Internal LOG=$slog" | tee -a $LOG
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
-   spool $slog
    select to_char(sysdate,'YYYY-MM-DD HH24:MI') current_date from dual;
 
    prompt Dropping Table OCI_USAGE
@@ -822,7 +823,7 @@ DropTables()
    drop table usage.OCI_LOAD_STATUS; 
 
    spool off
-" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $LOG
+" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
@@ -858,7 +859,6 @@ TruncateTables()
    echo "Truncating Usage2ADW Application Tables." | tee -a $LOG
    echo "Internal LOG=$slog" | tee -a $LOG
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
-   spool $slog
    select to_char(sysdate,'YYYY-MM-DD HH24:MI') current_date from dual;
 
    prompt Truncating Table OCI_USAGE
@@ -889,7 +889,7 @@ TruncateTables()
    truncate table usage.OCI_LOAD_STATUS; 
 
    spool off
-" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $LOG
+" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
@@ -946,7 +946,7 @@ SetupOL8Packages()
    sudo ln -s /usr/lib/oracle/19.19 /usr/lib/oracle/current | tee -a $LOG
 
    # Check if installed
-   echo "Check Installation..." | tee -a $LOG
+   echo "Check Installation... Can take a minute..." | tee -a $LOG
    dnf list |grep oracle-instantclient
    if [ $? -eq 0 ]; then
       echo "   Completed." | tee -a $LOG
