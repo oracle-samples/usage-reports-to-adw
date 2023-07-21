@@ -301,7 +301,6 @@ EnableAPEXApplication()
    -----------------------------
    @/home/opc/usage_reports_to_adw/usage2adw_demo_apex_app.sql
 
-   spool off
 " | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
@@ -710,7 +709,6 @@ SetupApp()
       CONSTRAINT OCI_LOAD_STATUS PRIMARY KEY (TENANT_NAME, FILE_NAME) USING INDEX ENABLE
    );
 
-   spool off
 " | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
@@ -778,7 +776,7 @@ DropTables()
 
    ReadVariablesFromCredfile 1
 
-   printf "Are you sure you want to drop Usage2ADW Tables for USAGE/@${db_db_name} (y/n) ? "; read ANSWER
+   printf "Are you sure you want to drop Usage2ADW Tables for USAGE/xxxxxx@${db_db_name} (y/n) ? "; read ANSWER
 
    if [ "$ANSWER" = 'y' ]; then
       echo ""
@@ -822,7 +820,6 @@ DropTables()
    prompt Dropping Table OCI_LOAD_STATUS
    drop table usage.OCI_LOAD_STATUS; 
 
-   spool off
 " | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
@@ -845,7 +842,7 @@ TruncateTables()
 
    ReadVariablesFromCredfile 1
 
-   printf "Are you sure you want to truncate Usage2ADW Tables for USAGE/@${db_db_name} (y/n) ? "; read ANSWER
+   printf "Are you sure you want to truncate Usage2ADW Tables for USAGE/xxxxx@${db_db_name} (y/n) ? "; read ANSWER
 
    if [ "$ANSWER" = 'y' ]; then
       echo ""
@@ -888,7 +885,6 @@ TruncateTables()
    prompt Truncating Table OCI_LOAD_STATUS
    truncate table usage.OCI_LOAD_STATUS; 
 
-   spool off
 " | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
