@@ -40,7 +40,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 -- Application Export:
 --   Application:     100
 --   Name:            OCI Usage and Cost Report
---   Date and Time:   15:42 Tuesday July 18, 2023
+--   Date and Time:   01:48 Friday July 21, 2023
 --   Exported By:     USAGE
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -147,7 +147,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'OCI Usage and Cost Report'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230718154022'
+,p_last_upd_yyyymmddhh24miss=>'20230721014533'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
 ,p_print_server_type=>'INSTANCE'
@@ -36619,7 +36619,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230526151728'
+,p_last_upd_yyyymmddhh24miss=>'20230721014533'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(7416020618752429)
@@ -54556,7 +54556,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_sequence=>60
 ,p_include_in_reg_disp_sel_yn=>'Y'
 ,p_query_type=>'TABLE'
-,p_query_table=>'OCI_SHOWOCI_COMPUTE_RESERVATIONS'
+,p_query_table=>'OCI_SHOWOCI_COMPUTE'
 ,p_query_where=>'(:P11_EXTRACT is null or EXTRACT_DATE = (select max(extract_date) from OCI_SHOWOCI_COMPUTE_RESERVATIONS))  '
 ,p_include_rowid_column=>false
 ,p_plug_source_type=>'NATIVE_IR'
@@ -54671,88 +54671,6 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_use_as_row_header=>'N'
 );
 wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12062644326353206)
-,p_db_column_name=>'ID'
-,p_display_order=>340
-,p_column_identifier=>'K'
-,p_column_label=>'Id'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#ID#</span>'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12062795773353207)
-,p_db_column_name=>'NAME'
-,p_display_order=>350
-,p_column_identifier=>'L'
-,p_column_label=>'Name'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#NAME#</span>'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12062801538353208)
-,p_db_column_name=>'LIFECYCLE_STATE'
-,p_display_order=>360
-,p_column_identifier=>'M'
-,p_column_label=>'Lifecycle State'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#LIFECYCLE_STATE#</span>'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12062945659353209)
-,p_db_column_name=>'IS_DEFAULT_RESERVATION'
-,p_display_order=>370
-,p_column_identifier=>'N'
-,p_column_label=>'Is Default Reservation'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#IS_DEFAULT_RESERVATION#</span>'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12063019171353210)
-,p_db_column_name=>'RESERVED_INSTANCE_COUNT'
-,p_display_order=>380
-,p_column_identifier=>'O'
-,p_column_label=>'Reserved Instance Count'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#RESERVED_INSTANCE_COUNT#</span>'
-,p_column_type=>'NUMBER'
-,p_column_alignment=>'RIGHT'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12063166646353211)
-,p_db_column_name=>'USED_INSTANCE_COUNT'
-,p_display_order=>390
-,p_column_identifier=>'P'
-,p_column_label=>'Used Instance Count'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#USED_INSTANCE_COUNT#</span>'
-,p_column_type=>'NUMBER'
-,p_column_alignment=>'RIGHT'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12063284937353212)
-,p_db_column_name=>'SHAPES'
-,p_display_order=>400
-,p_column_identifier=>'Q'
-,p_column_label=>'Shapes'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#SHAPES#</span>'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12063353468353213)
-,p_db_column_name=>'SHAPES_CAPACITY'
-,p_display_order=>410
-,p_column_identifier=>'R'
-,p_column_label=>'Shapes Capacity'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#SHAPES_CAPACITY#</span>'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(12048407644348942)
 ,p_db_column_name=>'TIME_CREATED'
 ,p_display_order=>420
@@ -54798,6 +54716,262 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_tz_dependent=>'N'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14062444641911614)
+,p_db_column_name=>'INSTANCE_ID'
+,p_display_order=>460
+,p_is_primary_key=>'Y'
+,p_column_identifier=>'S'
+,p_column_label=>'Instance Id'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14062599259911615)
+,p_db_column_name=>'FAULT_DOMAIN'
+,p_display_order=>470
+,p_column_identifier=>'T'
+,p_column_label=>'Fault Domain'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14062692084911616)
+,p_db_column_name=>'SERVER_NAME'
+,p_display_order=>480
+,p_column_identifier=>'U'
+,p_column_label=>'Server Name'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14062734634911617)
+,p_db_column_name=>'STATUS'
+,p_display_order=>490
+,p_column_identifier=>'V'
+,p_column_label=>'Status'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14062885012911618)
+,p_db_column_name=>'TYPE'
+,p_display_order=>500
+,p_column_identifier=>'W'
+,p_column_label=>'Type'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14062995994911619)
+,p_db_column_name=>'IMAGE'
+,p_display_order=>510
+,p_column_identifier=>'X'
+,p_column_label=>'Image'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063029053911620)
+,p_db_column_name=>'PRIMARY_VCN'
+,p_display_order=>520
+,p_column_identifier=>'Y'
+,p_column_label=>'Primary Vcn'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063148451911621)
+,p_db_column_name=>'PRIMARY_SUBNET'
+,p_display_order=>530
+,p_column_identifier=>'Z'
+,p_column_label=>'Primary Subnet'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063205516911622)
+,p_db_column_name=>'SHAPE'
+,p_display_order=>540
+,p_column_identifier=>'AA'
+,p_column_label=>'Shape'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063333643911623)
+,p_db_column_name=>'OCPUS'
+,p_display_order=>550
+,p_column_identifier=>'AB'
+,p_column_label=>'Ocpus'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063461774911624)
+,p_db_column_name=>'MEMORY_GB'
+,p_display_order=>560
+,p_column_identifier=>'AC'
+,p_column_label=>'Memory Gb'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063568512911625)
+,p_db_column_name=>'LOCAL_STORAGE_TB'
+,p_display_order=>570
+,p_column_identifier=>'AD'
+,p_column_label=>'Local Storage Tb'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063648754911626)
+,p_db_column_name=>'PUBLIC_IPS'
+,p_display_order=>580
+,p_column_identifier=>'AE'
+,p_column_label=>'Public Ips'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063768096911627)
+,p_db_column_name=>'PRIVATE_IPS'
+,p_display_order=>590
+,p_column_identifier=>'AF'
+,p_column_label=>'Private Ips'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063896844911628)
+,p_db_column_name=>'SECURITY_GROUPS'
+,p_display_order=>600
+,p_column_identifier=>'AG'
+,p_column_label=>'Security Groups'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14063927375911629)
+,p_db_column_name=>'INTERNAL_FQDN'
+,p_display_order=>610
+,p_column_identifier=>'AH'
+,p_column_label=>'Internal Fqdn'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064009049911630)
+,p_db_column_name=>'BOOT_VOLUME'
+,p_display_order=>620
+,p_column_identifier=>'AI'
+,p_column_label=>'Boot Volume'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064158820911631)
+,p_db_column_name=>'BOOT_VOLUME_ID'
+,p_display_order=>630
+,p_column_identifier=>'AJ'
+,p_column_label=>'Boot Volume Id'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064225941911632)
+,p_db_column_name=>'BOOT_VOLUME_SIZE_GB'
+,p_display_order=>640
+,p_column_identifier=>'AK'
+,p_column_label=>'Boot Volume Size Gb'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064308409911633)
+,p_db_column_name=>'BOOT_VOLUME_B_POLICY'
+,p_display_order=>650
+,p_column_identifier=>'AL'
+,p_column_label=>'Boot Volume B Policy'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064478456911634)
+,p_db_column_name=>'BLOCK_VOLUMES'
+,p_display_order=>660
+,p_column_identifier=>'AM'
+,p_column_label=>'Block Volumes'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064594614911635)
+,p_db_column_name=>'BLOCK_VOLUMES_IDS'
+,p_display_order=>670
+,p_column_identifier=>'AN'
+,p_column_label=>'Block Volumes Ids'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064663381911636)
+,p_db_column_name=>'BLOCK_VOLUMES_TOTAL_GB'
+,p_display_order=>680
+,p_column_identifier=>'AO'
+,p_column_label=>'Block Volumes Total Gb'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064728351911637)
+,p_db_column_name=>'BLOCK_VOLUMES_B_POLICY'
+,p_display_order=>690
+,p_column_identifier=>'AP'
+,p_column_label=>'Block Volumes B Policy'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064861739911638)
+,p_db_column_name=>'VNIC_IDS'
+,p_display_order=>700
+,p_column_identifier=>'AQ'
+,p_column_label=>'Vnic Ids'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(12089627175365349)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -54805,8 +54979,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'120897'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'TENANT_NAME:TENANT_ID:REGION_NAME:AVAILABILITY_DOMAIN:COMPARTMENT_PATH:COMPARTMENT_NAME:ID:NAME:LIFECYCLE_STATE:IS_DEFAULT_RESERVATION:RESERVED_INSTANCE_COUNT:USED_INSTANCE_COUNT:SHAPES:SHAPES_CAPACITY:TIME_CREATED:DEFINED_TAGS:FREEFORM_TAGS:EXTRACT_'
-||'DATE'
+,p_report_columns=>'TENANT_NAME:TENANT_ID:REGION_NAME:AVAILABILITY_DOMAIN:COMPARTMENT_PATH:COMPARTMENT_NAME:TIME_CREATED:DEFINED_TAGS:FREEFORM_TAGS:EXTRACT_DATE'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(12063718908353217)
@@ -55139,16 +55312,6 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_use_as_row_header=>'N'
 );
 wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(12066521471353245)
-,p_db_column_name=>'BOOT_VOLUME_ENCRYPTION'
-,p_display_order=>270
-,p_column_identifier=>'AA'
-,p_column_label=>'Boot Volume Encryption'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#BOOT_VOLUME_ENCRYPTION#</span>'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(12066622029353246)
 ,p_db_column_name=>'BLOCK_VOLUMES'
 ,p_display_order=>280
@@ -55250,7 +55413,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_report_columns=>'TENANT_NAME:TENANT_ID:INSTANCE_ID:REGION_NAME:AVAILABILITY_DOMAIN:FAULT_DOMAIN:COMPARTMENT_PATH:COMPARTMENT_NAME:SERVER_NAME:STATUS:TYPE:IMAGE:PRIMARY_VCN:PRIMARY_SUBNET:SHAPE:OCPUS:MEMORY_GB:LOCAL_STORAGE_TB:PUBLIC_IPS:PRIVATE_IPS:SECURITY_GROUPS:IN'
-||'TERNAL_FQDN:TIME_CREATED:BOOT_VOLUME:BOOT_VOLUME_SIZE_GB:BOOT_VOLUME_B_POLICY:BOOT_VOLUME_ENCRYPTION:BLOCK_VOLUMES:BLOCK_VOLUMES_TOTAL_GB:BLOCK_VOLUMES_B_POLICY:DEFINED_TAGS:FREEFORM_TAGS:EXTRACT_DATE:BOOT_VOLUME_ID:BLOCK_VOLUMES_IDS:VNIC_IDS'
+||'TERNAL_FQDN:TIME_CREATED:BOOT_VOLUME:BOOT_VOLUME_SIZE_GB:BOOT_VOLUME_B_POLICY:BLOCK_VOLUMES:BLOCK_VOLUMES_TOTAL_GB:BLOCK_VOLUMES_B_POLICY:DEFINED_TAGS:FREEFORM_TAGS:EXTRACT_DATE:BOOT_VOLUME_ID:BLOCK_VOLUMES_IDS:VNIC_IDS'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(12835987976172422)
@@ -55326,6 +55489,9 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(12836207982172425)
 ,p_db_column_name=>'TENANT_ID'
@@ -55437,9 +55603,6 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(14011465298991121)
 ,p_db_column_name=>'AVAILABILITY_DOMAINS'
@@ -56227,6 +56390,9 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(13208904416718843)
 ,p_db_column_name=>'NAME'
@@ -56330,9 +56496,6 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_tz_dependent=>'N'
 ,p_use_as_row_header=>'N'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(13210455132725508)
 ,p_db_column_name=>'TIME_UPDATED'
