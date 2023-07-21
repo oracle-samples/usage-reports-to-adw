@@ -422,7 +422,8 @@ END;
 Run on oci vm
 
 ```
-bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-python-sdk/master/examples/showoci/showoci_upgrade.sh)"    
+bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-python-sdk/master/examples/showoci/showoci_upgrade.sh)"  
+chmod +x /home/opc/showoci/run_daily_report.sh  
 ```
 
 ```
@@ -453,7 +454,7 @@ Edit crontab using crontab -e and add/update the below: (If exist remove the # b
 Download run_load_showoci_csv_to_adw.sh if not exist
 
 ```
-wget https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/usage2adw_setup.sh -O /home/opc/usage_reports_to_adw/shell_scripts/run_load_showoci_csv_to_adw.sh
+wget https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main/shell_scripts/run_load_showoci_csv_to_adw.sh -O /home/opc/usage_reports_to_adw/shell_scripts/run_load_showoci_csv_to_adw.sh
 chmod +x /home/opc/usage_reports_to_adw/shell_scripts/run_load_showoci_csv_to_adw.sh 
 ```
 
