@@ -89,8 +89,8 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 
 - Python 3.9.13_2
 - oracledb 1.3.0
-- requests 2.28.2
-- OCI Python SDK 2.98.0
+- requests 2.31.0
+- OCI Python SDK 2.107.0
 
 ## Contributing
 

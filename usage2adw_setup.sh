@@ -205,7 +205,7 @@ SetupCredential()
    printf "Please Enter Database Name     : "; read DATABASE_NAME
    printf "Please Enter Database id (ocid): "; read DATABASE_ID
    printf "Please Enter ADB Application Secret Id from KMS Vault: "; read DATABASE_SECRET_ID
-   printf "Please Enter ADB Application Secret Tenant (local for instance principle): "; read DATABASE_SECRET_TENANT
+   printf "Please Enter ADB Application Secret Tenant Profile - The Tenancy name in which the Secret Vault resides (For instance principle use 'local'):"; read DATABASE_SECRET_TENANT
    printf "Please Enter Extract Start Date (Format YYYY-MM i.e. 2023-01): "; read EXTRACT_DATE
    printf "Please Enter Tag Key 1 to extract as Special Tag (Oracle-Tags.CreatedBy): "; read TAG_SPECIAL
    printf "Please Enter Tag Key 2 to extract as Special Tag (Oracle-Tags.Program): "; read TAG2_SPECIAL
