@@ -106,11 +106,20 @@ bash -c "export usage2adw_param=-setup_ol8_packages; $(curl -L https://raw.githu
 
 ## 8. Setup Credentials
 
-This script will ask for Database Name, Application Secret Id (for Password) and Extract Start Date
-
 ```
 /home/opc/usage_reports_to_adw/usage2adw_setup -setup_credential
 ```
+
+This script will ask for:
+
+1. Database Name - the database connect string.
+2. Database Id (OCID) - the database ocid.
+3. Application Secret Id from KMS Vault.
+4. Application Secret Tenant Profile - The Tenancy profile (from oci config) in which the Secret Vault resides (For instance principle use 'local')
+5. Extract Start Date
+6. Tag Special Key 1 - Convert extract key to column #1
+7. Tag Special Key 2 - Convert extract key to column #2
+
    
 ## 9. Setup the application
 
