@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 ##########################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2023, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #
 # usage2adw_showoci_csv2adw.py
@@ -295,8 +295,8 @@ def handle_compute(connection):
                 {'col': 'status                ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
                 {'col': 'type                  ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'image                 ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'primary_vcn           ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
-                {'col': 'primary_subnet        ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'primary_vcn           ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'primary_subnet        ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'shape                 ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
                 {'col': 'ocpus                 ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
                 {'col': 'memory_gb             ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
@@ -1052,7 +1052,7 @@ def handle_load_balancer_listeners(connection):
                 {'col': 'tenant_name        ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'tenant_id          ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'id                 ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'y'},
-                {'col': 'loadbalancer_id    ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'y'},
+                {'col': 'loadbalancer_id    ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'region_name        ', 'csv': '     ', 'type': 'varchar2(100) ', 'pk': 'n'},
                 {'col': 'compartment_path   ', 'csv': '     ', 'type': 'varchar2(2000)', 'pk': 'n'},
                 {'col': 'compartment_name   ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
