@@ -4,9 +4,9 @@
 #********************************************************************************************
 
 title: Usage2ADW
-description: OCI Usage and Cost Reports to Autonomous Database Version 23.08.01
+description: OCI Usage and Cost Reports to Autonomous Database Version 23.09.10
 schemaVersion: 1.0.0
-version: "20230801"
+version: "20230910"
 locale: "en"
 
 groupings:

@@ -4,7 +4,6 @@
 -- Licensed under the Universal Permissive License v 1.0 
 -- as shown at https://oss.oracle.com/licenses/upl/
 --------------------------------------------------------------------------------
-
 prompt --application/set_environment
 set define off verify off feedback off
 whenever sqlerror exit sql.sqlcode rollback
@@ -26,7 +25,7 @@ whenever sqlerror exit sql.sqlcode rollback
 begin
 wwv_flow_imp.import_begin (
  p_version_yyyy_mm_dd=>'2023.04.28'
-,p_release=>'23.1.0'
+,p_release=>'23.1.2'
 ,p_default_workspace_id=>8458123041844848
 ,p_default_application_id=>100
 ,p_default_id_offset=>16918310929265932
@@ -40,7 +39,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 -- Application Export:
 --   Application:     100
 --   Name:            OCI Usage and Cost Report
---   Date and Time:   01:48 Friday July 21, 2023
+--   Date and Time:   12:43 Thursday August 31, 2023
 --   Exported By:     USAGE
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -85,7 +84,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 --       Reports:
 --       E-Mail:
 --     Supporting Objects:  Excluded
---   Version:         23.1.0
+--   Version:         23.1.2
 --   Instance ID:     8458019837672333
 --
 
@@ -125,7 +124,7 @@ wwv_imp_workspace.create_flow(
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Usage2ADW 23.08.01'
+,p_flow_version=>'Usage2ADW 23.09.10'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -147,7 +146,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'OCI Usage and Cost Report'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230721014533'
+,p_last_upd_yyyymmddhh24miss=>'20230831124345'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
 ,p_print_server_type=>'INSTANCE'
@@ -17606,7 +17605,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'U'
 ,p_page_component_map=>'13'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230718154022'
+,p_last_upd_yyyymmddhh24miss=>'20230831124345'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(17131501807059044)
@@ -17828,7 +17827,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P1_VERSION'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(28851420211457556)
-,p_item_default=>'23.08.01'
+,p_item_default=>'23.09.10'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_protection_level=>'S'
 ,p_attribute_01=>'Y'
@@ -17872,7 +17871,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(28851420211457556)
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'Usage and Cost Reports to Autonomous database version &P1_VERSION.<br><br>',
-'Created by <b>Adi Zohar</b>, Feb 2020-Aug 2023<br><br><br>',
+'Created by <b>Adi Zohar</b>, Feb 2020-Sep 2023<br><br><br>',
 'Application github <a target=_new href="https://github.com/oracle-samples/usage-reports-to-adw">link</a>, ',
 'How To Manual <a target=_new href="https://github.com/oracle-samples/usage-reports-to-adw/blob/main/step_by_step_howto.md">link</a>, ',
 '',
@@ -18045,8 +18044,8 @@ wwv_flow_imp_page.create_page(
 ,p_required_role=>'MUST_NOT_BE_PUBLIC_USER'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
-,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230520115454'
+,p_last_updated_by=>'ADIZOHAR'
+,p_last_upd_yyyymmddhh24miss=>'20230831123648'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(26823379352006433)
@@ -18567,7 +18566,7 @@ wwv_flow_imp_page.create_jet_chart_axis(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(26824647947006446)
-,p_plug_name=>'OCPUs Chart per Compartment'
+,p_plug_name=>'CPUs Chart per Compartment'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156092066081748)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_escape_on_http_output=>'Y'
@@ -18619,7 +18618,7 @@ wwv_flow_imp_page.create_jet_chart_series(
  p_id=>wwv_flow_imp.id(26824813162006448)
 ,p_chart_id=>wwv_flow_imp.id(26824734756006447)
 ,p_seq=>10
-,p_name=>'OCPUs per Service'
+,p_name=>'CPUs per Service'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select ',
@@ -18647,7 +18646,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 '    (:P2_TAG1_SPECIAL is null or tag_special = :P2_TAG1_SPECIAL) and',
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS''',
+'    USG_CONSUMED_MEASURE like ''%CPU%''',
 'group by ',
 '	prd_compartment_name, prd_service',
 'order by 3 desc',
@@ -18662,10 +18661,8 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'insideBarEdge'
-,p_items_label_display_as=>'PERCENT'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'8'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_imp_page.create_jet_chart_axis(
  p_id=>wwv_flow_imp.id(26825091511006450)
@@ -18890,7 +18887,7 @@ end;
 begin
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(26827716083006477)
-,p_plug_name=>'OCPUs Resource Chart'
+,p_plug_name=>'CPUs Resource Chart'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156092066081748)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_escape_on_http_output=>'Y'
@@ -18942,7 +18939,7 @@ wwv_flow_imp_page.create_jet_chart_series(
  p_id=>wwv_flow_imp.id(26827985614006479)
 ,p_chart_id=>wwv_flow_imp.id(26827862673006478)
 ,p_seq=>10
-,p_name=>'OCPUs per Resource'
+,p_name=>'CPUs per Resource'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select ',
@@ -18969,7 +18966,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USAGE_INTERVAL_START = to_date(:P2_DATE,''YYYY-MM-DD HH24:MI'') and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS''',
+'    USG_CONSUMED_MEASURE like ''%CPU%''',
 'group by ',
 '	prd_resource',
 'order by 2 desc',
@@ -18984,9 +18981,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
 ,p_items_label_font_size=>'10'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_imp_page.create_jet_chart_axis(
  p_id=>wwv_flow_imp.id(26828122311006481)
@@ -19033,7 +19028,7 @@ wwv_flow_imp_page.create_jet_chart_axis(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(26841340568982034)
-,p_plug_name=>'OCPUs Product Chart'
+,p_plug_name=>'CPUs Product Chart'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156092066081748)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_escape_on_http_output=>'Y'
@@ -19085,7 +19080,7 @@ wwv_flow_imp_page.create_jet_chart_series(
  p_id=>wwv_flow_imp.id(26841608215982036)
 ,p_chart_id=>wwv_flow_imp.id(26841501172982035)
 ,p_seq=>10
-,p_name=>'OCPUs per Service'
+,p_name=>'CPUs per Service'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select ',
@@ -19112,7 +19107,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USAGE_INTERVAL_START = to_date(:P2_DATE,''YYYY-MM-DD HH24:MI'') and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS''',
+'    USG_CONSUMED_MEASURE like ''%CPU%''',
 'group by ',
 '	prd_service',
 'order by 2 desc',
@@ -19127,8 +19122,6 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_imp_page.create_jet_chart_axis(
  p_id=>wwv_flow_imp.id(26841615784982037)
@@ -19510,7 +19503,7 @@ wwv_flow_imp_page.create_jet_chart_axis(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(28707578211443157)
-,p_plug_name=>'OCPUs Chart per Tag 1 Special Data'
+,p_plug_name=>'CPUs Chart per Tag 1 Special Data'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156092066081748)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_escape_on_http_output=>'Y'
@@ -19562,7 +19555,7 @@ wwv_flow_imp_page.create_jet_chart_series(
  p_id=>wwv_flow_imp.id(28707725980443159)
 ,p_chart_id=>wwv_flow_imp.id(28707645099443158)
 ,p_seq=>10
-,p_name=>'OCPUs per Service'
+,p_name=>'CPUs per Service'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select ',
@@ -19590,7 +19583,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 '    (:P2_TAG1_SPECIAL is null or tag_special = :P2_TAG1_SPECIAL) and',
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS'' and',
+'    USG_CONSUMED_MEASURE like ''%CPU%'' and',
 '    tag_special is not null',
 'group by ',
 '	tag_special, prd_service',
@@ -19606,10 +19599,8 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'insideBarEdge'
-,p_items_label_display_as=>'PERCENT'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'8'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_imp_page.create_jet_chart_axis(
  p_id=>wwv_flow_imp.id(28707880400443160)
@@ -19835,7 +19826,7 @@ wwv_flow_imp_page.create_jet_chart_axis(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(51692149001738382)
-,p_plug_name=>'OCPUs Chart per Tag 2 Special Data'
+,p_plug_name=>'CPUs Chart per Tag 2 Special Data'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156092066081748)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
@@ -19887,7 +19878,7 @@ wwv_flow_imp_page.create_jet_chart_series(
  p_id=>wwv_flow_imp.id(24267558836225634)
 ,p_chart_id=>wwv_flow_imp.id(24267505620225633)
 ,p_seq=>10
-,p_name=>'OCPUs per Service'
+,p_name=>'CPUs per Service'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select ',
@@ -19915,7 +19906,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 '    (:P2_TAG1_SPECIAL is null or tag_special = :P2_TAG1_SPECIAL) and',
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS'' and',
+'    USG_CONSUMED_MEASURE like ''%CPU%'' and',
 '    tag_special2 is not null',
 'group by ',
 '	tag_special2, prd_service',
@@ -19931,10 +19922,8 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'insideBarEdge'
-,p_items_label_display_as=>'PERCENT'
 ,p_items_label_font_style=>'normal'
 ,p_items_label_font_size=>'8'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_imp_page.create_jet_chart_axis(
  p_id=>wwv_flow_imp.id(24267643609225635)
@@ -19995,7 +19984,7 @@ wwv_flow_imp_page.create_page_plug(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(28899956735705180)
-,p_plug_name=>'OCPUs Product Table'
+,p_plug_name=>'CPUs Product Table'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156113261081749)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
@@ -20008,11 +19997,29 @@ wwv_flow_imp_page.create_page_plug(
 'select ',
 '    prd_service, ',
 '    sum(',
-'		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'        case when USG_CONSUMED_MEASURE like ''OCPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY,',
+'    sum(',
+'        case when USG_CONSUMED_MEASURE like ''ECPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY_ECPUS,',
+'    sum(',
+'		case when USG_CONSUMED_UNITS like ''%MS%''',
 '        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
 '		else USG_BILLED_QUANTITY',
 '		end ',
-'	) as USG_BILLED_QUANTITY',
+'	) as USG_BILLED_QUANTITY_TOTAL',
 'from oci_usage',
 'where ',
 '    tenant_name=:P2_TENANT_NAME and',
@@ -20029,7 +20036,7 @@ wwv_flow_imp_page.create_page_plug(
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USAGE_INTERVAL_START = to_date(:P2_DATE,''YYYY-MM-DD HH24:MI'') and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS''',
+'    USG_CONSUMED_MEASURE like ''%CPU%''',
 'group by ',
 '	prd_service',
 'order by 2 desc',
@@ -20100,6 +20107,28 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_format_mask=>'999G999G999G999G990D00'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14064994968911639)
+,p_db_column_name=>'USG_BILLED_QUANTITY_ECPUS'
+,p_display_order=>30
+,p_column_identifier=>'C'
+,p_column_label=>'ECPUs'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065039003911640)
+,p_db_column_name=>'USG_BILLED_QUANTITY_TOTAL'
+,p_display_order=>40
+,p_column_identifier=>'D'
+,p_column_label=>'Total'
+,p_column_type=>'NUMBER'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(49163015965087358)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -20107,7 +20136,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'322448'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'PRD_SERVICE:USG_BILLED_QUANTITY'
+,p_report_columns=>'PRD_SERVICE:USG_BILLED_QUANTITY:USG_BILLED_QUANTITY_ECPUS:USG_BILLED_QUANTITY_TOTAL:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(49154653122081734)
@@ -20227,7 +20256,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(49155088402081738)
-,p_plug_name=>'OCPUs Resource Table'
+,p_plug_name=>'CPUs Resource Table'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156113261081749)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
@@ -20240,11 +20269,29 @@ wwv_flow_imp_page.create_page_plug(
 'select ',
 '    prd_resource, ',
 '    sum(',
-'		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'        case when USG_CONSUMED_MEASURE like ''OCPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY,',
+'    sum(',
+'        case when USG_CONSUMED_MEASURE like ''ECPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY_ECPUS,',
+'    sum(',
+'		case when USG_CONSUMED_UNITS like ''%MS%''',
 '        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
 '		else USG_BILLED_QUANTITY',
 '		end ',
-'	) as USG_BILLED_QUANTITY',
+'	) as USG_BILLED_QUANTITY_TOTAL',
 'from oci_usage',
 'where ',
 '    tenant_name=:P2_TENANT_NAME and',
@@ -20261,7 +20308,7 @@ wwv_flow_imp_page.create_page_plug(
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USAGE_INTERVAL_START = to_date(:P2_DATE,''YYYY-MM-DD HH24:MI'') and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS''',
+'    USG_CONSUMED_MEASURE like ''%CPU%''',
 'group by ',
 '	prd_resource',
 'order by 2 desc',
@@ -20307,6 +20354,30 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_format_mask=>'999G999G999G999G990D00'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065174897911641)
+,p_db_column_name=>'USG_BILLED_QUANTITY_ECPUS'
+,p_display_order=>30
+,p_column_identifier=>'C'
+,p_column_label=>'ECPUs'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065215154911642)
+,p_db_column_name=>'USG_BILLED_QUANTITY_TOTAL'
+,p_display_order=>40
+,p_column_identifier=>'D'
+,p_column_label=>'Total'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(49174774796155226)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -20314,7 +20385,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'322565'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'PRD_RESOURCE:USG_BILLED_QUANTITY:'
+,p_report_columns=>'PRD_RESOURCE:USG_BILLED_QUANTITY:USG_BILLED_QUANTITY_ECPUS:USG_BILLED_QUANTITY_TOTAL:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(49155479481081742)
@@ -20434,7 +20505,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(49156220099081750)
-,p_plug_name=>'OCPUs Per Compartment'
+,p_plug_name=>'CPUs Per Compartment'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156113261081749)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
@@ -20448,11 +20519,29 @@ wwv_flow_imp_page.create_page_plug(
 '    prd_compartment_path,',
 '    prd_compartment_name,',
 '    sum(',
-'		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'        case when USG_CONSUMED_MEASURE like ''OCPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY,',
+'    sum(',
+'        case when USG_CONSUMED_MEASURE like ''ECPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY_ECPUS,',
+'    sum(',
+'		case when USG_CONSUMED_UNITS like ''%MS%''',
 '        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
 '		else USG_BILLED_QUANTITY',
 '		end ',
-'	) as USG_BILLED_QUANTITY',
+'	) as USG_BILLED_QUANTITY_TOTAL',
 'from oci_usage',
 'where ',
 '    tenant_name=:P2_TENANT_NAME and',
@@ -20469,7 +20558,7 @@ wwv_flow_imp_page.create_page_plug(
 '    (:P2_TAG1_SPECIAL is null or tag_special = :P2_TAG1_SPECIAL) and',
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS''',
+'    USG_CONSUMED_MEASURE like ''%CPU%''',
 'group by ',
 '    prd_compartment_path,',
 '	prd_compartment_name',
@@ -20525,6 +20614,30 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_format_mask=>'999G999G999G999G990D00'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065308214911643)
+,p_db_column_name=>'USG_BILLED_QUANTITY_ECPUS'
+,p_display_order=>50
+,p_column_identifier=>'D'
+,p_column_label=>'ECPUs'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065474345911644)
+,p_db_column_name=>'USG_BILLED_QUANTITY_TOTAL'
+,p_display_order=>60
+,p_column_identifier=>'E'
+,p_column_label=>'Total'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(49190588457224753)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -20532,7 +20645,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'322723'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'PRD_COMPARTMENT_PATH:PRD_COMPARTMENT_NAME:USG_BILLED_QUANTITY:'
+,p_report_columns=>'PRD_COMPARTMENT_PATH:PRD_COMPARTMENT_NAME:USG_BILLED_QUANTITY:USG_BILLED_QUANTITY_ECPUS:USG_BILLED_QUANTITY_TOTAL:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(49156661803081754)
@@ -20613,6 +20726,9 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_source_type=>'NATIVE_IR'
 ,p_prn_content_disposition=>'ATTACHMENT'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_worksheet(
  p_id=>wwv_flow_imp.id(49156723070081755)
 ,p_max_row_count=>'1000000'
@@ -20666,12 +20782,9 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_is_default=>'Y'
 ,p_report_columns=>'PRD_COMPARTMENT_PATH:PRD_COMPARTMENT_NAME:USG_BILLED_QUANTITY:'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(49157471360081762)
-,p_plug_name=>'OCPUs Per Tag 1 Special'
+,p_plug_name=>'CPUs Per Tag 1 Special'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156113261081749)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
@@ -20684,11 +20797,29 @@ wwv_flow_imp_page.create_page_plug(
 'select ',
 '    tag_special,',
 '    sum(',
-'		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'        case when USG_CONSUMED_MEASURE like ''OCPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY,',
+'    sum(',
+'        case when USG_CONSUMED_MEASURE like ''ECPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY_ECPUS,',
+'    sum(',
+'		case when USG_CONSUMED_UNITS like ''%MS%''',
 '        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
 '		else USG_BILLED_QUANTITY',
 '		end ',
-'	) as USG_BILLED_QUANTITY',
+'	) as USG_BILLED_QUANTITY_TOTAL',
 'from oci_usage',
 'where ',
 '    tenant_name=:P2_TENANT_NAME and',
@@ -20705,7 +20836,7 @@ wwv_flow_imp_page.create_page_plug(
 '    (:P2_TAG1_SPECIAL is null or tag_special = :P2_TAG1_SPECIAL) and',
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS'' and',
+'    USG_CONSUMED_MEASURE like ''%CPU%'' and',
 '    tag_special is not null',
 'group by ',
 '	tag_special',
@@ -20752,6 +20883,30 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_format_mask=>'999G999G999G999G990D00'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065537411911645)
+,p_db_column_name=>'USG_BILLED_QUANTITY_ECPUS'
+,p_display_order=>30
+,p_column_identifier=>'D'
+,p_column_label=>'ECPUs'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065636152911646)
+,p_db_column_name=>'USG_BILLED_QUANTITY_TOTAL'
+,p_display_order=>40
+,p_column_identifier=>'E'
+,p_column_label=>'Total'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(49203021053255040)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -20759,7 +20914,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'322848'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'TAG_SPECIAL:USG_BILLED_QUANTITY'
+,p_report_columns=>'TAG_SPECIAL:USG_BILLED_QUANTITY:USG_BILLED_QUANTITY_ECPUS:USG_BILLED_QUANTITY_TOTAL:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(49157892815081766)
@@ -20883,7 +21038,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(51691389186738374)
-,p_plug_name=>'OCPUs Per Tag 2 Special'
+,p_plug_name=>'CPUs Per Tag 2 Special'
 ,p_parent_plug_id=>wwv_flow_imp.id(49156113261081749)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
@@ -20896,11 +21051,29 @@ wwv_flow_imp_page.create_page_plug(
 'select ',
 '    tag_special2 tag_special,',
 '    sum(',
-'		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'        case when USG_CONSUMED_MEASURE like ''OCPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY,',
+'    sum(',
+'        case when USG_CONSUMED_MEASURE like ''ECPU%'' then',
+'    		case when USG_CONSUMED_UNITS like ''%MS%'' ',
+'            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
+'    		else USG_BILLED_QUANTITY',
+'    		end ',
+'        else 0',
+'        end',
+'	) as USG_BILLED_QUANTITY_ECPUS,',
+'    sum(',
+'		case when USG_CONSUMED_UNITS like ''%MS%''',
 '        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000',
 '		else USG_BILLED_QUANTITY',
 '		end ',
-'	) as USG_BILLED_QUANTITY',
+'	) as USG_BILLED_QUANTITY_TOTAL',
 'from oci_usage',
 'where ',
 '    tenant_name=:P2_TENANT_NAME and',
@@ -20917,7 +21090,7 @@ wwv_flow_imp_page.create_page_plug(
 '    (:P2_TAG1_SPECIAL is null or tag_special = :P2_TAG1_SPECIAL) and',
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS'' and',
+'    USG_CONSUMED_MEASURE like ''%CPU%'' and',
 '    tag_special2 is not null',
 'group by ',
 '	tag_special2',
@@ -20991,6 +21164,30 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_format_mask=>'999G999G999G999G990D00'
 ,p_use_as_row_header=>'N'
 );
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065710302911647)
+,p_db_column_name=>'USG_BILLED_QUANTITY_ECPUS'
+,p_display_order=>30
+,p_column_identifier=>'C'
+,p_column_label=>'ECPUs'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065895529911648)
+,p_db_column_name=>'USG_BILLED_QUANTITY_TOTAL'
+,p_display_order=>40
+,p_column_identifier=>'D'
+,p_column_label=>'Total'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_use_as_row_header=>'N'
+);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(24282838473243355)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -20998,7 +21195,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'73646'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'TAG_SPECIAL:USG_BILLED_QUANTITY'
+,p_report_columns=>'TAG_SPECIAL:USG_BILLED_QUANTITY:USG_BILLED_QUANTITY_ECPUS:USG_BILLED_QUANTITY_TOTAL:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(51691758981738378)
@@ -21401,6 +21598,9 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_04=>'TEXT'
 ,p_attribute_05=>'BOTH'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(27732205751431642)
 ,p_name=>'P2_PRODUCT_RESOURCE'
@@ -21563,9 +21763,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_04=>'Y'
 ,p_attribute_05=>'PLAIN'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(28898108358705161)
 ,p_name=>'P2_ROWS_DISPLAY'
@@ -21754,7 +21951,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'04'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230524004730'
+,p_last_upd_yyyymmddhh24miss=>'20230831123915'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(26826902001006468)
@@ -21783,7 +21980,7 @@ wwv_flow_imp_page.create_page_plug(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(36816709911901517)
-,p_plug_name=>'Daily OCPUs Chart'
+,p_plug_name=>'Daily CPUs Chart'
 ,p_parent_plug_id=>wwv_flow_imp.id(26827078364006470)
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
 ,p_escape_on_http_output=>'Y'
@@ -21835,7 +22032,7 @@ wwv_flow_imp_page.create_jet_chart_series(
  p_id=>wwv_flow_imp.id(26906348050185483)
 ,p_chart_id=>wwv_flow_imp.id(26904652153185482)
 ,p_seq=>10
-,p_name=>'OCPUs per Service'
+,p_name=>'CPUs per Service'
 ,p_data_source_type=>'SQL'
 ,p_data_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select /*+ parallel(oci_usage,8) full(oci_usage) */ ',
@@ -21889,7 +22086,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 '        :P3_FRAME=''30 Days'' and USAGE_INTERVAL_START=trunc(USAGE_INTERVAL_START) and mod(to_number(to_char(USAGE_INTERVAL_START,''DDD'')),30) = 0',
 '    ) and',
 '    USG_BILLED_QUANTITY>0 and',
-'    USG_CONSUMED_MEASURE=''OCPUS''',
+'    USG_CONSUMED_MEASURE like ''%CPU%''',
 'group by ',
 '    case when :P3_FRAME like ''%Hour%'' then to_char(USAGE_INTERVAL_START,''YYYY-MM-DD HH24:MI'') else to_char(USAGE_INTERVAL_START,''YYYY-MM-DD'') end,',
 '    prd_service',
@@ -21902,8 +22099,6 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_assigned_to_y2=>'off'
 ,p_items_label_rendered=>true
 ,p_items_label_position=>'auto'
-,p_items_label_display_as=>'PERCENT'
-,p_threshold_display=>'onIndicator'
 );
 wwv_flow_imp_page.create_jet_chart_axis(
  p_id=>wwv_flow_imp.id(26905197661185482)
@@ -33877,7 +34072,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230520120040'
+,p_last_upd_yyyymmddhh24miss=>'20230831124241'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(28126375548902548)
@@ -34086,7 +34281,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(28709395142443175)
-,p_plug_name=>'Usage OCPUs Summary Last 10 Days'
+,p_plug_name=>'Usage CPUs Summary Last 10 Days'
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent4:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(26683353252953952)
@@ -34123,7 +34318,7 @@ wwv_flow_imp_page.create_page_plug(
 '                USAGE_INTERVAL_START > trunc(sysdate-15) and',
 '                prd_service not in (''ORACLE_NOTIFICATION_SERVICE'') and',
 '                prd_resource not in (''PIC_STANDARD_PERFORMANCE'',''PIC_COMPUTE_OUTBOUND_DATA_TRANSFER'') and',
-'                USG_CONSUMED_MEASURE in (''OCPUS'')',
+'                USG_CONSUMED_MEASURE like ''%CPU%''',
 '            )',
 '        group by',
 '            tenant_name,',
@@ -34160,7 +34355,7 @@ wwv_flow_imp_page.create_page_plug(
 '        sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-1 ) then USG_BILLED_QUANTITY else 0 end) DAY1',
 '    from data s',
 '    where',
-'        USG_CONSUMED_MEASURE = ''OCPUS''',
+'        USG_CONSUMED_MEASURE like ''%CPU%''',
 '    group by tenant_name',
 '    order by 1',
 ')',
@@ -34417,7 +34612,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(29288933013151133)
-,p_plug_name=>'Usage OCPUs Daily Report by Service for Last 10 Days'
+,p_plug_name=>'Usage CPUs Daily Report by Service for Last 10 Days'
 ,p_region_template_options=>'#DEFAULT#:t-Region--accent4:t-Region--scrollBody'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(26683353252953952)
@@ -34458,7 +34653,7 @@ wwv_flow_imp_page.create_page_plug(
 '                oci_usage d',
 '            where',
 '                USAGE_INTERVAL_START > trunc(sysdate-15) and',
-'                USG_CONSUMED_MEASURE in (''OCPUS'')',
+'                USG_CONSUMED_MEASURE like ''%CPU%''',
 '            )',
 '        group by',
 '            tenant_name,',
@@ -34506,7 +34701,7 @@ wwv_flow_imp_page.create_page_plug(
 '        sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-1 ) then USG_BILLED_QUANTITY else 0 end) DAY1',
 '    from data s',
 '    where',
-'        USG_CONSUMED_MEASURE = ''OCPUS''',
+'        USG_CONSUMED_MEASURE like ''%CPU%''',
 '    group by ',
 '        tenant_name,',
 '        prd_service,',

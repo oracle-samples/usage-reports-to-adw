@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+23.09.10 - 2023.09.10
+=====================
+* Terraform deployed on ECPUs
+* Added support for ECPUs
+
+=====================
 23.08.01 - 2023.08.01
 =====================
 * ADB Password moved to KMS Secret
