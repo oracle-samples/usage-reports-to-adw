@@ -170,7 +170,7 @@ ReadVariablesFromCredfile()
       exit 1
    fi
    rm -f $log
-   export db_app_password=`python3 ${APPDIR}/usage2adw_retrieve_secret.py -t $database_secret_tenant -secret $database_secret_id | grep "^Secret=" | sed -s 's/Secret=//'`
+   export db_app_password=`python3 ${APPDIR}/usage2adw_retrieve_secret.py -t $database_secret_tenant -secret $database_secret_id | grep "^Value=" | sed -s 's/Value=//'`
 
    if [ -z "${db_app_password}" ]
    then
