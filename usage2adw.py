@@ -75,7 +75,7 @@ import time
 import base64
 
 
-version = "23.08.01"
+version = "23.09.10"
 usage_report_namespace = "bling"
 work_report_dir = os.curdir + "/work_report_dir"
 

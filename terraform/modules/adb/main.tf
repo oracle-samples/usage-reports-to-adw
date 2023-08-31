@@ -29,7 +29,8 @@ data "oci_secrets_secretbundle" "bundle" {
 resource "oci_database_autonomous_database" "adwc" {
     compartment_id           = var.compartment_id
     admin_password           = base64decode(data.oci_secrets_secretbundle.bundle.secret_bundle_content.0.content)
-    cpu_core_count           = "1"
+    compute_count            = "2"
+    compute_model            = "ECPU"
     data_storage_size_in_tbs = "1"
     db_name                  = var.db_name
     display_name             = var.db_name

@@ -68,8 +68,8 @@ Create Autonomous Database
 --> Database Name ADWCUSG
 --> Workload = Data Warehouse
 --> Deployment = Shared
---> Always Free = Optional
---> OCPU = 1
+--> Always Free = Optional (20GB is limited)
+--> ECPU = 2 or OCPU = 1
 --> Storage = 1
 --> Auto Scale = No
 --> Password = $passwprd (Please choose your own password, 12 chars, one upper, one lower, one number and one # )

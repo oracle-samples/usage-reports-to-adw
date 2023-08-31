@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ##########################################################################
 # Copyright (c) 2023, Oracle and/or its affiliates.
-# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
+# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/
 #
 # usage2adw_showoci_csv2adw.py
 #
@@ -171,12 +171,12 @@ def get_secret_password(config, signer, proxy, secret_id):
         return secret_text
 
     except oci.exceptions.ServiceError as e:
-        print("\ServiceError retrieving secret at get_secret_password !")
+        print("\nServiceError retrieving secret at get_secret_password !")
         print("\n" + str(e) + "\n")
         raise SystemExit
 
     except Exception as e:
-        print("\Exception retrieving secret at get_secret_password !")
+        print("\nException retrieving secret at get_secret_password !")
         print("\n" + str(e) + "\n")
         raise SystemExit
 
@@ -1466,7 +1466,6 @@ def handle_network_vcn(connection):
                 {'col': 'compartment              ', 'csv': '             ', 'type': 'varchar2(2000)', 'pk': 'n'},
                 {'col': 'compartment_path         ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'name                     ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'cidr                     ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'cidrs                    ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'internet_gateway         ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'service_gateway          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
@@ -1502,7 +1501,6 @@ def handle_network_subnet(connection):
                 {'col': 'vcn_compartment          ', 'csv': '             ', 'type': 'varchar2(2000)', 'pk': 'n'},
                 {'col': 'vcn_compartment_path     ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_name                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'vcn_cidr                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_cidrs                ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'internet_gateway         ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'service_gateway          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
@@ -1549,7 +1547,6 @@ def handle_network_subnet_private_ips(connection):
                 {'col': 'vcn_compartment          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_compartment_path     ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'vcn_name                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'vcn_cidr                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_cidrs                ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'subnet_name              ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'subnet_cidr              ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
@@ -1593,7 +1590,6 @@ def handle_network_security_list(connection):
                 {'col': 'vcn_compartment          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_compartment_path     ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'vcn_name                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'vcn_cidr                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_cidrs                ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'sec_name                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'sec_compartment          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
@@ -1629,7 +1625,6 @@ def handle_network_security_groups(connection):
                 {'col': 'vcn_compartment          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_compartment_path     ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'vcn_name                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'vcn_cidr                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_cidrs                ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'sec_name                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'sec_compartment          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
@@ -1736,7 +1731,6 @@ def handle_network_dhcp_options(connection):
                 {'col': 'vcn_compartment          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_compartment_path     ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'vcn_name                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'vcn_cidr                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_cidrs                ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'dhcp_name                ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'option_1                 ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
@@ -1770,7 +1764,6 @@ def handle_network_routes(connection):
                 {'col': 'vcn_compartment          ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_compartment_path     ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'vcn_name                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'vcn_cidr                 ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'vcn_cidrs                ', 'csv': '             ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'route_name               ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'route_compartment        ', 'csv': '             ', 'type': 'varchar2(1000)', 'pk': 'n'},
