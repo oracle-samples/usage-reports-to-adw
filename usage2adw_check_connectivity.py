@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ##########################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
-# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
+# Copyright (c) 2023, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/
 #
 # check_connectivity.py - to check if policies granted the proper roles
 # @author: Adi Zohar
@@ -12,7 +12,6 @@
 ##########################################################################
 import oci
 import requests
-import sys
 
 # Get Instance Principles Signer
 signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
@@ -48,6 +47,9 @@ try:
     print("   Okay...")
 
     print("\n   Check Access to Cost and Usage Object Storage...")
+    signer.region = home_region
+    config['region'] = home_region
+
     object_storage = oci.object_storage.ObjectStorageClient(config, signer=signer)
     objects = object_storage.list_objects("bling", tenancy_id, fields="timeCreated,size").data
     print("   Okay.")
