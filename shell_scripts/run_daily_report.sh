@@ -60,7 +60,7 @@ if (( `grep "Secret Okay" $log | wc -l` < 1 )); then
     exit 1
 fi
 rm -f $log
-export DATABASE_PASS=`python3 usage2adw_retrieve_secret.py -t $DATABASE_SECRET_TENANT -secret $DATABASE_SECRET_ID | grep "^Secret=" | sed -s 's/Secret=//'`
+export DATABASE_PASS=`python3 usage2adw_retrieve_secret.py -t $DATABASE_SECRET_TENANT -secret $DATABASE_SECRET_ID | grep "^Value=" | sed -s 's/Value=//'`
 
 # Fixed variables
 export DATE=`date '+%Y%m%d_%H%M'`

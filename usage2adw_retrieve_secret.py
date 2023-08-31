@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ##########################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                  
-# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
+# Copyright (c) 2023, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/
 #
 # DISCLAIMER This is not an official Oracle application,  It does not supported by Oracle Support.
 #
@@ -31,7 +31,7 @@ import datetime
 import oci
 import base64
 
-version = "23.08.01"
+version = "23.09.10"
 
 
 ##########################################################################
@@ -112,27 +112,27 @@ def get_secret_password(config, signer, proxy, secret_id):
 
     try:
         print("\nConnecting to Secret Client Service...")
-        secret_client = oci.secrets.SecretsClient(config, signer=signer)
+        sclient = oci.secrets.SecretsClient(config, signer=signer)
         if proxy:
-            secret_client.base_client.session.proxies = {'https': proxy}
+            sclient.base_client.session.proxies = {'https': proxy}
         print("Connected.")
 
-        secret_data = secret_client.get_secret_bundle(secret_id).data
+        secret_data = sclient.get_secret_bundle(secret_id).data
 
         print("Secret Retrieved.")
-        secret_bundle_content = secret_data.secret_bundle_content
-        secret_base64 = secret_bundle_content.content
-        secret_text_bytes = base64.b64decode(secret_base64)
-        secret_text = secret_text_bytes.decode('ASCII')
-        return secret_text
+        value_bundle_content = secret_data.secret_bundle_content
+        value_base64 = value_bundle_content.content
+        value_text_bytes = base64.b64decode(value_base64)
+        value_text = value_text_bytes.decode('ASCII')
+        return value_text
 
     except oci.exceptions.ServiceError as e:
-        print("\ServiceError retrieving secret at get_secret_password !")
+        print("\nServiceError retrieving secret at get_secret_password !")
         print("\n" + str(e) + "\n")
         raise SystemExit
 
     except Exception as e:
-        print("\Exception retrieving secret at get_secret_password !")
+        print("\nException retrieving secret at get_secret_password !")
         print("\n" + str(e) + "\n")
         raise SystemExit
 
@@ -141,7 +141,7 @@ def get_secret_password(config, signer, proxy, secret_id):
 # Main
 ##########################################################################
 def main_process():
-    try: 
+    try:
 
         cmd = set_parser_arguments()
         if cmd is None:
@@ -150,13 +150,13 @@ def main_process():
 
         print("\nRunning Secret Retrieval from Vault")
         print("Starts at " + get_current_date_time())
-        
-        secret_text = get_secret_password(config, signer, cmd.proxy, cmd.secret)
+
+        value_text = get_secret_password(config, signer, cmd.proxy, cmd.secret)
 
         if cmd.check:
             print("Secret Okay")
         else:
-            print("Secret=" + str(secret_text))
+            print("Value=" + str(value_text))
 
     except Exception as e:
         print("\nError at main_process !")
