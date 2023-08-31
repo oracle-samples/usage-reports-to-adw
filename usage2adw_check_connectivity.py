@@ -41,8 +41,7 @@ try:
     if home_region == curr_region:
         print("   Okay.")
     else:
-        print("   Error, Installation must be in Home Region, please change to " + home_region + " and re-run the stack, Aborting...")
-        sys.exit()
+        print("   Okay. But recommend to install it at Home Region, home region " + home_region + ".")
 
     print("\n   Check Compartment List Access...")
     all_compartments = identity.list_compartments(tenancy_id, compartment_id_in_subtree=True).data
