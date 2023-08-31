@@ -71,7 +71,7 @@ Create Autonomous Database
 --> ECPU = 2 or OCPU = 1
 --> Storage = 1
 --> Auto Scale = No
---> Password = (Please choose your own password)
+--> (Please choose your own credentials)
 --> Choose Network Access = Allow secure Access from Everywhere (you can use VCN as well which requires NSG)
 --> Choose License Type
 ```
@@ -244,7 +244,7 @@ Development Menu -> Oracle APEX
    Login under USAGE Workspace
    --> Workspace = USAGE
    --> Username = USAGE
-   --> Password = "USAGE Schema Password"
+   --> "USAGE Schema Password"
    --> Press Continue
  
    Specify your e-mail and name.
