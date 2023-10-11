@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ##########################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
-# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
+# Copyright (c) 2023, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/
 #
 # DISCLAIMER This is not an official Oracle application,  It does not supported by Oracle Support,
 #
@@ -36,7 +36,7 @@ import sys
 import shutil
 import base64
 
-version = "23.08.01"
+version = "23.10.15"
 
 
 ##########################################################################
@@ -133,12 +133,12 @@ def get_secret_password(config, signer, proxy, secret_id):
         return secret_text
 
     except oci.exceptions.ServiceError as e:
-        print("\ServiceError retrieving secret at get_secret_password !")
+        print("\nServiceError retrieving secret at get_secret_password !")
         print("\n" + str(e) + "\n")
         raise SystemExit
 
     except Exception as e:
-        print("\Exception retrieving secret at get_secret_password !")
+        print("\nException retrieving secret at get_secret_password !")
         print("\n" + str(e) + "\n")
         raise SystemExit
 

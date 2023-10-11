@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=23.08.01
+export VERSION=23.10.15
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -520,6 +520,17 @@ SetupApp()
    echo "5. Create Usage2ADW Tables" | tee -a $LOG
    echo "   Internal LOG=$slog" | tee -a $LOG
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
+   -------------------------------
+   -- OCI_TENANT
+   -------------------------------
+   prompt Creating Table OCI_TENANT
+
+   create table OCI_USAGE (
+      TENANT_ID               VARCHAR2(100),
+      TENANT_NAME             VARCHAR2(100),
+      CONSTRAINT OCI_TENANT_PK PRIMARY KEY (TENANT_ID) USING INDEX
+   );
+
    -------------------------------
    -- OCI_USAGE
    -------------------------------

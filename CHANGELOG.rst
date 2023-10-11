@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+23.10.15 - 2023.10.15
+=====================
+* Added OCI_TENANT table for child tenant display name
+
+=====================
 23.09.10 - 2023.09.10
 =====================
 * Terraform deployed on ECPUs

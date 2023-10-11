@@ -61,6 +61,7 @@
 # - OCI_COST_REFERENCE - Reference table of the cost filter keys - SERVICE, REGION, COMPARTMENT, PRODUCT, SUBSCRIPTION
 # - OCI_PRICE_LIST - Hold the price list and the cost per product
 # - OCI_LOAD_STATUS - Load Statistics table
+# - OCI_TENANT - tenant information
 ##########################################################################
 import sys
 import argparse
@@ -75,7 +76,7 @@ import time
 import base64
 
 
-version = "23.09.10"
+version = "23.10.15"
 usage_report_namespace = "bling"
 work_report_dir = os.curdir + "/work_report_dir"
 
@@ -350,6 +351,24 @@ def check_database_table_structure_usage(connection, tenant_name):
     try:
         # open cursor
         with connection.cursor() as cursor:
+
+            # check if OCI_TENANT table exist, if not create
+            sql = "select count(*) from user_tables where table_name = 'OCI_TENANT'"
+            cursor.execute(sql)
+            val, = cursor.fetchone()
+
+            # if table not exist, create it
+            if val == 0:
+                print("   Table OCI_TENANT was not exist, creating")
+                sql = """create table OCI_TENANT (
+                    TENANT_ID               VARCHAR2(100),
+                    TENANT_NAME             VARCHAR2(100),
+                    CONSTRAINT OCI_TENANT_PK PRIMARY KEY (TENANT_ID) USING INDEX
+                    ) """
+                cursor.execute(sql)
+                print("   Table OCI_TENANT created")
+            else:
+                print("   Table OCI_TENANT exist")
 
             # check if OCI_USAGE table exist, if not create
             sql = "select count(*) from user_tables where table_name = 'OCI_USAGE'"
@@ -1096,48 +1115,45 @@ def update_usage_stats(connection, tenant_name):
 
 
 ##########################################################################
-# update_tenant_id_if_null - Added for organization
+# update_oci_tenant_with_tenant_ids
 ##########################################################################
-def update_tenant_id_if_null(connection, tenant_name, short_tenant_id):
+def update_oci_tenant_with_tenant_ids(connection, tenant_name, short_tenant_id):
     try:
         start_time = time.time()
 
         # open cursor
         with connection.cursor() as cursor:
 
-            # Check OCI_USAGE
-            print("\nCheck if TENANT_ID is null on OCI_USAGE...")
-            sql = "select /*+ full(a) parallel(a,8) */ count(*) as cnt from OCI_USAGE a where TENANT_NAME=:tenant_name and tenant_id is null"
-            cursor.execute(sql, tenant_name=tenant_name)
-            cnt, = cursor.fetchone()
+            print("\nCheck OCI_TENANT for new TENANT_ID...")
 
-            if cnt > 0:
-                print("   Update TENANT_ID on OCI_USAGE... " + str(cnt) + " rows to update... updating max 1,000,000 per execution")
-                sql = "update /*+ parallel(a,8) */ OCI_USAGE a set TENANT_ID = :tenant_id where tenant_id is null and tenant_name = :tenant_name and rownum<=1000000"
-                cursor.execute(sql, tenant_id=short_tenant_id, tenant_name=tenant_name)
-                connection.commit()
-                print("   Update Completed, " + str(cursor.rowcount) + " rows updated" + get_time_elapsed(start_time))
-
-            # Check OCI_COST
+            # Insert from reference table
             start_time = time.time()
-            print("\nCheck if TENANT_ID is null on OCI_COST...")
-            sql = "select /*+ full(a) parallel(a,8) */ count(*) as cnt from OCI_COST a where TENANT_NAME=:tenant_name and tenant_id is null"
-            cursor.execute(sql, tenant_name=tenant_name)
-            cnt, = cursor.fetchone()
+            sql = """
+                insert into oci_tenant (tenant_id)
+                select ref_name tenant_id
+                from
+                    OCI_COST_REFERENCE
+                where
+                    ref_type='USAGE_TENANT_ID' and
+                    ref_name not in (select tenant_id from oci_tenant)"""
 
-            if cnt > 0:
-                print("   Update TENANT_ID on OCI_COST..." + str(cnt) + " rows to update... updating max 1,000,000 per execution")
-                sql = "update /*+ parallel(a,8) */ OCI_COST a set TENANT_ID = :tenant_id where tenant_id is null and tenant_name = :tenant_name and rownum<=1000000"
-                cursor.execute(sql, tenant_id=short_tenant_id, tenant_name=tenant_name)
-                connection.commit()
-                print("   Update Completed, " + str(cursor.rowcount) + " rows updated" + get_time_elapsed(start_time))
+            cursor.execute(sql)
+            connection.commit()
+            print("   Update Tenant Display Name Table, " + str(cursor.rowcount) + " rows inserted" + get_time_elapsed(start_time))
+
+            # Update name for current tenant
+            start_time = time.time()
+            sql = "update oci_tenant set tenant_name=:tenant_name where tenant_id=:tenant_id and tenant_name is null"
+            cursor.execute(sql, tenant_id=short_tenant_id, tenant_name=tenant_name)
+            connection.commit()
+            print("   Update Current Tenant Name, " + str(cursor.rowcount) + " rows Updated" + get_time_elapsed(start_time))
 
     except oracledb.DatabaseError as e:
-        print("\nError manipulating database at update_tenant_id_if_null() - " + str(e) + "\n")
+        print("\nError manipulating database at update_oci_tenant_with_tenant_ids() - " + str(e) + "\n")
         raise SystemExit
 
     except Exception as e:
-        raise Exception("\nError manipulating database at update_tenant_id_if_null() - " + str(e))
+        raise Exception("\nError manipulating database at update_oci_tenant_with_tenant_ids() - " + str(e))
 
 
 ##########################################################################
@@ -2102,9 +2118,9 @@ def main_process():
                 update_cost_stats(connection, tenancy.name)
                 update_price_list(connection, tenancy.name)
                 update_cost_reference(connection, cmd.tagspecial, cmd.tagspecial2, tenancy.name)
+                update_oci_tenant_with_tenant_ids(connection, tenancy.name, short_tenant_id)
                 if not cmd.skip_rate:
                     update_public_rates(connection, tenancy.name)
-                update_tenant_id_if_null(connection, tenancy.name, short_tenant_id)
 
     except oracledb.DatabaseError as e:
         print("\nError manipulating database - " + str(e) + "\n")

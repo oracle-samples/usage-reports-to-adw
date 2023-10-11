@@ -39,15 +39,15 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 -- Application Export:
 --   Application:     100
 --   Name:            OCI Usage and Cost Report
---   Date and Time:   12:43 Thursday August 31, 2023
+--   Date and Time:   13:34 Monday October 9, 2023
 --   Exported By:     USAGE
 --   Flashback:       0
 --   Export Type:     Application Export
---     Pages:                     11
+--     Pages:                     12
 --       Items:                  123
 --       Computations:            36
---       Processes:                9
---       Regions:                163
+--       Processes:               10
+--       Regions:                164
 --       Buttons:                  9
 --       Dynamic Actions:          1
 --     Shared Components:
@@ -59,7 +59,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 --       Navigation:
 --         Lists:                  3
 --         Breadcrumbs:            1
---           Entries:              2
+--           Entries:              3
 --       Security:
 --         Authentication:         1
 --         Authorization:          3
@@ -124,7 +124,7 @@ wwv_imp_workspace.create_flow(
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Usage2ADW 23.09.10'
+,p_flow_version=>'Usage2ADW 23.10.15'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -146,7 +146,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'OCI Usage and Cost Report'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230831124345'
+,p_last_upd_yyyymmddhh24miss=>'20231009133314'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
 ,p_print_server_type=>'INSTANCE'
@@ -246,6 +246,15 @@ wwv_flow_imp_shared.create_list_item(
 ,p_list_item_link_target=>'f?p=&APP_ID.:6:&SESSION.::&DEBUG.::::'
 ,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
 ,p_list_item_current_for_pages=>'6'
+);
+wwv_flow_imp_shared.create_list_item(
+ p_id=>wwv_flow_imp.id(24608837655231885)
+,p_list_item_display_sequence=>100
+,p_list_item_link_text=>'Tenant Display Update'
+,p_list_item_link_target=>'f?p=&APP_ID.:9:&SESSION.::&DEBUG.::::'
+,p_list_item_icon=>'fa-address-card-o'
+,p_list_item_current_type=>'COLON_DELIMITED_PAGE_LIST'
+,p_list_item_current_for_pages=>'9'
 );
 end;
 /
@@ -614,6 +623,13 @@ wwv_flow_imp_shared.create_menu_option(
 ,p_short_name=>'ShowOCI Data'
 ,p_link=>'f?p=&APP_ID.:11:&APP_SESSION.::&DEBUG.:::'
 ,p_page_id=>11
+);
+wwv_flow_imp_shared.create_menu_option(
+ p_id=>wwv_flow_imp.id(24609761911231901)
+,p_parent_id=>wwv_flow_imp.id(26633243562953818)
+,p_short_name=>'Tenant Child Update'
+,p_link=>'f?p=&APP_ID.:9:&APP_SESSION.::&DEBUG.:::'
+,p_page_id=>9
 );
 wwv_flow_imp_shared.create_menu_option(
  p_id=>wwv_flow_imp.id(26633243562953818)
@@ -17605,7 +17621,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'U'
 ,p_page_component_map=>'13'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230831124345'
+,p_last_upd_yyyymmddhh24miss=>'20231009133236'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(17131501807059044)
@@ -17827,7 +17843,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P1_VERSION'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(28851420211457556)
-,p_item_default=>'23.09.10'
+,p_item_default=>'23.10.15'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_protection_level=>'S'
 ,p_attribute_01=>'Y'
@@ -17871,7 +17887,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(28851420211457556)
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'Usage and Cost Reports to Autonomous database version &P1_VERSION.<br><br>',
-'Created by <b>Adi Zohar</b>, Feb 2020-Sep 2023<br><br><br>',
+'Created by <b>Adi Zohar</b>, Feb 2020-Oct 2023<br><br><br>',
 'Application github <a target=_new href="https://github.com/oracle-samples/usage-reports-to-adw">link</a>, ',
 'How To Manual <a target=_new href="https://github.com/oracle-samples/usage-reports-to-adw/blob/main/step_by_step_howto.md">link</a>, ',
 '',
@@ -18044,8 +18060,8 @@ wwv_flow_imp_page.create_page(
 ,p_required_role=>'MUST_NOT_BE_PUBLIC_USER'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
-,p_last_updated_by=>'ADIZOHAR'
-,p_last_upd_yyyymmddhh24miss=>'20230831123648'
+,p_last_updated_by=>'USAGE'
+,p_last_upd_yyyymmddhh24miss=>'20231009130931'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(26823379352006433)
@@ -18082,7 +18098,8 @@ wwv_flow_imp_page.create_page_plug(
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'select ',
-'    tenant_id,',
+'    oci_usage.tenant_id,',
+'    oci_tenant.tenant_name,',
 '    prd_compartment_path, ',
 '    prd_compartment_name, ',
 '    prd_region, ',
@@ -18108,8 +18125,9 @@ wwv_flow_imp_page.create_page_plug(
 '    TAG_SPECIAL,',
 '    TAG_SPECIAL2,',
 '    TAGS_DATA',
-'from oci_usage, oci_resources',
+'from oci_usage, oci_resources, oci_tenant',
 'where ',
+'    oci_usage.tenant_id = oci_tenant.tenant_id (+) and',
 '    USG_RESOURCE_ID = oci_resources.resource_id (+) and',
 '    oci_usage.tenant_name=:P2_TENANT_NAME and',
 '    (:P2_COMPARTMENT_NAME is null or prd_compartment_name = :P2_COMPARTMENT_NAME) and',
@@ -18118,7 +18136,7 @@ wwv_flow_imp_page.create_page_plug(
 '    (:P2_COMPARTMENT_TOP is null or prd_compartment_path like :P2_COMPARTMENT_TOP ||''%'') and',
 '    (:P2_PRODUCT_RESOURCE is null or prd_resource = :P2_PRODUCT_RESOURCE) and',
 '    (:P2_WINDOWS_OCPUS is null or prd_resource not like ''%WINDOW%'') and',
-'    (:P2_TENANT_ID is null or tenant_id = :P2_TENANT_ID) and',
+'    (:P2_TENANT_ID is null or oci_usage.tenant_id = :P2_TENANT_ID) and',
 '    (:P2_TAG1_SPECIAL is null or tag_special = :P2_TAG1_SPECIAL) and',
 '    (:P2_TAG2_SPECIAL is null or tag_special2 = :P2_TAG2_SPECIAL) and',
 '    (:P2_TAG_KEY is null or :P2_TAG_KEY=''notag'' and tags_data is null or tags_data like ''%#'' || :P2_TAG_KEY || ''=%'') and ',
@@ -18126,7 +18144,8 @@ wwv_flow_imp_page.create_page_plug(
 '    USAGE_INTERVAL_START = to_date(:P2_DATE,''YYYY-MM-DD HH24:MI'') and',
 '    USG_BILLED_QUANTITY>0',
 'group by ',
-'	tenant_id,',
+'	oci_usage.tenant_id,',
+'    oci_tenant.tenant_name,',
 '    prd_compartment_path, ',
 '	prd_compartment_name, ',
 '	prd_region, ',
@@ -18323,9 +18342,19 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_use_as_row_header=>'N'
 );
 wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14065968692911649)
+,p_db_column_name=>'TENANT_NAME'
+,p_display_order=>140
+,p_column_identifier=>'R'
+,p_column_label=>'Tenant Display Name'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(28707416650443156)
 ,p_db_column_name=>'TAG_SPECIAL'
-,p_display_order=>140
+,p_display_order=>150
 ,p_column_identifier=>'N'
 ,p_column_label=>'Tag Special 1'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAG_SPECIAL#</span>'
@@ -18335,7 +18364,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(51691307214738373)
 ,p_db_column_name=>'TAG_SPECIAL2'
-,p_display_order=>150
+,p_display_order=>160
 ,p_column_identifier=>'P'
 ,p_column_label=>'Tag Special 2'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAG_SPECIAL2#</span>'
@@ -18345,7 +18374,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(49158526543081773)
 ,p_db_column_name=>'USG_RESOURCE_ID'
-,p_display_order=>160
+,p_display_order=>170
 ,p_column_identifier=>'O'
 ,p_column_label=>'Resource Id'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#USG_RESOURCE_ID#</span>'
@@ -18355,7 +18384,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(10722101087336618)
 ,p_db_column_name=>'RESOURCE_NAME'
-,p_display_order=>170
+,p_display_order=>180
 ,p_column_identifier=>'Q'
 ,p_column_label=>'Resource Name'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#RESOURCE_NAME#</span>'
@@ -18371,8 +18400,8 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'99175'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'TENANT_ID:PRD_COMPARTMENT_PATH:PRD_COMPARTMENT_NAME:PRD_REGION:PRD_SERVICE:PRD_RESOURCE:USG_BILLED_QUANTITY:USG_CONSUMED_UNITS:USG_CONSUMED_MEASURE:USAGE_INTERVAL_START:USAGE_INTERVAL_END:TAG_SPECIAL:TAG_SPECIAL2:USG_RESOURCE_ID:RESOURCE_NAME:TAGS_DA'
-||'TA:'
+,p_report_columns=>'TENANT_ID:TENANT_NAME:PRD_COMPARTMENT_PATH:PRD_COMPARTMENT_NAME:PRD_REGION:PRD_SERVICE:PRD_RESOURCE:USG_BILLED_QUANTITY:USG_CONSUMED_UNITS:USG_CONSUMED_MEASURE:USAGE_INTERVAL_START:USAGE_INTERVAL_END:TAG_SPECIAL:TAG_SPECIAL2:USG_RESOURCE_ID:RESOURCE_'
+||'NAME:TAGS_DATA:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(49156092066081748)
@@ -21827,13 +21856,17 @@ wwv_flow_imp_page.create_page_item(
 ,p_prompt=>'Tenant Id'
 ,p_display_as=>'NATIVE_SELECT_LIST'
 ,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct tenant_id o, tenant_id r ',
+'select /*+ use_nl(a,b) leading(a) */ ',
+'    distinct ',
+'    case when b.tenant_name is null then a.tenant_id else a.tenant_id ||'' (''||b.tenant_name||'')'' end o, ',
+'    a.tenant_id r ',
 'from ',
-'    oci_usage ',
+'    oci_usage a, oci_tenant b',
 'where',
-'    tenant_name=:P2_TENANT_NAME',
+'    a.tenant_id = b.tenant_id (+)',
+'    and a.tenant_name=:P2_TENANT_NAME',
 '    and USAGE_INTERVAL_START = to_date(:P2_DATE,''YYYY-MM-DD HH24:MI'')',
-'    and tenant_id is not null',
+'    and a.tenant_id is not null',
 'order by 1'))
 ,p_lov_display_null=>'YES'
 ,p_lov_null_text=>'All'
@@ -21951,7 +21984,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'04'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230831123915'
+,p_last_upd_yyyymmddhh24miss=>'20231009113229'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(26826902001006468)
@@ -22052,7 +22085,7 @@ wwv_flow_imp_page.create_jet_chart_series(
 '    (:P3_PRODUCT_SERVICE is null or prd_service = :P3_PRODUCT_SERVICE) and',
 '    (:P3_PRODUCT_REGION is null or prd_region = :P3_PRODUCT_REGION) and',
 '    (:P3_PRODUCT_RESOURCE is null or prd_resource = :P3_PRODUCT_RESOURCE) and',
-'    (:P3_PRODUCT_RESOURCE is null or prd_resource = :P3_PRODUCT_RESOURCE) and',
+'    (:P3_TENANT_ID is null or tenant_id = :P3_TENANT_ID) and',
 '    (:P3_TAG1_SPECIAL is null or tag_special = :P3_TAG1_SPECIAL) and',
 '    (:P3_TAG2_SPECIAL is null or tag_special2 = :P3_TAG2_SPECIAL) and',
 '    (:P3_WINDOWS_OCPUS is null or prd_resource not like ''%WINDOW%'') and',
@@ -22829,11 +22862,15 @@ wwv_flow_imp_page.create_page_item(
 ,p_prompt=>'Tenant Id'
 ,p_display_as=>'NATIVE_SELECT_LIST'
 ,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct ref_name o, ref_name r ',
+'select ',
+'    distinct',
+'    case when OCI_TENANT.tenant_name is null then ref_name else ref_name ||'' (''||OCI_TENANT.tenant_name||'')'' end o, ',
+'    ref_name r ',
 'from ',
-'    OCI_COST_REFERENCE ',
+'    OCI_COST_REFERENCE, OCI_TENANT',
 'where',
-'    (tenant_name=:P3_TENANT_NAME or :P3_TENANT_NAME = ''ALL'')',
+'    ref_name = oci_tenant.tenant_id (+)',
+'    and (OCI_COST_REFERENCE.tenant_name=:P3_TENANT_NAME or :P3_TENANT_NAME = ''ALL'')',
 '    and ref_type=''USAGE_TENANT_ID''',
 'order by 1',
 ''))
@@ -23019,7 +23056,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230520115558'
+,p_last_upd_yyyymmddhh24miss=>'20231009131115'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(27734864051431669)
@@ -25289,8 +25326,9 @@ wwv_flow_imp_page.create_page_plug(
 '        a.tenant_name,a.USG_RESOURCE_ID, tenant_id',
 ')',
 'select ',
-'    TENANT_NAME,',
-'    TENANT_ID,',
+'    a.TENANT_NAME PARENT_NAME,',
+'    a.TENANT_ID,',
+'    t.TENANT_NAME,',
 '    A.RESOURCE_ID,',
 '    B.RESOURCE_NAME,',
 '    A.COMPARTMENT_NAME,',
@@ -25309,9 +25347,10 @@ wwv_flow_imp_page.create_page_plug(
 '    TAG_SPECIAL,',
 '    TAG_SPECIAL2',
 'from',
-'    data a, OCI_RESOURCES b',
+'    data a, OCI_RESOURCES b, oci_tenant t',
 'where ',
 '    a.resource_id = b.resource_id (+)',
+'    and a.tenant_id = t.tenant_id (+)',
 'order by 1',
 '',
 ''))
@@ -25367,18 +25406,28 @@ wwv_flow_imp_page.create_worksheet(
 ,p_internal_uid=>12303874435574210
 );
 wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(24625861894398101)
+,p_db_column_name=>'PARENT_NAME'
+,p_display_order=>10
+,p_column_identifier=>'T'
+,p_column_label=>'Parent Name'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(49535771099313438)
 ,p_db_column_name=>'TENANT_NAME'
-,p_display_order=>10
+,p_display_order=>20
 ,p_column_identifier=>'L'
-,p_column_label=>'Tenant Name'
+,p_column_label=>'Tenant Display Name'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(49535871728313439)
 ,p_db_column_name=>'TENANT_ID'
-,p_display_order=>20
+,p_display_order=>30
 ,p_column_identifier=>'M'
 ,p_column_label=>'Tenant Id'
 ,p_column_type=>'STRING'
@@ -25387,7 +25436,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29223542300840156)
 ,p_db_column_name=>'RESOURCE_ID'
-,p_display_order=>30
+,p_display_order=>40
 ,p_column_identifier=>'K'
 ,p_column_label=>'Resource Id'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#RESOURCE_ID#</span>'
@@ -25397,7 +25446,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29222224933840143)
 ,p_db_column_name=>'PRODUCT'
-,p_display_order=>40
+,p_display_order=>50
 ,p_column_identifier=>'A'
 ,p_column_label=>'Product'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#PRODUCT#</span>'
@@ -25407,7 +25456,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29222408028840144)
 ,p_db_column_name=>'COST_BILLING_UNIT'
-,p_display_order=>50
+,p_display_order=>60
 ,p_column_identifier=>'B'
 ,p_column_label=>'Cost Billing Unit'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#COST_BILLING_UNIT#</span>'
@@ -25417,7 +25466,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29222475166840145)
 ,p_db_column_name=>'RATE'
-,p_display_order=>60
+,p_display_order=>70
 ,p_column_identifier=>'C'
 ,p_column_label=>'Customer Rate'
 ,p_column_type=>'NUMBER'
@@ -25428,7 +25477,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29223247145840153)
 ,p_db_column_name=>'CURRENCY'
-,p_display_order=>70
+,p_display_order=>80
 ,p_column_identifier=>'J'
 ,p_column_label=>'Cur'
 ,p_column_type=>'STRING'
@@ -25438,7 +25487,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29222566645840146)
 ,p_db_column_name=>'SINGLE_QUANTITY'
-,p_display_order=>80
+,p_display_order=>90
 ,p_column_identifier=>'D'
 ,p_column_label=>'Single Quantity'
 ,p_column_type=>'NUMBER'
@@ -25449,7 +25498,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29222631137840147)
 ,p_db_column_name=>'HOURS_QUANTITY'
-,p_display_order=>90
+,p_display_order=>100
 ,p_column_identifier=>'E'
 ,p_column_label=>'Hours Quantity'
 ,p_column_type=>'NUMBER'
@@ -25460,7 +25509,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29222796406840148)
 ,p_db_column_name=>'TOTAL_QUANTITY'
-,p_display_order=>100
+,p_display_order=>110
 ,p_column_identifier=>'F'
 ,p_column_label=>'Total Quantity'
 ,p_column_type=>'NUMBER'
@@ -25471,7 +25520,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29223001457840150)
 ,p_db_column_name=>'USAGE_COST'
-,p_display_order=>110
+,p_display_order=>120
 ,p_column_identifier=>'G'
 ,p_column_label=>'Usage Cost'
 ,p_column_type=>'NUMBER'
@@ -25483,7 +25532,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29223081699840151)
 ,p_db_column_name=>'ESTIMATE_MONTH_31'
-,p_display_order=>120
+,p_display_order=>130
 ,p_column_identifier=>'H'
 ,p_column_label=>'Estimate Month 31'
 ,p_column_type=>'NUMBER'
@@ -25494,7 +25543,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(29223131967840152)
 ,p_db_column_name=>'ESTIMATE_YEAR'
-,p_display_order=>130
+,p_display_order=>140
 ,p_column_identifier=>'I'
 ,p_column_label=>'Estimate Year'
 ,p_column_type=>'NUMBER'
@@ -25505,7 +25554,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(12063428351353214)
 ,p_db_column_name=>'RESOURCE_NAME'
-,p_display_order=>140
+,p_display_order=>150
 ,p_column_identifier=>'N'
 ,p_column_label=>'Resource Name'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#RESOURCE_NAME#</span>'
@@ -25517,7 +25566,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(12063568168353215)
 ,p_db_column_name=>'COMPARTMENT_NAME'
-,p_display_order=>150
+,p_display_order=>160
 ,p_column_identifier=>'O'
 ,p_column_label=>'Compartment Name'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#COMPARTMENT_NAME#</span>'
@@ -25527,20 +25576,10 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(12063633475353216)
 ,p_db_column_name=>'COMPARTMENT_PATH'
-,p_display_order=>160
+,p_display_order=>170
 ,p_column_identifier=>'P'
 ,p_column_label=>'Compartment Path'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#COMPARTMENT_PATH#</span>'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(10721753801336614)
-,p_db_column_name=>'TAGS_DATA'
-,p_display_order=>170
-,p_column_identifier=>'Q'
-,p_column_label=>'Tags Data'
-,p_column_html_expression=>'<span style="white-space:nowrap;">#TAGS_DATA#</span>'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
@@ -25548,9 +25587,19 @@ end;
 /
 begin
 wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(10721753801336614)
+,p_db_column_name=>'TAGS_DATA'
+,p_display_order=>180
+,p_column_identifier=>'Q'
+,p_column_label=>'Tags Data'
+,p_column_html_expression=>'<span style="white-space:nowrap;">#TAGS_DATA#</span>'
+,p_column_type=>'STRING'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(10721844888336615)
 ,p_db_column_name=>'TAG_SPECIAL'
-,p_display_order=>180
+,p_display_order=>190
 ,p_column_identifier=>'R'
 ,p_column_label=>'Tag Special'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAG_SPECIAL#</span>'
@@ -25560,7 +25609,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(10721952774336616)
 ,p_db_column_name=>'TAG_SPECIAL2'
-,p_display_order=>190
+,p_display_order=>200
 ,p_column_identifier=>'S'
 ,p_column_label=>'Tag Special2'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAG_SPECIAL2#</span>'
@@ -25574,7 +25623,8 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'144062'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'TENANT_NAME:TENANT_ID:COMPARTMENT_PATH:COMPARTMENT_NAME:RESOURCE_ID:RESOURCE_NAME:PRODUCT:COST_BILLING_UNIT:RATE:CURRENCY:SINGLE_QUANTITY:HOURS_QUANTITY:TOTAL_QUANTITY:USAGE_COST:ESTIMATE_MONTH_31:ESTIMATE_YEAR:TAGS_DATA:TAG_SPECIAL:TAG_SPECIAL2:'
+,p_report_columns=>'PARENT_NAME:TENANT_ID:TENANT_NAME:COMPARTMENT_PATH:COMPARTMENT_NAME:RESOURCE_ID:RESOURCE_NAME:PRODUCT:COST_BILLING_UNIT:RATE:CURRENCY:SINGLE_QUANTITY:HOURS_QUANTITY:TOTAL_QUANTITY:USAGE_COST:ESTIMATE_MONTH_31:ESTIMATE_YEAR:TAGS_DATA:TAG_SPECIAL:TAG_S'
+||'PECIAL2:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(29235453984912667)
@@ -25588,8 +25638,9 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_point=>'SUB_REGIONS'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources) */ ',
-'    TENANT_ID,',
+'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources,oci_tenant) */ ',
+'    oci_cost.TENANT_ID,',
+'    oci_tenant.TENANT_name,',
 '    USAGE_INTERVAL_START    ,',
 '    USAGE_INTERVAL_END      ,',
 '    FILE_ID                 ,',
@@ -25618,16 +25669,17 @@ wwv_flow_imp_page.create_page_plug(
 '    TAGS_DATA,',
 '    oci_resources.resource_name   ',
 'from            ',
-'    oci_cost, oci_resources',
+'    oci_cost, oci_resources, oci_tenant',
 'WHERE ',
 '    usg_resource_id = oci_resources.resource_id (+) and ',
+'    oci_cost.tenant_id = oci_tenant.tenant_id (+) and ',
 '    (oci_cost.tenant_name=:P4_TENANT_NAME or :P4_TENANT_NAME = ''ALL'') and',
 '    (:P4_COMPARTMENT_NAME is null or prd_compartment_name = :P4_COMPARTMENT_NAME) and',
 '    (:P4_PRODUCT_SERVICE is null or prd_service = :P4_PRODUCT_SERVICE) and',
 '    (:P4_PRODUCT_REGION is null or prd_region = :P4_PRODUCT_REGION) and',
 '    (:P4_COMPARTMENT_TOP is null or prd_compartment_path like :P4_COMPARTMENT_TOP ||''%'') and',
 '    (:P4_TAG_KEY is null or tags_data like ''%#'' || :P4_TAG_KEY || ''=%'') and',
-'    (:P4_TENANT_ID is null or tenant_id = :P4_TENANT_ID) and',
+'    (:P4_TENANT_ID is null or oci_cost.tenant_id = :P4_TENANT_ID) and',
 '    (:P4_TAG1_SPECIAL is null or TAG_SPECIAL = :P4_TAG1_SPECIAL) and',
 '    (:P4_TAG2_SPECIAL is null or TAG_SPECIAL2 = :P4_TAG2_SPECIAL) and',
 '    (:P4_TAG_DATA is null or tags_data like ''%#'' || nvl(:P4_TAG_KEY,''%'') || ''='' || :P4_TAG_DATA || ''#%'') and',
@@ -25958,9 +26010,19 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_use_as_row_header=>'N'
 );
 wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(14066072116911650)
+,p_db_column_name=>'TENANT_NAME'
+,p_display_order=>280
+,p_column_identifier=>'AD'
+,p_column_label=>'Tenant Display Name'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(28708927517443171)
 ,p_db_column_name=>'TAG_SPECIAL'
-,p_display_order=>280
+,p_display_order=>290
 ,p_column_identifier=>'AA'
 ,p_column_label=>'Tag 1 Special'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAG_SPECIAL#</span>'
@@ -25970,7 +26032,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(24268563162225644)
 ,p_db_column_name=>'TAG_SPECIAL2'
-,p_display_order=>290
+,p_display_order=>300
 ,p_column_identifier=>'AB'
 ,p_column_label=>'Tag 2 Special'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAG_SPECIAL2#</span>'
@@ -25980,7 +26042,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(10722094588336617)
 ,p_db_column_name=>'RESOURCE_NAME'
-,p_display_order=>300
+,p_display_order=>310
 ,p_column_identifier=>'AC'
 ,p_column_label=>'Resource Name'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#RESOURCE_NAME#</span>'
@@ -25995,8 +26057,8 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
 ,p_display_rows=>20
-,p_report_columns=>'TENANT_ID:FILE_ID:USAGE_INTERVAL_START:USAGE_INTERVAL_END:PRD_COMPARTMENT_NAME:PRD_COMPARTMENT_PATH:PRD_AVAILABILITY_DOMAIN:PRD_REGION:PRD_SERVICE:COST_PRODUCT_SKU:PRD_DESCRIPTION:USG_BILLED_QUANTITY:USG_BILLED_QUANTITY_OVERAGE:COST_BILLING_UNIT:COST'
-||'_UNIT_PRICE:COST_UNIT_PRICE_OVERAGE:COST_MY_COST:COST_MY_COST_OVERAGE:COST_CURRENCY_CODE:COST_OVERAGE_FLAG:IS_CORRECTION:TAG_SPECIAL:TAG_SPECIAL2:TAGS_DATA:USG_RESOURCE_ID:RESOURCE_NAME:'
+,p_report_columns=>'TENANT_ID:TENANT_NAME:FILE_ID:USAGE_INTERVAL_START:USAGE_INTERVAL_END:PRD_COMPARTMENT_NAME:PRD_COMPARTMENT_PATH:PRD_AVAILABILITY_DOMAIN:PRD_REGION:PRD_SERVICE:COST_PRODUCT_SKU:PRD_DESCRIPTION:USG_BILLED_QUANTITY:USG_BILLED_QUANTITY_OVERAGE:COST_BILLI'
+||'NG_UNIT:COST_UNIT_PRICE:COST_UNIT_PRICE_OVERAGE:COST_MY_COST:COST_MY_COST_OVERAGE:COST_CURRENCY_CODE:COST_OVERAGE_FLAG:IS_CORRECTION:TAG_SPECIAL:TAG_SPECIAL2:TAGS_DATA:USG_RESOURCE_ID:RESOURCE_NAME:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(29291441065151158)
@@ -27310,12 +27372,16 @@ wwv_flow_imp_page.create_page_item(
 ,p_prompt=>'Tenant Id'
 ,p_display_as=>'NATIVE_SELECT_LIST'
 ,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct ref_name o, ref_name r ',
+'select ',
+'    distinct',
+'    case when OCI_TENANT.tenant_name is null then ref_name else ref_name ||'' (''||OCI_TENANT.tenant_name||'')'' end o, ',
+'    ref_name r ',
 'from ',
-'    OCI_COST_REFERENCE ',
+'    OCI_COST_REFERENCE, OCI_TENANT',
 'where',
-'    (tenant_name=:P4_TENANT_NAME or :P4_TENANT_NAME = ''ALL'')',
-'    and ref_type=''TENANT_ID''',
+'    ref_name = oci_tenant.tenant_id (+)',
+'    and (OCI_COST_REFERENCE.tenant_name=:P4_TENANT_NAME or :P4_TENANT_NAME = ''ALL'')',
+'    and ref_type=''USAGE_TENANT_ID''',
 'order by 1'))
 ,p_lov_display_null=>'YES'
 ,p_lov_null_text=>'All'
@@ -27504,7 +27570,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'03'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230520120010'
+,p_last_upd_yyyymmddhh24miss=>'20231009115736'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(39764862521507625)
@@ -27554,7 +27620,7 @@ wwv_flow_imp_page.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources) */ ',
+'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources,oci_tenant) */ ',
 '	case ',
 '		when :P5_REPORT_GROUP = ''Product'' or :P5_REPORT_GROUP is null then COST_PRODUCT_SKU || '' '' || replace(replace(PRD_DESCRIPTION,COST_PRODUCT_SKU||'' - '',''''),''Oracle Cloud Infrastructure'',''OCI'')',
 '		when :P5_REPORT_GROUP = ''Service'' then prd_service',
@@ -27571,7 +27637,7 @@ wwv_flow_imp_page.create_report_region(
 '                else prd_compartment_path ',
 '            end ',
 '		when :P5_REPORT_GROUP = ''Compartment'' then nvl(prd_compartment_name,''No Compartment'')',
-'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(tenant_id,''No TenantId'')',
+'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(oci_cost.tenant_id,''No TenantId'')||'' (''||nvl(oci_tenant.tenant_name,''No Name'')||'')''',
 '	end product_name,',
 '    sum(COST_MY_COST) TOTAL,',
 '    sum(case when to_char(USAGE_INTERVAL_START,''MM'') = ''01'' then COST_MY_COST else null end) Jan,',
@@ -27587,9 +27653,10 @@ wwv_flow_imp_page.create_report_region(
 '    sum(case when to_char(USAGE_INTERVAL_START,''MM'') = ''11'' then COST_MY_COST else null end) Nov,',
 '    sum(case when to_char(USAGE_INTERVAL_START,''MM'') = ''12'' then COST_MY_COST else null end) Dec',
 'FROM ',
-'    oci_cost, oci_resources',
+'    oci_cost, oci_resources, oci_tenant',
 'WHERE ',
 '    usg_resource_id = oci_resources.resource_id (+) and ',
+'    oci_cost.tenant_id = oci_tenant.tenant_id (+) and ',
 '    (oci_cost.tenant_name=:P5_TENANT_NAME or :P5_TENANT_NAME = ''ALL'') and',
 '    :P5_PERIOD=''Monthly'' and ',
 '	to_char(USAGE_INTERVAL_START,''YYYY'') = :P5_PERIOD_RANGE and',
@@ -27600,7 +27667,7 @@ wwv_flow_imp_page.create_report_region(
 '    (:P5_COST_PRODUCT_SKU is null or COST_PRODUCT_SKU = :P5_COST_PRODUCT_SKU) and',
 '    (:P5_TAG1_SPECIAL is null or :P5_TAG1_SPECIAL = TAG_SPECIAL) and',
 '    (:P5_TAG2_SPECIAL is null or :P5_TAG2_SPECIAL = TAG_SPECIAL2) and',
-'    (:P5_TENANT_ID is null or tenant_id = :P5_TENANT_ID) and',
+'    (:P5_TENANT_ID is null or oci_cost.tenant_id = :P5_TENANT_ID) and',
 '    (:P5_TAG_KEY is null or tags_data like ''%#'' || :P5_TAG_KEY || ''=%'') and',
 '    (:P5_TAG_DATA is null or tags_data like ''%#'' || nvl(:P5_TAG_KEY,''%'') || ''=%'' || :P5_TAG_DATA || ''#'') and',
 '    :P5_REPORT_SELECTOR = ''Monthly Cost Report''',
@@ -27621,7 +27688,7 @@ wwv_flow_imp_page.create_report_region(
 '                else prd_compartment_path ',
 '            end ',
 '		when :P5_REPORT_GROUP = ''Compartment'' then nvl(prd_compartment_name,''No Compartment'')',
-'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(tenant_id,''No TenantId'')',
+'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(oci_cost.tenant_id,''No TenantId'')||'' (''||nvl(oci_tenant.tenant_name,''No Name'')||'')''',
 '	end',
 'having sum(COST_MY_COST)>0',
 'order by 2 desc',
@@ -27879,7 +27946,7 @@ wwv_flow_imp_page.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources) */ ',
+'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources,oci_tenant) */ ',
 '	case ',
 '		when :P5_REPORT_GROUP = ''Product'' or :P5_REPORT_GROUP is null then COST_PRODUCT_SKU || '' '' || replace(replace(PRD_DESCRIPTION,COST_PRODUCT_SKU||'' - '',''''),''Oracle Cloud Infrastructure'',''OCI'')',
 '		when :P5_REPORT_GROUP = ''Service'' then prd_service',
@@ -27896,7 +27963,7 @@ wwv_flow_imp_page.create_report_region(
 '                else prd_compartment_path ',
 '            end ',
 '		when :P5_REPORT_GROUP = ''Compartment'' then nvl(prd_compartment_name,''No Compartment'')',
-'		when :P5_REPORT_GROUP = ''Tenant'' then nvl(tenant_id,''No TenantId'')',
+'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(oci_cost.tenant_id,''No TenantId'')||'' (''||nvl(oci_tenant.tenant_name,''No Name'')||'')''',
 '	end product_name,',
 '    sum(COST_MY_COST) TOTAL,',
 '    sum(case when to_char(USAGE_INTERVAL_START,''DD'') = ''01'' then COST_MY_COST else null end) D01,',
@@ -27931,9 +27998,10 @@ wwv_flow_imp_page.create_report_region(
 '    sum(case when to_char(USAGE_INTERVAL_START,''DD'') = ''30'' then COST_MY_COST else null end) D30,',
 '    sum(case when to_char(USAGE_INTERVAL_START,''DD'') = ''31'' then COST_MY_COST else null end) D31',
 'FROM ',
-'    oci_cost, oci_resources',
+'    oci_cost, oci_resources, oci_tenant',
 'WHERE ',
 '    usg_resource_id = oci_resources.resource_id (+) and ',
+'    oci_cost.tenant_id = oci_tenant.tenant_id (+) and',
 '    (oci_cost.tenant_name=:P5_TENANT_NAME or :P5_TENANT_NAME = ''ALL'') and',
 '    :P5_PERIOD=''Daily'' and ',
 '	to_char(USAGE_INTERVAL_START,''YYYY-MM'') = :P5_PERIOD_RANGE and',
@@ -27944,7 +28012,7 @@ wwv_flow_imp_page.create_report_region(
 '    (:P5_COST_PRODUCT_SKU is null or COST_PRODUCT_SKU = :P5_COST_PRODUCT_SKU) and',
 '    (:P5_TAG1_SPECIAL is null or :P5_TAG1_SPECIAL = TAG_SPECIAL) and',
 '    (:P5_TAG2_SPECIAL is null or :P5_TAG2_SPECIAL = TAG_SPECIAL2) and',
-'    (:P5_TENANT_ID is null or tenant_id = :P5_TENANT_ID) and',
+'    (:P5_TENANT_ID is null or oci_cost.tenant_id = :P5_TENANT_ID) and',
 '    (:P5_TAG_KEY is null or tags_data like ''%#'' || :P5_TAG_KEY || ''=%'') and',
 '    (:P5_TAG_DATA is null or tags_data like ''%#'' || nvl(:P5_TAG_KEY,''%'') || ''=%'' || :P5_TAG_DATA || ''#'') and',
 '    :P5_REPORT_SELECTOR = ''Daily Cost Report''',
@@ -27965,7 +28033,7 @@ wwv_flow_imp_page.create_report_region(
 '                else prd_compartment_path ',
 '            end ',
 '		when :P5_REPORT_GROUP = ''Compartment'' then nvl(prd_compartment_name,''No Compartment'')',
-'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(tenant_id,''No TenantId'')',
+'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(oci_cost.tenant_id,''No TenantId'')||'' (''||nvl(oci_tenant.tenant_name,''No Name'')||'')''',
 '	end',
 'having sum(COST_MY_COST)>0',
 'order by 2 desc'))
@@ -28223,6 +28291,9 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(29013309595136182)
 ,p_query_column_id=>16
@@ -28237,9 +28308,6 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(29057989847251833)
 ,p_query_column_id=>17
@@ -28491,7 +28559,7 @@ wwv_flow_imp_page.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources) */ ',
+'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources,oci_tenant) */ ',
 '	case ',
 '		when :P5_REPORT_GROUP = ''Product'' or :P5_REPORT_GROUP is null then COST_PRODUCT_SKU || '' '' || replace(replace(PRD_DESCRIPTION,COST_PRODUCT_SKU||'' - '',''''),''Oracle Cloud Infrastructure'',''OCI'')',
 '		when :P5_REPORT_GROUP = ''Service'' then prd_service',
@@ -28508,7 +28576,7 @@ wwv_flow_imp_page.create_report_region(
 '                else prd_compartment_path ',
 '            end ',
 '		when :P5_REPORT_GROUP = ''Compartment'' then nvl(prd_compartment_name,''No Compartment'')',
-'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(tenant_id,''No TenantId'')',
+'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(oci_cost.tenant_id,''No TenantId'')||'' (''||nvl(oci_tenant.tenant_name,''No Name'')||'')''',
 '	end product_name,',
 '    sum(COST_MY_COST) TOTAL,',
 '    sum(case when to_char(USAGE_INTERVAL_START,''WW'') = ''01'' then COST_MY_COST else null end) W01,',
@@ -28564,9 +28632,10 @@ wwv_flow_imp_page.create_report_region(
 '    sum(case when to_char(USAGE_INTERVAL_START,''WW'') = ''51'' then COST_MY_COST else null end) W51,',
 '    sum(case when to_char(USAGE_INTERVAL_START,''WW'') = ''52'' then COST_MY_COST else null end) W52',
 'FROM ',
-'    oci_cost, oci_resources',
+'    oci_cost, oci_resources, oci_tenant',
 'WHERE ',
 '    usg_resource_id = oci_resources.resource_id (+) and ',
+'    oci_cost.tenant_id = oci_tenant.tenant_id (+) and',
 '    (oci_cost.tenant_name=:P5_TENANT_NAME or :P5_TENANT_NAME = ''ALL'') and',
 '    :P5_PERIOD=''Weekly'' and ',
 '	to_char(USAGE_INTERVAL_START,''YYYY'') = :P5_PERIOD_RANGE and',
@@ -28578,7 +28647,7 @@ wwv_flow_imp_page.create_report_region(
 '    (:P5_TAG1_SPECIAL is null or :P5_TAG1_SPECIAL = TAG_SPECIAL) and',
 '    (:P5_TAG2_SPECIAL is null or :P5_TAG2_SPECIAL = TAG_SPECIAL2) and',
 '    (:P5_TAG_KEY is null or tags_data like ''%#'' || :P5_TAG_KEY || ''=%'') and',
-'    (:P5_TENANT_ID is null or tenant_id = :P5_TENANT_ID) and',
+'    (:P5_TENANT_ID is null or oci_cost.tenant_id = :P5_TENANT_ID) and',
 '    (:P5_TAG_DATA is null or tags_data like ''%#'' || nvl(:P5_TAG_KEY,''%'') || ''=%'' || :P5_TAG_DATA || ''#'') and',
 '    :P5_REPORT_SELECTOR = ''Weekly Cost Report''',
 'GROUP BY ',
@@ -28598,7 +28667,7 @@ wwv_flow_imp_page.create_report_region(
 '                else prd_compartment_path ',
 '            end ',
 '		when :P5_REPORT_GROUP = ''Compartment'' then nvl(prd_compartment_name,''No Compartment'')',
-'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(tenant_id,''No TenantId'')',
+'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(oci_cost.tenant_id,''No TenantId'')||'' (''||nvl(oci_tenant.tenant_name,''No Name'')||'')''',
 '	end',
 'having sum(COST_MY_COST)>0',
 'order by 2 desc',
@@ -29131,6 +29200,9 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(29194003171568555)
 ,p_query_column_id=>41
@@ -29155,9 +29227,6 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(29194152362568557)
 ,p_query_column_id=>43
@@ -30029,6 +30098,9 @@ wwv_flow_imp_page.create_jet_chart_axis(
 ,p_zoom_order_quarters=>false
 ,p_zoom_order_years=>false
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(31104773710535937)
 ,p_plug_name=>'Cost By Region - &P5_PERIOD.'
@@ -30044,9 +30116,6 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_when_condition=>'P5_REPORT_SELECTOR'
 ,p_plug_display_when_cond2=>'Hourly Cost By Region:Daily Cost By Region:Weekly Cost By Region:Monthly Cost By Region'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_jet_chart(
  p_id=>wwv_flow_imp.id(31104881417535938)
 ,p_region_id=>wwv_flow_imp.id(31104773710535937)
@@ -30781,6 +30850,9 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(31971935279255860)
 ,p_query_column_id=>3
@@ -30807,9 +30879,6 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(31972180161255862)
 ,p_query_column_id=>5
@@ -31729,6 +31798,9 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(32005612400763480)
 ,p_query_column_id=>36
@@ -31753,9 +31825,6 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(32005889077763482)
 ,p_query_column_id=>38
@@ -32376,7 +32445,7 @@ wwv_flow_imp_page.create_report_region(
 ,p_source_type=>'NATIVE_SQL_REPORT'
 ,p_query_type=>'SQL'
 ,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources) */ ',
+'SELECT /*+ parallel(oci_cost,8) full(oci_cost) use_hash(oci_cost,oci_resources,oci_tenant) */ ',
 '	case ',
 '		when :P5_REPORT_GROUP = ''Product'' or :P5_REPORT_GROUP is null then COST_PRODUCT_SKU || '' '' || replace(replace(PRD_DESCRIPTION,COST_PRODUCT_SKU||'' - '',''''),''Oracle Cloud Infrastructure'',''OCI'')',
 '		when :P5_REPORT_GROUP = ''Service'' then prd_service',
@@ -32393,7 +32462,7 @@ wwv_flow_imp_page.create_report_region(
 '                else prd_compartment_path ',
 '            end ',
 '		when :P5_REPORT_GROUP = ''Compartment'' then nvl(prd_compartment_name,''No Compartment'')',
-'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(tenant_id,''No TenantId'')',
+'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(oci_cost.tenant_id,''No TenantId'')||'' (''||nvl(oci_tenant.tenant_name,''No Name'')||'')''',
 '	end product_name,',
 '    sum(COST_MY_COST) TOTAL,',
 '    sum(case when to_char(USAGE_INTERVAL_START,''HH24'') = ''00'' then COST_MY_COST else null end) H00,',
@@ -32421,9 +32490,10 @@ wwv_flow_imp_page.create_report_region(
 '    sum(case when to_char(USAGE_INTERVAL_START,''HH24'') = ''22'' then COST_MY_COST else null end) H22,',
 '    sum(case when to_char(USAGE_INTERVAL_START,''HH24'') = ''23'' then COST_MY_COST else null end) H23',
 'FROM ',
-'    oci_cost, oci_resources',
+'    oci_cost, oci_resources, oci_tenant',
 'WHERE ',
 '    usg_resource_id = oci_resources.resource_id (+) and ',
+'    oci_cost.tenant_id = oci_tenant.tenant_id (+) and',
 '    (oci_cost.tenant_name=:P5_TENANT_NAME or :P5_TENANT_NAME = ''ALL'') and',
 '    :P5_PERIOD=''Hourly'' and ',
 '	to_char(USAGE_INTERVAL_START,''YYYY-MM-DD'') = :P5_PERIOD_RANGE and',
@@ -32434,7 +32504,7 @@ wwv_flow_imp_page.create_report_region(
 '    (:P5_COST_PRODUCT_SKU is null or COST_PRODUCT_SKU = :P5_COST_PRODUCT_SKU) and',
 '    (:P5_TAG1_SPECIAL is null or :P5_TAG1_SPECIAL = TAG_SPECIAL) and',
 '    (:P5_TAG2_SPECIAL is null or :P5_TAG2_SPECIAL = TAG_SPECIAL2) and',
-'    (:P5_TENANT_ID is null or tenant_id = :P5_TENANT_ID) and',
+'    (:P5_TENANT_ID is null or oci_cost.tenant_id = :P5_TENANT_ID) and',
 '    (:P5_TAG_KEY is null or tags_data like ''%#'' || :P5_TAG_KEY || ''=%'') and',
 '    (:P5_TAG_DATA is null or tags_data like ''%#'' || nvl(:P5_TAG_KEY,''%'') || ''=%'' || :P5_TAG_DATA || ''#'') and',
 '    :P5_REPORT_SELECTOR = ''Hourly Cost Report''',
@@ -32455,7 +32525,7 @@ wwv_flow_imp_page.create_report_region(
 '                else prd_compartment_path ',
 '            end ',
 '		when :P5_REPORT_GROUP = ''Compartment'' then nvl(prd_compartment_name,''No Compartment'')',
-'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(tenant_id,''No TenantId'')',
+'        when :P5_REPORT_GROUP = ''Tenant'' then nvl(oci_cost.tenant_id,''No TenantId'')||'' (''||nvl(oci_tenant.tenant_name,''No Name'')||'')''',
 '	end',
 'having sum(COST_MY_COST)>0',
 'order by 2 desc',
@@ -32544,6 +32614,9 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(33689000358107174)
 ,p_query_column_id=>4
@@ -32580,9 +32653,6 @@ wwv_flow_imp_page.create_report_columns(
 ,p_derived_column=>'N'
 ,p_include_in_export=>'Y'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_report_columns(
  p_id=>wwv_flow_imp.id(33689308390107177)
 ,p_query_column_id=>7
@@ -33497,6 +33567,9 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_04=>'Y'
 ,p_attribute_05=>'PLAIN'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(28967627998341993)
 ,p_name=>'P5_TENANT_NAME'
@@ -33520,9 +33593,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_01=>'NONE'
 ,p_attribute_02=>'N'
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(28968507547341995)
 ,p_name=>'P5_PRODUCT_SERVICE'
@@ -33739,12 +33809,16 @@ wwv_flow_imp_page.create_page_item(
 ,p_prompt=>'Tenant Id'
 ,p_display_as=>'NATIVE_SELECT_LIST'
 ,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'select distinct ref_name o, ref_name r ',
+'select ',
+'    distinct',
+'    case when OCI_TENANT.tenant_name is null then ref_name else ref_name ||'' (''||OCI_TENANT.tenant_name||'')'' end o, ',
+'    ref_name r ',
 'from ',
-'    OCI_COST_REFERENCE ',
+'    OCI_COST_REFERENCE, OCI_TENANT',
 'where',
-'    (tenant_name=:P5_TENANT_NAME or :P5_TENANT_NAME = ''ALL'')',
-'    and ref_type=''TENANT_ID''',
+'    ref_name = oci_tenant.tenant_id (+)',
+'    and (OCI_COST_REFERENCE.tenant_name=:P5_TENANT_NAME or :P5_TENANT_NAME = ''ALL'')',
+'    and ref_type=''USAGE_TENANT_ID''',
 'order by 1'))
 ,p_lov_display_null=>'YES'
 ,p_lov_null_text=>'All'
@@ -34072,7 +34146,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230831124241'
+,p_last_upd_yyyymmddhh24miss=>'20231009131711'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(28126375548902548)
@@ -34132,7 +34206,7 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'TENANT_NAME'
 ,p_display_order=>10
 ,p_column_identifier=>'A'
-,p_column_label=>'Tenant Name'
+,p_column_label=>'Tenant Parent'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
@@ -34377,7 +34451,7 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'TENANT_NAME'
 ,p_display_order=>10
 ,p_column_identifier=>'A'
-,p_column_label=>'Tenant Name'
+,p_column_label=>'Tenant Parent'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
@@ -34733,7 +34807,7 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'TENANT_NAME'
 ,p_display_order=>10
 ,p_column_identifier=>'A'
-,p_column_label=>'Tenant Name'
+,p_column_label=>'Tenant Parent'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
@@ -35055,7 +35129,7 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'TENANT_NAME'
 ,p_display_order=>10
 ,p_column_identifier=>'A'
-,p_column_label=>'Tenant Name'
+,p_column_label=>'Tenant Parent'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
@@ -35294,7 +35368,7 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'TENANT_NAME'
 ,p_display_order=>10
 ,p_column_identifier=>'A'
-,p_column_label=>'Tenant Name'
+,p_column_label=>'Tenant Parent'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
@@ -35533,7 +35607,7 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'TENANT_NAME'
 ,p_display_order=>10
 ,p_column_identifier=>'A'
-,p_column_label=>'Tenant Name'
+,p_column_label=>'Tenant Parent'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
 );
@@ -36116,7 +36190,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230524005613'
+,p_last_upd_yyyymmddhh24miss=>'20231009131540'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(89287622627078316)
@@ -36150,12 +36224,13 @@ wwv_flow_imp_page.create_page_plug(
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT',
-'	TENANT_NAME               TENANT,',
-'    TENANT_ID                 TENANT_ID,',
-'    COST_PRODUCT_SKU          SKU,',
+'	OCI_PRICE_LIST.TENANT_NAME TENANT,',
+'    OCI_PRICE_LIST.TENANT_ID   TENANT_ID,',
+'    OCI_TENANT.TENANT_NAME     TENANT_NAME,',
+'    COST_PRODUCT_SKU           SKU,',
 '    replace(PRD_DESCRIPTION,COST_PRODUCT_SKU||'' - '','''')  PRODUCT,',
-'    COST_CURRENCY_CODE        CURRENCY,',
-'    COST_UNIT_PRICE           COST_PRICE,',
+'    COST_CURRENCY_CODE         CURRENCY,',
+'    COST_UNIT_PRICE            COST_PRICE,',
 '    COST_LAST_UPDATE,',
 '	RATE_DESCRIPTION,',
 '    ROUND(RATE_MONTHLY_FLEX_PRICE,4) RATE_MONTHLY,',
@@ -36164,8 +36239,11 @@ wwv_flow_imp_page.create_page_plug(
 '	ELSE NULL END PCT_MONTH,',
 '	RATE_UPDATE_DATE',
 'FROM',
-'    OCI_PRICE_LIST',
-'where tenant_name=:P7_TENANT_NAME and tenant_id=:P7_TENANT_ID',
+'    OCI_PRICE_LIST, OCI_TENANT',
+'where ',
+'    OCI_PRICE_LIST.tenant_name=:P7_TENANT_NAME ',
+'    and OCI_PRICE_LIST.tenant_id=:P7_TENANT_ID',
+'    and OCI_PRICE_LIST.tenant_id = oci_tenant.tenant_id (+)',
 'order by cost_product_sku;'))
 ,p_plug_source_type=>'NATIVE_IR'
 ,p_prn_content_disposition=>'ATTACHMENT'
@@ -36219,14 +36297,33 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'TENANT'
 ,p_display_order=>10
 ,p_column_identifier=>'A'
-,p_column_label=>'Tenant'
+,p_column_label=>'Parent Name'
 ,p_column_type=>'STRING'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(29224746192840168)
+,p_db_column_name=>'TENANT_ID'
+,p_display_order=>20
+,p_column_identifier=>'M'
+,p_column_label=>'Tenant Id'
+,p_column_type=>'STRING'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(24625941700398102)
+,p_db_column_name=>'TENANT_NAME'
+,p_display_order=>30
+,p_column_identifier=>'N'
+,p_column_label=>'Tenant Display Name'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
 ,p_use_as_row_header=>'N'
 );
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(33276991758756243)
 ,p_db_column_name=>'SKU'
-,p_display_order=>20
+,p_display_order=>40
 ,p_column_identifier=>'B'
 ,p_column_label=>'Sku'
 ,p_column_type=>'STRING'
@@ -36235,7 +36332,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(33277064126756244)
 ,p_db_column_name=>'PRODUCT'
-,p_display_order=>30
+,p_display_order=>50
 ,p_column_identifier=>'C'
 ,p_column_label=>'Product'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#PRODUCT#</span>'
@@ -36245,7 +36342,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(33277195774756245)
 ,p_db_column_name=>'CURRENCY'
-,p_display_order=>40
+,p_display_order=>60
 ,p_column_identifier=>'D'
 ,p_column_label=>'Currency'
 ,p_column_type=>'STRING'
@@ -36255,7 +36352,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(33277270590756246)
 ,p_db_column_name=>'COST_PRICE'
-,p_display_order=>50
+,p_display_order=>70
 ,p_column_identifier=>'E'
 ,p_column_label=>'Cost Price'
 ,p_column_type=>'NUMBER'
@@ -36267,7 +36364,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(33277399317756247)
 ,p_db_column_name=>'COST_LAST_UPDATE'
-,p_display_order=>60
+,p_display_order=>80
 ,p_column_identifier=>'F'
 ,p_column_label=>'Cost Last Update'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#COST_LAST_UPDATE#</span>'
@@ -36280,7 +36377,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(33277468277756248)
 ,p_db_column_name=>'RATE_DESCRIPTION'
-,p_display_order=>70
+,p_display_order=>90
 ,p_column_identifier=>'G'
 ,p_column_label=>'Rate Full Description'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#RATE_DESCRIPTION#</span>'
@@ -36324,15 +36421,6 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_tz_dependent=>'N'
 ,p_use_as_row_header=>'N'
 );
-wwv_flow_imp_page.create_worksheet_column(
- p_id=>wwv_flow_imp.id(29224746192840168)
-,p_db_column_name=>'TENANT_ID'
-,p_display_order=>130
-,p_column_identifier=>'M'
-,p_column_label=>'Tenant Id'
-,p_column_type=>'STRING'
-,p_use_as_row_header=>'N'
-);
 wwv_flow_imp_page.create_worksheet_rpt(
  p_id=>wwv_flow_imp.id(33311099629253972)
 ,p_application_user=>'APXWS_DEFAULT'
@@ -36340,7 +36428,7 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'163928'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'SKU:PRODUCT:CURRENCY:RATE_MONTHLY:PCT_MONTH:COST_PRICE:RATE_DESCRIPTION:RATE_UPDATE_DATE:'
+,p_report_columns=>'TENANT:TENANT_ID:TENANT_NAME:SKU:PRODUCT:CURRENCY:RATE_MONTHLY:PCT_MONTH:COST_PRICE:RATE_DESCRIPTION:RATE_UPDATE_DATE:'
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(40721806645769283)
@@ -36363,12 +36451,23 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(89287622627078316)
 ,p_prompt=>'Tenant Id'
 ,p_display_as=>'NATIVE_SELECT_LIST'
-,p_lov=>'select distinct tenant_id o, tenant_id r from  OCI_PRICE_LIST where tenant_name = :P7_TENANT_NAME  order by 1'
+,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'select ',
+'    distinct',
+'    case when OCI_TENANT.tenant_name is null then ref_name else ref_name ||'' (''||OCI_TENANT.tenant_name||'')'' end o, ',
+'    ref_name r ',
+'from ',
+'    OCI_COST_REFERENCE, OCI_TENANT',
+'where',
+'    ref_name = oci_tenant.tenant_id (+)',
+'    and (OCI_COST_REFERENCE.tenant_name=:P7_TENANT_NAME or :P7_TENANT_NAME = ''ALL'')',
+'    and ref_type=''USAGE_TENANT_ID''',
+'order by 1'))
 ,p_lov_cascade_parent_items=>'P7_TENANT_NAME'
 ,p_ajax_optimize_refresh=>'Y'
 ,p_cHeight=>1
 ,p_begin_on_new_line=>'N'
-,p_colspan=>2
+,p_colspan=>3
 ,p_field_template=>wwv_flow_imp.id(26738339406954019)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_warn_on_unsaved_changes=>'I'
@@ -36388,7 +36487,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_lov_null_text=>'Please Choose...'
 ,p_cHeight=>1
 ,p_tag_attributes=>'style="background-color:#d0ffff; font-weight:bold"'
-,p_colspan=>2
+,p_colspan=>3
 ,p_field_template=>wwv_flow_imp.id(26738339406954019)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_warn_on_unsaved_changes=>'I'
@@ -36449,7 +36548,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20230520115657'
+,p_last_upd_yyyymmddhh24miss=>'20231009133314'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(105619921556865454)
@@ -36555,7 +36654,7 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_db_column_name=>'TENANT_NAME'
 ,p_display_order=>10
 ,p_column_identifier=>'N'
-,p_column_label=>'Tenant Name'
+,p_column_label=>'Tenant Parent Name'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TENANT_NAME#</span>'
 ,p_column_type=>'STRING'
 ,p_use_as_row_header=>'N'
@@ -36745,7 +36844,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P8_TENANT_NAME'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(105619921556865454)
-,p_prompt=>'Tenant Name'
+,p_prompt=>'Tenant Parent Name'
 ,p_display_as=>'NATIVE_SELECT_LIST'
 ,p_lov=>'select distinct tenant_name o, tenant_name r from  OCI_LOAD_STATUS order by 1'
 ,p_lov_display_null=>'YES'
@@ -36795,6 +36894,223 @@ wwv_flow_imp_page.create_page_computation(
 '    (:P8_TENANT_NAME is null or tenant_name=:P8_TENANT_NAME) and ',
 '    (:P8_FILE_TYPE is null or FILE_TYPE=:P8_FILE_TYPE)',
 ''))
+);
+end;
+/
+prompt --application/pages/page_00009
+begin
+wwv_flow_imp_page.create_page(
+ p_id=>9
+,p_name=>'Tenant Display Update'
+,p_alias=>'TENANT-DISPLAY-NAME-UPDATE'
+,p_step_title=>'Tenant Display Update'
+,p_autocomplete_on_off=>'OFF'
+,p_page_template_options=>'#DEFAULT#'
+,p_protection_level=>'C'
+,p_page_component_map=>'21'
+,p_last_updated_by=>'USAGE'
+,p_last_upd_yyyymmddhh24miss=>'20231009132054'
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(24609944349231903)
+,p_plug_name=>'Tenant Display Name Update'
+,p_region_template_options=>'#DEFAULT#:t-Region--accent15:t-Region--scrollBody'
+,p_plug_template=>wwv_flow_imp.id(26683353252953952)
+,p_plug_display_sequence=>20
+,p_plug_grid_column_span=>6
+,p_query_type=>'TABLE'
+,p_query_table=>'OCI_TENANT'
+,p_include_rowid_column=>false
+,p_plug_source_type=>'NATIVE_IG'
+,p_prn_content_disposition=>'ATTACHMENT'
+,p_prn_units=>'INCHES'
+,p_prn_paper_size=>'LETTER'
+,p_prn_width=>11
+,p_prn_height=>8.5
+,p_prn_orientation=>'HORIZONTAL'
+,p_prn_page_header=>'Tenant Display Name Update'
+,p_prn_page_header_font_color=>'#000000'
+,p_prn_page_header_font_family=>'Helvetica'
+,p_prn_page_header_font_weight=>'normal'
+,p_prn_page_header_font_size=>'12'
+,p_prn_page_footer_font_color=>'#000000'
+,p_prn_page_footer_font_family=>'Helvetica'
+,p_prn_page_footer_font_weight=>'normal'
+,p_prn_page_footer_font_size=>'12'
+,p_prn_header_bg_color=>'#EEEEEE'
+,p_prn_header_font_color=>'#000000'
+,p_prn_header_font_family=>'Helvetica'
+,p_prn_header_font_weight=>'bold'
+,p_prn_header_font_size=>'10'
+,p_prn_body_bg_color=>'#FFFFFF'
+,p_prn_body_font_color=>'#000000'
+,p_prn_body_font_family=>'Helvetica'
+,p_prn_body_font_weight=>'normal'
+,p_prn_body_font_size=>'10'
+,p_prn_border_width=>.5
+,p_prn_page_header_alignment=>'CENTER'
+,p_prn_page_footer_alignment=>'CENTER'
+,p_prn_border_color=>'#666666'
+);
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(24611234240231912)
+,p_name=>'APEX$ROW_SELECTOR'
+,p_item_type=>'NATIVE_ROW_SELECTOR'
+,p_display_sequence=>10
+,p_attribute_01=>'Y'
+,p_attribute_02=>'Y'
+,p_attribute_03=>'N'
+,p_enable_hide=>true
+,p_is_primary_key=>false
+);
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(24611752916231913)
+,p_name=>'APEX$ROW_ACTION'
+,p_item_type=>'NATIVE_ROW_ACTION'
+,p_label=>'Actions'
+,p_heading_alignment=>'CENTER'
+,p_display_sequence=>20
+,p_value_alignment=>'CENTER'
+,p_enable_hide=>true
+,p_is_primary_key=>false
+);
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(24612792903231917)
+,p_name=>'TENANT_ID'
+,p_source_type=>'DB_COLUMN'
+,p_source_expression=>'TENANT_ID'
+,p_data_type=>'VARCHAR2'
+,p_session_state_data_type=>'VARCHAR2'
+,p_is_query_only=>false
+,p_item_type=>'NATIVE_DISPLAY_ONLY'
+,p_heading=>'Tenant Id (Last 6 Chars - Read only)'
+,p_heading_alignment=>'LEFT'
+,p_display_sequence=>30
+,p_value_alignment=>'LEFT'
+,p_attribute_02=>'VALUE'
+,p_attribute_05=>'PLAIN'
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
+,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
+,p_use_as_row_header=>false
+,p_enable_sort_group=>true
+,p_enable_control_break=>true
+,p_enable_hide=>true
+,p_is_primary_key=>true
+,p_duplicate_value=>true
+,p_include_in_export=>false
+);
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(24613733375231918)
+,p_name=>'TENANT_NAME'
+,p_source_type=>'DB_COLUMN'
+,p_source_expression=>'TENANT_NAME'
+,p_data_type=>'VARCHAR2'
+,p_is_query_only=>false
+,p_item_type=>'NATIVE_TEXT_FIELD'
+,p_heading=>'Tenant Display Name (Updatable)'
+,p_heading_alignment=>'LEFT'
+,p_display_sequence=>40
+,p_value_alignment=>'LEFT'
+,p_attribute_05=>'BOTH'
+,p_is_required=>false
+,p_max_length=>100
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
+,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
+,p_use_as_row_header=>false
+,p_enable_sort_group=>true
+,p_enable_control_break=>true
+,p_enable_hide=>true
+,p_enable_pivot=>false
+,p_is_primary_key=>false
+,p_duplicate_value=>true
+,p_include_in_export=>true
+);
+wwv_flow_imp_page.create_interactive_grid(
+ p_id=>wwv_flow_imp.id(24610410881231904)
+,p_internal_uid=>24610410881231904
+,p_is_editable=>true
+,p_edit_operations=>'u'
+,p_lost_update_check_type=>'VALUES'
+,p_submit_checked_rows=>false
+,p_lazy_loading=>false
+,p_requires_filter=>false
+,p_select_first_row=>true
+,p_fixed_row_height=>true
+,p_pagination_type=>'SCROLL'
+,p_show_total_row_count=>true
+,p_show_toolbar=>true
+,p_enable_save_public_report=>false
+,p_enable_subscriptions=>true
+,p_enable_flashback=>true
+,p_define_chart_view=>true
+,p_enable_download=>true
+,p_enable_mail_download=>true
+,p_fixed_header=>'PAGE'
+,p_show_icon_view=>false
+,p_show_detail_view=>false
+);
+wwv_flow_imp_page.create_ig_report(
+ p_id=>wwv_flow_imp.id(24610869775231907)
+,p_interactive_grid_id=>wwv_flow_imp.id(24610410881231904)
+,p_static_id=>'246109'
+,p_type=>'PRIMARY'
+,p_default_view=>'GRID'
+,p_show_row_number=>false
+,p_settings_area_expanded=>true
+);
+wwv_flow_imp_page.create_ig_report_view(
+ p_id=>wwv_flow_imp.id(24611098481231908)
+,p_report_id=>wwv_flow_imp.id(24610869775231907)
+,p_view_type=>'GRID'
+,p_srv_exclude_null_values=>false
+,p_srv_only_display_columns=>true
+,p_edit_mode=>false
+);
+wwv_flow_imp_page.create_ig_report_column(
+ p_id=>wwv_flow_imp.id(24612181844231915)
+,p_view_id=>wwv_flow_imp.id(24611098481231908)
+,p_display_seq=>0
+,p_column_id=>wwv_flow_imp.id(24611752916231913)
+,p_is_visible=>true
+,p_is_frozen=>false
+);
+wwv_flow_imp_page.create_ig_report_column(
+ p_id=>wwv_flow_imp.id(24613165948231917)
+,p_view_id=>wwv_flow_imp.id(24611098481231908)
+,p_display_seq=>1
+,p_column_id=>wwv_flow_imp.id(24612792903231917)
+,p_is_visible=>true
+,p_is_frozen=>false
+);
+wwv_flow_imp_page.create_ig_report_column(
+ p_id=>wwv_flow_imp.id(24614199214231919)
+,p_view_id=>wwv_flow_imp.id(24611098481231908)
+,p_display_seq=>2
+,p_column_id=>wwv_flow_imp.id(24613733375231918)
+,p_is_visible=>true
+,p_is_frozen=>false
+);
+wwv_flow_imp_page.create_page_process(
+ p_id=>wwv_flow_imp.id(24614731432231922)
+,p_process_sequence=>10
+,p_process_point=>'AFTER_SUBMIT'
+,p_region_id=>wwv_flow_imp.id(24609944349231903)
+,p_process_type=>'NATIVE_IG_DML'
+,p_process_name=>'Tenant Child Update - Save Interactive Grid Data'
+,p_attribute_01=>'REGION_SOURCE'
+,p_attribute_05=>'Y'
+,p_attribute_06=>'Y'
+,p_attribute_08=>'Y'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_internal_uid=>24614731432231922
 );
 end;
 /
