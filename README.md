@@ -85,6 +85,7 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 - OCI_PRICE_LIST - Has the price list and the cost per product
 - OCI_LOAD_STATUS - Has the load file statistics
 - OCI_TENANT - Has the display name of the child tenants (Manual Update)
+- OCI_INTERNAL_COST - Used for internal rate cards
 
 ## 3rd Party Dependencies including tested versions
 

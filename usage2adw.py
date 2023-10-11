@@ -62,6 +62,7 @@
 # - OCI_PRICE_LIST - Hold the price list and the cost per product
 # - OCI_LOAD_STATUS - Load Statistics table
 # - OCI_TENANT - tenant information
+# - OCI_INTERNAL_COST - used for internal rate cards
 ##########################################################################
 import sys
 import argparse
@@ -76,7 +77,7 @@ import time
 import base64
 
 
-version = "23.10.15"
+version = "23.10.16"
 usage_report_namespace = "bling"
 work_report_dir = os.curdir + "/work_report_dir"
 
@@ -371,6 +372,31 @@ def check_database_table_structure_usage(connection, tenant_name):
                 print("   Table OCI_TENANT created")
             else:
                 print("   Table OCI_TENANT exist")
+
+            # check if OCI_INTERNAL_COST table exist, if not create
+            sql = "select count(*) from user_tables where table_name = 'OCI_INTERNAL_COST'"
+            cursor.execute(sql)
+            val, = cursor.fetchone()
+
+            # if table not exist, create it
+            if val == 0:
+                print("   Table OCI_INTERNAL_COST was not exist, creating")
+                sql = """create table OCI_INTERNAL_COST (
+                    RESOURCE_NAME       VARCHAR2(100) NOT NULL,
+                    SERVICE_NAME        VARCHAR2(100),
+                    BILLED_USAGE_UNIT   VARCHAR2(100),
+                    CONSUMED_MEASURE    VARCHAR2(100),
+                    RESOURCE_UNITS      VARCHAR2(100),
+                    UNIT_COST           NUMBER,
+                    CONVERSION_FACTOR   NUMBER,
+                    EXIST_IN_FINANCE    CHAR(1),
+                    CONVERSION_NOTES    VARCHAR2(500),
+                    CONSTRAINT OCI_INTERNAL_COST_PK PRIMARY KEY (RESOURCE_NAME,BILLED_USAGE_UNIT) USING INDEX ENABLE
+                )"""
+                cursor.execute(sql)
+                print("   Table OCI_INTERNAL_COST created")
+            else:
+                print("   Table OCI_INTERNAL_COST exist")
 
             # check if OCI_USAGE table exist, if not create
             sql = "select count(*) from user_tables where table_name = 'OCI_USAGE'"
