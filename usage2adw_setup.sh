@@ -525,7 +525,7 @@ SetupApp()
    -------------------------------
    prompt Creating Table OCI_TENANT
 
-   create table OCI_USAGE (
+   create table OCI_TENANT (
       TENANT_ID               VARCHAR2(100),
       TENANT_NAME             VARCHAR2(100),
       CONSTRAINT OCI_TENANT_PK PRIMARY KEY (TENANT_ID) USING INDEX
