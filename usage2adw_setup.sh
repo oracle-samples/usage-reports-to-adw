@@ -807,6 +807,9 @@ DropTables()
    prompt Dropping Table OCI_USAGE
    drop table usage.OCI_USAGE ;
 
+   prompt Dropping Table OCI_TENANT
+   drop table usage.OCI_TENANT ;
+
    prompt Dropping Table OCI_USAGE_STATS
    drop table usage.OCI_USAGE_STATS ;
 
@@ -868,6 +871,9 @@ TruncateTables()
    echo "Internal LOG=$slog" | tee -a $LOG
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
    select to_char(sysdate,'YYYY-MM-DD HH24:MI') current_date from dual;
+
+   prompt Truncating Table OCI_TENANT
+   truncate table usage.OCI_TENANT ;
 
    prompt Truncating Table OCI_USAGE
    truncate table usage.OCI_USAGE ;
