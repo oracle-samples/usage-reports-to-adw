@@ -87,7 +87,7 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 
 ## 3rd Party Dependencies including tested versions
 
-- Python 3.9.13_2
+- Python 3.9.16
 - oracledb 1.3.2
 - requests 2.31.0
 - OCI Python SDK 2.107.0
