@@ -528,6 +528,8 @@ SetupApp()
    create table OCI_TENANT (
       TENANT_ID               VARCHAR2(100),
       TENANT_NAME             VARCHAR2(100),
+      ADMIN_EMAIL             VARCHAR2(100),
+      INFORMATION             VARCHAR2(1000),
       CONSTRAINT OCI_TENANT_PK PRIMARY KEY (TENANT_ID) USING INDEX
    );
 
