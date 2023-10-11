@@ -84,6 +84,7 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 - OCI_COST_REFERENCE - Reference table of the cost filter keys - SERVICE, REGION, COMPARTMENT, PRODUCT, SUBSCRIPTION
 - OCI_PRICE_LIST - Has the price list and the cost per product
 - OCI_LOAD_STATUS - Has the load file statistics
+- OCI_TENANT - Has the display name of the child tenants (Manual Update)
 
 ## 3rd Party Dependencies including tested versions
 
