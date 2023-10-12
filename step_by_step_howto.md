@@ -217,7 +217,23 @@ https://docs.cloud.oracle.com/en-us/iaas/Content/Email/Tasks/configuresmtpconnec
 
 Example For Ashburn - smtp.us-ashburn-1.oraclecloud.com
 
-### 7.4. Setup postfix e-mail - part #1 - main.cf
+### 7.4. Install Postfix
+
+Following the documentation - https://docs.oracle.com/en/learn/oracle-linux-postfix
+
+Tested on Oracle Linux 8.
+
+```
+sudo dnf install -y postfix
+sudo firewall-cmd --zone=public --add-service=smtp --permanent
+sudo firewall-cmd --reload
+sudo dnf remove -y sendmail
+sudo alternatives --set mta /usr/sbin/sendmail.postfix
+sudo systemctl enable --now postfix
+sudo dnf install -y mailx
+```
+
+### 7.5. Setup postfix e-mail - part #1 - main.cf
 
 Following the documentation - https://docs.cloud.oracle.com/en-us/iaas/Content/Email/Reference/postfix.htm
 
@@ -236,10 +252,10 @@ smtp_sasl_security_options =
 smtpd_use_tls = yes
 
 # Update relayhost to include your SMTP connection endpoint and port. take it from item #3
-relayhost = smtp.us-ashburn-1.oraclecloud.com:587	
+relayhost = smtp.us-ashburn-1.oraclecloud.com:587
 ```
 
-### 7.5. Setup postfix e-mail - part #2 - sasl_passwd
+### 7.6. Setup postfix e-mail - part #2 - sasl_passwd
 
 ```
 sudo vi /etc/postfix/sasl_passwd
@@ -254,7 +270,7 @@ sudo chown root:root /etc/postfix/sasl_passwd && sudo chmod 600 /etc/postfix/sas
 sudo postmap hash:/etc/postfix/sasl_passwd
 ```
 
-### 7.6. Setup postfix e-mail - part #3 - Reload Postfix
+### 7.7. Setup postfix e-mail - part #3 - Reload Postfix
 
 ```
 # if postfix running - run start else reload
@@ -263,14 +279,14 @@ sudo postfix start
 sudo postfix reload
 ```
 
-### 7.7. Setup postfix e-mail - part #4 - Test Mail
+### 7.8. Setup postfix e-mail - part #4 - Test Mail
 
 ```
 # Test e-mail
-echo "This is a test message" | mail -s "Test" -r "report@oracleemaildelivery.com" youremail@yourdomain.com
+echo "This is a test message" | mail -s "Test" -r "approved@sendermail" youremail@yourdomain.com
 ```
 
-### 7.8. Clone the OCI Python SDK Repo from Git Hub
+### 7.9. Clone the OCI Python SDK Repo from Git Hub
 
 ```
 # Required if previous clone not includes run_daily_report.sh
@@ -281,7 +297,7 @@ cd usage_reports_to_adw/shell_scripts
 chmod +x run_daily_report.sh
 ```
 
-### 7.9. Update script parameters
+### 7.10. Update script parameters
 
 ```
 # update run_daily_report.sh for the database connection and mail info details
@@ -293,13 +309,13 @@ export MAIL_FROM_EMAIL="report@oracleemaildelivery.com"
 export MAIL_TO="oci.user@oracle.com"
 ```
 
-### 7.10. Execute the script
+### 7.11. Execute the script
 
 ```
 ./run_daily_report.sh
 ```
 
-### 7.11. Add crontab to run daily at 7am
+### 7.12. Add crontab to run daily at 7am
 
 ```
 # add the line to the crontab using - crontab -e
