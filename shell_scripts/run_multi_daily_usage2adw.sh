@@ -27,7 +27,7 @@ cd $APPDIR
 # database info
 export DATABASE_USER=`grep "^DATABASE_USER" $CREDFILE | sed -s 's/DATABASE_USER=//'`
 export DATABASE_NAME=`grep "^DATABASE_NAME" $CREDFILE | sed -s 's/DATABASE_NAME=//'`
-export TAG1_SPECIAL=`grep "^TAG1_SPECIAL" $CREDFILE| sed -s 's/TAG1_SPECIAL=//'`
+export TAG1_SPECIAL=`grep "^TAG_SPECIAL" $CREDFILE| sed -s 's/TAG_SPECIAL=//'`
 export TAG2_SPECIAL=`grep "^TAG2_SPECIAL" $CREDFILE| sed -s 's/TAG2_SPECIAL=//'`
 export EXTRACT_DATE=`grep "^EXTRACT_DATE" $CREDFILE| sed -s 's/EXTRACT_DATE=//'`
 export DATABASE_SECRET_ID=`grep "^DATABASE_SECRET_ID" $CREDFILE | sed -s 's/DATABASE_SECRET_ID=//'`
