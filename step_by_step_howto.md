@@ -35,6 +35,7 @@ and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/
 
 [13. Sample of database queries](#13-sample-of-database-queries)
 
+
 ## 1. How to create additional APEX End User Accounts
 
 ```
@@ -95,6 +96,21 @@ cd ADWCUSG
 Edit tnsnames.ora file and change the tnsnames *_low entry host to the private end point specify in the ADW page
 
 ## 3. How to add multiple tenants
+
+
+### 3.1 Create group and user for authentication at additional tenancy
+
+```
+Policy -> 
+--> Name = UsageDownloadPolicy
+--> Desc = Allow Group UsageDownloadGroup to Extract Usage report script
+--> Statement 1 = define tenancy usage-report as ocid1.tenancy.oc1..aaaaaaaaned4fkpkisbwjlr56u7cj63lf3wffbilvqknstgtvzub7vhqkggq
+--> Statement 2 = endorse group UsageDownloadGroup to read objects in tenancy usage-report
+--> Statement 3 = Allow group UsageDownloadGroup to inspect compartments in tenancy
+--> Statement 4 = Allow group UsageDownloadGroup to inspect tenancies in tenancy
+```
+
+### 3.2 Add the authentication to the VM
 
 Login to Usage2adw VM
 
