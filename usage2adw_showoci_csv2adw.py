@@ -105,7 +105,7 @@ import os
 import oci
 import base64
 
-version = "23.08.01"
+version = "23.10.19"
 cmd = None
 file_num = 0
 
@@ -2967,22 +2967,34 @@ def handle_table(connection, inputdata, resource_id="", resource_name="", resour
 
                 data = []
                 for row in csv_reader:
+                    primary_key_has_data = True
                     rowarray = []
+
                     for item in inputdata['items']:
                         column = str(item['csv']).strip()
                         if not column:
                             column = str(item['col']).strip()
                         limit_size = 16 if 'date' in item['type'] else 3999
                         value = get_column_value_from_array(column, row, limit_size)
+
+                        # check if primary key is null
+                        if item['pk'] == 'y' and not value:
+                            primary_key_has_data = False
+
+                        # Add col data to the collection
                         rowarray.append(value)
-                    data.append(tuple(rowarray))
-                    num_rows += 1
+
+                    # add row only if pk is  not null
+                    if primary_key_has_data:
+                        data.append(tuple(rowarray))
+                        num_rows += 1
 
                     # executemany every batch size
                     process_location = "before executemany"
-                    if len(data) % batch_size == 0:
-                        cursor.executemany(sql, data)
-                        data = []
+                    if data:
+                        if len(data) % batch_size == 0:
+                            cursor.executemany(sql, data)
+                            data = []
 
                 # if data exist final execute
                 if data:
