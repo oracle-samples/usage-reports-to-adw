@@ -19,7 +19,7 @@ whenever sqlerror exit sql.sqlcode rollback
 begin
 wwv_flow_imp.import_begin (
  p_version_yyyy_mm_dd=>'2023.04.28'
-,p_release=>'23.1.2'
+,p_release=>'23.1.5'
 ,p_default_workspace_id=>8458123041844848
 ,p_default_application_id=>100
 ,p_default_id_offset=>24780123424698023
@@ -33,7 +33,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 -- Application Export:
 --   Application:     100
 --   Name:            OCI Usage and Cost Report
---   Date and Time:   17:40 Wednesday October 11, 2023
+--   Date and Time:   16:20 Monday November 6, 2023
 --   Exported By:     USAGE
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -78,7 +78,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 --       Reports:
 --       E-Mail:
 --     Supporting Objects:  Excluded
---   Version:         23.1.2
+--   Version:         23.1.5
 --   Instance ID:     8458019837672333
 --
 
@@ -140,7 +140,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_string_01=>'APP_NAME'
 ,p_substitution_value_01=>'OCI Usage and Cost Report'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20231011173933'
+,p_last_upd_yyyymmddhh24miss=>'20231106161948'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
 ,p_print_server_type=>'INSTANCE'
@@ -18099,7 +18099,7 @@ wwv_flow_imp_page.create_page(
 ,p_protection_level=>'C'
 ,p_page_component_map=>'18'
 ,p_last_updated_by=>'USAGE'
-,p_last_upd_yyyymmddhh24miss=>'20231009130931'
+,p_last_upd_yyyymmddhh24miss=>'20231106161948'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(76295425801483261)
@@ -18160,6 +18160,8 @@ wwv_flow_imp_page.create_page_plug(
 '		else USG_CONSUMED_UNITS',
 '	end as USG_CONSUMED_UNITS, ',
 '    USG_CONSUMED_MEASURE,',
+'    USG_CONSUMED_UNITS USG_CONSUMED_UNITS_RAW,',
+'    sum(USG_BILLED_QUANTITY) USG_BILLED_QUANTITY_RAW,',
 '    TAG_SPECIAL,',
 '    TAG_SPECIAL2,',
 '    TAGS_DATA',
@@ -18231,7 +18233,9 @@ wwv_flow_imp_page.create_page_plug(
 ,p_prn_border_width=>.5
 ,p_prn_page_header_alignment=>'CENTER'
 ,p_prn_page_footer_alignment=>'CENTER'
-,p_plug_footer=>'<b><small>*** Resource Name only available from ShowOCI and not for all resources</small></b>'
+,p_plug_footer=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<b><small>*** Resource Name only available from ShowOCI and not for all resources</small></b><br>',
+'<b><small>*** To Convert from GB_MS to GB per Hour, Divide by 3,6000,000 (60*60*1000), and to convert to monthly fraction divide by 744 (24*60)</small></b><br>'))
 );
 wwv_flow_imp_page.create_worksheet(
  p_id=>wwv_flow_imp.id(76295665236483264)
@@ -18310,7 +18314,7 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#USG_BILLED_QUANTITY#</span>'
 ,p_column_type=>'NUMBER'
 ,p_column_alignment=>'RIGHT'
-,p_format_mask=>'999G999G999G999G990'
+,p_format_mask=>'999G999G999G999G990D000'
 ,p_use_as_row_header=>'N'
 );
 wwv_flow_imp_page.create_worksheet_column(
@@ -18326,7 +18330,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(76296549045483272)
 ,p_db_column_name=>'USG_CONSUMED_MEASURE'
-,p_display_order=>80
+,p_display_order=>90
 ,p_column_identifier=>'H'
 ,p_column_label=>'Usg Consumed Measure'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#USG_CONSUMED_MEASURE#</span>'
@@ -18334,9 +18338,33 @@ wwv_flow_imp_page.create_worksheet_column(
 ,p_use_as_row_header=>'N'
 );
 wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(24627284121398115)
+,p_db_column_name=>'USG_BILLED_QUANTITY_RAW'
+,p_display_order=>100
+,p_column_identifier=>'T'
+,p_column_label=>'Usg Billed Quantity Raw'
+,p_column_html_expression=>'<span style="white-space:nowrap;">#USG_BILLED_QUANTITY_RAW#</span>'
+,p_column_type=>'NUMBER'
+,p_heading_alignment=>'RIGHT'
+,p_column_alignment=>'RIGHT'
+,p_format_mask=>'999G999G999G999G990D000'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
+ p_id=>wwv_flow_imp.id(24627106773398114)
+,p_db_column_name=>'USG_CONSUMED_UNITS_RAW'
+,p_display_order=>110
+,p_column_identifier=>'S'
+,p_column_label=>'Usg Consumed Units Raw'
+,p_column_html_expression=>'<span style="white-space:nowrap;">#USG_CONSUMED_UNITS_RAW#</span>'
+,p_column_type=>'STRING'
+,p_heading_alignment=>'LEFT'
+,p_use_as_row_header=>'N'
+);
+wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(76315266140458881)
 ,p_db_column_name=>'USAGE_INTERVAL_START'
-,p_display_order=>90
+,p_display_order=>130
 ,p_column_identifier=>'I'
 ,p_column_label=>'Usage Interval Start'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#USAGE_INTERVAL_START#</span>'
@@ -18349,7 +18377,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(76315451371458882)
 ,p_db_column_name=>'USAGE_INTERVAL_END'
-,p_display_order=>100
+,p_display_order=>140
 ,p_column_identifier=>'J'
 ,p_column_label=>'Usage Interval End'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#USAGE_INTERVAL_END#</span>'
@@ -18362,7 +18390,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(77204896031908477)
 ,p_db_column_name=>'TAGS_DATA'
-,p_display_order=>120
+,p_display_order=>150
 ,p_column_identifier=>'L'
 ,p_column_label=>'Tags Data (Separated by #)'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAGS_DATA#</span>'
@@ -18373,7 +18401,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(78696071317316989)
 ,p_db_column_name=>'TENANT_ID'
-,p_display_order=>130
+,p_display_order=>160
 ,p_column_identifier=>'M'
 ,p_column_label=>'Tenant Id'
 ,p_column_type=>'STRING'
@@ -18382,7 +18410,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(63538015142388477)
 ,p_db_column_name=>'TENANT_NAME'
-,p_display_order=>140
+,p_display_order=>170
 ,p_column_identifier=>'R'
 ,p_column_label=>'Tenant Display Name'
 ,p_column_type=>'STRING'
@@ -18392,7 +18420,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(78179463099919984)
 ,p_db_column_name=>'TAG_SPECIAL'
-,p_display_order=>150
+,p_display_order=>180
 ,p_column_identifier=>'N'
 ,p_column_label=>'Tag Special 1'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAG_SPECIAL#</span>'
@@ -18402,7 +18430,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(101163353664215201)
 ,p_db_column_name=>'TAG_SPECIAL2'
-,p_display_order=>160
+,p_display_order=>190
 ,p_column_identifier=>'P'
 ,p_column_label=>'Tag Special 2'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#TAG_SPECIAL2#</span>'
@@ -18412,7 +18440,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(98630572992558601)
 ,p_db_column_name=>'USG_RESOURCE_ID'
-,p_display_order=>170
+,p_display_order=>200
 ,p_column_identifier=>'O'
 ,p_column_label=>'Resource Id'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#USG_RESOURCE_ID#</span>'
@@ -18422,7 +18450,7 @@ wwv_flow_imp_page.create_worksheet_column(
 wwv_flow_imp_page.create_worksheet_column(
  p_id=>wwv_flow_imp.id(60194147536813446)
 ,p_db_column_name=>'RESOURCE_NAME'
-,p_display_order=>180
+,p_display_order=>210
 ,p_column_identifier=>'Q'
 ,p_column_label=>'Resource Name'
 ,p_column_html_expression=>'<span style="white-space:nowrap;">#RESOURCE_NAME#</span>'
@@ -18438,8 +18466,8 @@ wwv_flow_imp_page.create_worksheet_rpt(
 ,p_report_alias=>'99175'
 ,p_status=>'PUBLIC'
 ,p_is_default=>'Y'
-,p_report_columns=>'TENANT_ID:TENANT_NAME:PRD_COMPARTMENT_PATH:PRD_COMPARTMENT_NAME:PRD_REGION:PRD_SERVICE:PRD_RESOURCE:USG_BILLED_QUANTITY:USG_CONSUMED_UNITS:USG_CONSUMED_MEASURE:USAGE_INTERVAL_START:USAGE_INTERVAL_END:TAG_SPECIAL:TAG_SPECIAL2:USG_RESOURCE_ID:RESOURCE_'
-||'NAME:TAGS_DATA:'
+,p_report_columns=>'TENANT_ID:TENANT_NAME:PRD_COMPARTMENT_PATH:PRD_COMPARTMENT_NAME:PRD_REGION:PRD_SERVICE:PRD_RESOURCE:USG_BILLED_QUANTITY:USG_CONSUMED_UNITS:USG_BILLED_QUANTITY_RAW:USG_CONSUMED_UNITS_RAW:USG_CONSUMED_MEASURE:USAGE_INTERVAL_START:USAGE_INTERVAL_END:TAG'
+||'_SPECIAL:TAG_SPECIAL2:USG_RESOURCE_ID:RESOURCE_NAME:TAGS_DATA:'
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(98628138515558576)
@@ -18908,6 +18936,9 @@ wwv_flow_imp_page.create_jet_chart_series(
 ,p_items_label_font_size=>'8'
 ,p_threshold_display=>'onIndicator'
 );
+end;
+/
+begin
 wwv_flow_imp_page.create_jet_chart_axis(
  p_id=>wwv_flow_imp.id(76297620228483283)
 ,p_chart_id=>wwv_flow_imp.id(76297346160483280)
@@ -18929,9 +18960,6 @@ wwv_flow_imp_page.create_jet_chart_axis(
 ,p_zoom_order_quarters=>false
 ,p_zoom_order_years=>false
 );
-end;
-/
-begin
 wwv_flow_imp_page.create_jet_chart_axis(
  p_id=>wwv_flow_imp.id(76297554384483282)
 ,p_chart_id=>wwv_flow_imp.id(76297346160483280)
