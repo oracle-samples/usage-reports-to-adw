@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=23.10.16
+export VERSION=23.12.01
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -479,8 +479,8 @@ SetupApp()
       echo "   Error querying OCI, please check the log $slog" | tee -a $LOG
       echo "   Please check the documentation to have the dynamic group and policy correctted" | tee -a $LOG
       echo "   Once fixed you can rerun the script $SCRIPT" | tee -a $LOG
-      echo "   Abort" | tee -a $LOG
-      exit 1
+      echo "" | tee -a $LOG
+      echo "   Script will continue incase creating the database on different tenant or child tenant..." | tee -a $LOG
    else
       echo "   Okay." | tee -a $LOG
    fi
