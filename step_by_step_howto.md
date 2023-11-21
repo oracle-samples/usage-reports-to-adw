@@ -13,7 +13,9 @@ and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/
 
 [2. How to change Autonomous Database to Private End Point](#2-how-to-change-autonomous-database-to-private-end-point)
 
-[3. How to add multiple tenants](#3-how-to-add-multiple-tenants)
+[3a. How to install Usage2ADW on child tenant fetching cost and usage reports from parent tenant](#3a-how-to-install-usage2adw-on-child-tenant-fetching-cost-and-usage-reports-from-parent-tenant)
+
+[3b. How to add multiple tenants](#3b-how-to-add-multiple-tenants)
 
 [4. How to upgrade the usage2adw application and APEX](#4-how-to-upgrade-the-usage2adw-application-and-apex)
 
@@ -95,7 +97,15 @@ cd ADWCUSG
 
 Edit tnsnames.ora file and change the tnsnames *_low entry host to the private end point specify in the ADW page
 
-## 3. How to add multiple tenants
+## 3a. How to install Usage2ADW on child tenant fetching cost and usage reports from parent tenant
+
+```
+Install Usage2ADW on the child tenant following the installation guide.
+Create User authentication on parent tenant as describe in the following section (3.1)
+update run_multi_daily_usage2adw.sh file as describe in section (3.2) and remove the "run_report local" 
+```
+
+## 3b. How to add multiple tenants
 
 
 ### 3.1 Create group and user for authentication at additional tenancy
