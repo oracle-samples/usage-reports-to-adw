@@ -101,8 +101,8 @@ Edit tnsnames.ora file and change the tnsnames *_low entry host to the private e
 
 ```
 Install Usage2ADW on the child tenant following the installation guide.
-Create User authentication on parent tenant as describe in the following section (3.1)
-update run_multi_daily_usage2adw.sh file as describe in section (3.2) and remove the "run_report local" 
+Create User authentication on parent tenant as described in the following section (3.1)
+update run_multi_daily_usage2adw.sh file as described in section (3.2) and remove the "run_report local" 
 ```
 
 ## 3b. How to add multiple tenants
