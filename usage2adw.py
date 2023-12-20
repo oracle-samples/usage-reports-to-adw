@@ -77,8 +77,7 @@ import time
 import base64
 
 
-version = "23.10.16"
-usage_report_namespace = "bling"
+version = "23.12.20"
 work_report_dir = os.curdir + "/work_report_dir"
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client
@@ -328,6 +327,8 @@ def set_parser_arguments():
     parser.add_argument('-sc', action='store_true', default=False, dest='skip_cost', help='Skip Load Cost Files')
     parser.add_argument('-sr', action='store_true', default=False, dest='skip_rate', help='Skip Public Rate API')
     parser.add_argument('-ip', action='store_true', default=False, dest='instance_principals', help='Use Instance Principals for Authentication')
+    parser.add_argument('-bn', default="", dest='bucket_name', help='Override Bucket Name for Cost and Usage Files')
+    parser.add_argument('-ns', default="bling", dest='namespace_name', help='Override Namespace Name for Cost and Usage Files (default=bling)')
     parser.add_argument('-du', default="", dest='duser', help='ADB User')
     parser.add_argument('-dn', default="", dest='dname', help='ADB Name')
     parser.add_argument('-ds', default="", dest='dsecret_id', help='ADB Secret Id')
@@ -1492,7 +1493,7 @@ def check_database_table_structure_load_status(connection):
 #########################################################################
 # Load Cost File
 ##########################################################################
-def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, tenancy, compartments, file_num, total_files):
+def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, tenancy, compartments, file_num, total_files, costusage_namespace_name, costusage_bucket_name):
     start_time = time.time()
     start_time_str = get_current_date_time()
     num_files = 0
@@ -1533,7 +1534,7 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
         print("\n   Processing file " + file_name_full + " - " + str(file_size_mb) + " MB, " + file_time + ", #" + str(file_num) + "/" + str(total_files))
 
         # download file
-        object_details = object_storage.get_object(usage_report_namespace, str(tenancy.id), o.name)
+        object_details = object_storage.get_object(costusage_namespace_name, costusage_bucket_name, o.name)
         with open(path_filename, 'wb') as f:
             for chunk in object_details.data.raw.stream(1024 * 1024, decode_content=False):
                 f.write(chunk)
@@ -1656,6 +1657,10 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
                     cost_overageFlag = get_column_value_from_array('cost/overageFlag', row)
                     lineItem_isCorrection = get_column_value_from_array('lineItem/isCorrection', row)
 
+                    # Check if cost_subscriptionId is number if not assign "" for internal tenant which assigned tenant_id to the subscriptions
+                    if not str(cost_subscriptionId).replace(".", "").isnumeric():
+                        cost_subscriptionId = ""
+
                     # OCI changed the column billingUnitReadable to skuUnitDescription
                     if 'cost/skuUnitDescription' in row:
                         cost_billingUnitReadable = get_column_value_from_array('cost/skuUnitDescription', row)
@@ -1765,7 +1770,7 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
 #########################################################################
 # Load Usage File
 ##########################################################################
-def load_usage_file(connection, object_storage, object_file, max_file_id, cmd, tenancy, compartments, file_num, total_files):
+def load_usage_file(connection, object_storage, object_file, max_file_id, cmd, tenancy, compartments, file_num, total_files, costusage_namespace_name, costusage_bucket_name):
     start_time = time.time()
     start_time_str = get_current_date_time()
     num_files = 0
@@ -1805,7 +1810,7 @@ def load_usage_file(connection, object_storage, object_file, max_file_id, cmd, t
         print("\n   Processing file " + o.name + " - " + str(round(o.size / 1024 / 1024)) + " MB, " + file_time + ", #" + str(file_num) + "/" + str(total_files))
 
         # download file
-        object_details = object_storage.get_object(usage_report_namespace, str(tenancy.id), o.name)
+        object_details = object_storage.get_object(costusage_namespace_name, costusage_bucket_name, o.name)
         with open(path_filename, 'wb') as f:
             for chunk in object_details.data.raw.stream(1024 * 1024, decode_content=False):
                 f.write(chunk)
@@ -1987,6 +1992,12 @@ def main_process():
     config, signer = create_signer(cmd)
 
     ############################################
+    # namnespace and bucket name
+    ############################################
+    costusage_bucket_name = ""
+    costusage_namespace_name = cmd.namespace_name
+
+    ############################################
     # Start
     ############################################
     print_header("Running Usage Load to ADW", 0)
@@ -2023,10 +2034,15 @@ def main_process():
             if reg.is_home_region:
                 tenancy_home_region = str(reg.region_name)
 
-        print("   Tenant Name : " + str(tenancy.name))
-        print("   Tenant Id   : " + tenancy.id)
-        print("   App Version : " + version)
-        print("   Home Region : " + tenancy_home_region)
+        # cost usage bucket name
+        costusage_bucket_name = cmd.bucket_name if cmd.bucket_name else str(tenancy.id)
+
+        print("   Tenant Name  : " + str(tenancy.name))
+        print("   Tenant Id    : " + tenancy.id)
+        print("   App Version  : " + version)
+        print("   Home Region  : " + tenancy_home_region)
+        print("   OS Namespace : " + costusage_namespace_name)
+        print("   OS Bucket    : " + costusage_bucket_name)
         print("")
 
         # set signer home region
@@ -2104,12 +2120,12 @@ def main_process():
             usage_num = 0
             if not cmd.skip_usage:
                 print("\nHandling Usage Report... started at " + get_current_date_time())
-                objects = oci.pagination.list_call_get_all_results(object_storage.list_objects, usage_report_namespace, str(tenancy.id), fields="timeCreated,size", prefix="reports/usage-csv/", start="reports/usage-csv/" + max_usage_file_id).data
+                objects = oci.pagination.list_call_get_all_results(object_storage.list_objects, costusage_namespace_name, costusage_bucket_name, fields="timeCreated,size", prefix="reports/usage-csv/", start="reports/usage-csv/" + max_usage_file_id).data
 
                 total_files = len(objects.objects)
                 print("Total " + str(total_files) + " usage files found to scan...")
                 for index, object_file in enumerate(objects.objects, start=1):
-                    usage_num += load_usage_file(connection, object_storage, object_file, max_usage_file_id, cmd, tenancy, compartments, index, total_files)
+                    usage_num += load_usage_file(connection, object_storage, object_file, max_usage_file_id, cmd, tenancy, compartments, index, total_files, costusage_namespace_name, costusage_bucket_name)
                 print("\n   Total " + str(usage_num) + " Usage Files Loaded, conmpleted at " + get_current_date_time())
 
             #############################
@@ -2126,12 +2142,12 @@ def main_process():
             cost_num = 0
             if not cmd.skip_cost:
                 print("\nHandling Cost Report... started at " + get_current_date_time())
-                objects = oci.pagination.list_call_get_all_results(object_storage.list_objects, usage_report_namespace, str(tenancy.id), fields="timeCreated,size", prefix="reports/cost-csv/", start="reports/cost-csv/" + max_cost_file_id).data
+                objects = oci.pagination.list_call_get_all_results(object_storage.list_objects, costusage_namespace_name, costusage_bucket_name, fields="timeCreated,size", prefix="reports/cost-csv/", start="reports/cost-csv/" + max_cost_file_id).data
 
                 total_files = len(objects.objects)
                 print("Total " + str(total_files) + " cost files found to scan...")
                 for index, object_file in enumerate(objects.objects, start=1):
-                    cost_num += load_cost_file(connection, object_storage, object_file, max_cost_file_id, cmd, tenancy, compartments, index, total_files)
+                    cost_num += load_cost_file(connection, object_storage, object_file, max_cost_file_id, cmd, tenancy, compartments, index, total_files, costusage_namespace_name, costusage_bucket_name)
                 print("\n   Total " + str(cost_num) + " Cost Files Loaded, completed at " + get_current_date_time())
 
             # Handle Index structure if not exist
