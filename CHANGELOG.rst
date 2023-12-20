@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+23.12.20 - 2023.12.20
+=====================
+* Added new flags -nm for override namespace and -bn for override bucketname
+
+=====================
 23.10.15 - 2023.10.15
 =====================
 * Added OCI_TENANT table for child tenant display name
