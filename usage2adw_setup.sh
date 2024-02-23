@@ -1,11 +1,11 @@
 #!/bin/bash
 #############################################################################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2024, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #
 # Usage2ADW main Setup script
 # 
-# Written by Adi Zohar, October 2020, Amended Aug 2023
+# Written by Adi Zohar, October 2020, Amended Feb 2024
 #
 # Git Location     = https://github.com/oracle-samples/usage-reports-to-adw
 # Git Raw Location = https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main
@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=23.12.01
+export VERSION=24.03.01
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -970,23 +970,29 @@ SetupOL8Packages()
    ###########################################
    # Install Oracle Instant Client
    ###########################################
+   export RPM_BAS=oracle-instantclient19.22-basic-19.22.0.0.0-1.x86_64
+   export RPM_SQL=oracle-instantclient19.22-sqlplus-19.22.0.0.0-1.x86_64
+   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1922000/
+   export RPM_LOC=/usr/lib/oracle/19.22
+
    echo "" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
    echo "# 2. Install Oracle Instant Client 19c" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
    sudo dnf install -y libnsl | tee -a $LOG
 
-   echo "Installing oracle-instantclient19.19-basic-19.19.0.0.0-1.x86_64.rpm" | tee -a $LOG
-   sudo rpm -i https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-basic-19.19.0.0.0-1.x86_64.rpm | tee -a $LOG
+   echo "Installing ${RPM_BAS}.rpm" | tee -a $LOG
+   sudo rpm -i ${RPM_LNK}${RPM_BAS}.rpm | tee -a $LOG
 
-   echo "Installing oracle-instantclient19.19-sqlplus-19.19.0.0.0-1.x86_64.rpm" | tee -a $LOG
-   sudo rpm -i https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-sqlplus-19.19.0.0.0-1.x86_64.rpm | tee -a $LOG
+   echo "Installing ${RPM_SQL}.rpm" | tee -a $LOG
+   sudo rpm -i ${RPM_LNK}${RPM_SQL}.rpm | tee -a $LOG
+
    sudo rm -f /usr/lib/oracle/current | tee -a $LOG
-   sudo ln -s /usr/lib/oracle/19.19 /usr/lib/oracle/current | tee -a $LOG
+   sudo ln -s $RPM_LOC /usr/lib/oracle/current | tee -a $LOG
 
    # Check if installed
-   echo "Check Installation... Can take a minute..." | tee -a $LOG
-   dnf list |grep oracle-instantclient
+   echo "Check Installation... " | tee -a $LOG
+   rpm -q $RPM_BAS $RPM_SQL | tee -a $LOG
    if [ $? -eq 0 ]; then
       echo "   Completed." | tee -a $LOG
    else

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 ##########################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.
+# Copyright (c) 2024, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/
 #
 # DISCLAIMER This is not an official Oracle application,  It does not supported by Oracle Support,
@@ -77,7 +77,7 @@ import time
 import base64
 
 
-version = "23.12.20"
+version = "24.03.01"
 work_report_dir = os.curdir + "/work_report_dir"
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client

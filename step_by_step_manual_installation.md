@@ -101,11 +101,11 @@ python3 -m pip install --upgrade oci oracledb requests
 
 4. install oracle instant client 19
 sudo dnf install -y libnsl
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-basic-19.19.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-sqlplus-19.19.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-tools-19.19.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-basic-19.22.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-sqlplus-19.22.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-tools-19.22.0.0.0-1.x86_64.rpm
 sudo rm -f /usr/lib/oracle/current
-sudo ln -s /usr/lib/oracle/19.19 /usr/lib/oracle/current
+sudo ln -s /usr/lib/oracle/19.22 /usr/lib/oracle/current
 
 # setup oracle home variables
 # Add the below to $HOME/.bashrc:
@@ -348,5 +348,5 @@ Please Visit [How To File](step_by_step_howto.md)
 
 ## License
 
-Copyright (c) 2023, Oracle and/or its affiliates.
+Copyright (c) 2024, Oracle and/or its affiliates.
 Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/
