@@ -6,7 +6,7 @@
 [cost analysis](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/costanalysisoverview.htm) 
 and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm) features should be used instead.**
 
-**Developed by Adi Zohar, 2020-2023**
+**Developed by Adi Zohar, 2020-2024**
 
 ## Content
 [1. How to create additional APEX End User Accounts](#1-how-to-create-additional-apex-end-user-accounts)
@@ -195,11 +195,11 @@ If you deployed usage2adw before Jan 2022 you may need to download new Oracle In
 sudo dnf install -y libnsl
 
 # Install 19.19:
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-basic-19.19.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-sqlplus-19.19.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1919000/oracle-instantclient19.19-tools-19.19.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-basic-19.22.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-sqlplus-19.22.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-tools-19.22.0.0.0-1.x86_64.rpm
 sudo rm -f /usr/lib/oracle/current
-sudo ln -s /usr/lib/oracle/19.19 /usr/lib/oracle/current
+sudo ln -s /usr/lib/oracle/19.22 /usr/lib/oracle/current
 
 # Check by running the application
 $HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
