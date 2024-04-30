@@ -11,7 +11,10 @@ It uses APEX for Visualization and generates Daily e-mail report.
 [cost analysis](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/costanalysisoverview.htm) 
 and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm) features should be used instead.**
 
-**Developed by Adi Zohar, 2020-2023**
+For application issues, please open ticket at [github issues](https://github.com/oracle-samples/usage-reports-to-adw/issues) 
+
+
+**Developed by Adi Zohar, 2020-2024**
 
 ## Documentation
 
@@ -90,9 +93,9 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 ## 3rd Party Dependencies including tested versions
 
 - Python 3.9.16
-- oracledb 1.3.2
+- oracledb 2.1.0
 - requests 2.31.0
-- OCI Python SDK 2.107.0
+- OCI Python SDK 2.122.0
 
 ## Contributing
 
@@ -106,7 +109,7 @@ Please consult the [security guide](./SECURITY.md) for our responsible security 
 
 ## License
 
-Copyright (c) 2023, Oracle and/or its affiliates. 
+Copyright (c) 2024, Oracle and/or its affiliates. 
 Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 
 See [LICENSE](./LICENSE.txt) for details.
