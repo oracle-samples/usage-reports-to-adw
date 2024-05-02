@@ -107,6 +107,22 @@ Before submitting a pull request, please [review our contribution guide](./CONTR
 
 Please consult the [security guide](./SECURITY.md) for our responsible security vulnerability disclosure process
 
+## My Other Projects
+
+[1. ShowUsage](https://github.com/oracle/oci-python-sdk/tree/master/examples/showusage)
+
+[2. ShowSubscription](https://github.com/oracle/oci-python-sdk/tree/master/examples/showsubscription)
+
+[3. ShowRewards](https://github.com/oracle/oci-python-sdk/tree/master/examples/showrewards)
+
+[4. List Resources in Tenancy](https://github.com/oracle/oci-python-sdk/tree/master/examples/list_resources_in_tenancy)
+
+[5. Object Storage Tools](https://github.com/oracle/oci-python-sdk/tree/master/examples/object_storage)
+
+[6. Tag Resources in Tenanct](https://github.com/oracle/oci-python-sdk/tree/master/examples/tag_resources_in_tenancy)
+
+[7. ShowOCI](https://github.com/oracle/oci-python-sdk/tree/master/examples/showoci)
+
 ## License
 
 Copyright (c) 2024, Oracle and/or its affiliates. 

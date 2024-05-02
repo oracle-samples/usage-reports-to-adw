@@ -91,7 +91,7 @@ Option to tag the resources
    - APPCOMP is the compartment where the usage2adw will be installed
      
      Dynamic Group:
-         OCI -> Menu -> Identity -> Dynamic Groups -> Create Dynamic Group
+         OCI -> Menu -> Identity -> Default Domain -> Dynamic Groups -> Create Dynamic Group
          --> Name = UsageDownloadGroup 
          --> Desc = Dynamic Group for the Usage Report Compartment
          --> Rule 1 = ANY { instance.compartment.id = 'OCID_Of_Compartment' }
