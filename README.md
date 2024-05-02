@@ -109,19 +109,19 @@ Please consult the [security guide](./SECURITY.md) for our responsible security 
 
 ## My Other Projects
 
-[1. ShowUsage](https://github.com/oracle/oci-python-sdk/tree/master/examples/showusage)
+- [ShowOCI](https://github.com/oracle/oci-python-sdk/tree/master/examples/showoci)
 
-[2. ShowSubscription](https://github.com/oracle/oci-python-sdk/tree/master/examples/showsubscription)
+- [ShowUsage](https://github.com/oracle/oci-python-sdk/tree/master/examples/showusage)
 
-[3. ShowRewards](https://github.com/oracle/oci-python-sdk/tree/master/examples/showrewards)
+- [ShowSubscription](https://github.com/oracle/oci-python-sdk/tree/master/examples/showsubscription)
 
-[4. List Resources in Tenancy](https://github.com/oracle/oci-python-sdk/tree/master/examples/list_resources_in_tenancy)
+- [ShowRewards](https://github.com/oracle/oci-python-sdk/tree/master/examples/showrewards)
 
-[5. Object Storage Tools](https://github.com/oracle/oci-python-sdk/tree/master/examples/object_storage)
+- [List Resources in Tenancy](https://github.com/oracle/oci-python-sdk/tree/master/examples/list_resources_in_tenancy)
 
-[6. Tag Resources in Tenanct](https://github.com/oracle/oci-python-sdk/tree/master/examples/tag_resources_in_tenancy)
+- [Object Storage Tools](https://github.com/oracle/oci-python-sdk/tree/master/examples/object_storage)
 
-[7. ShowOCI](https://github.com/oracle/oci-python-sdk/tree/master/examples/showoci)
+- [Tag Resources in Tenancy](https://github.com/oracle/oci-python-sdk/tree/master/examples/tag_resources_in_tenancy)
 
 ## License
 
