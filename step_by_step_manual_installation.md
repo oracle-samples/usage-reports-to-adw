@@ -33,7 +33,7 @@ Copy Instance Info:
 ## 2. Create Dynamic Group for Instance Principles
 
 ```
-OCI -> Menu -> Identity -> Dynamic Groups -> Create Dynamic Group
+OCI -> Menu -> Identity -> Default Domain -> Dynamic Groups -> Create Dynamic Group
 --> Name = UsageDownloadGroup 
 --> Desc = Dynamic Group for the Usage Report VM
 --> Rule 1 = ANY { instance.id = 'OCID_Of_Step_1_Instance' }
