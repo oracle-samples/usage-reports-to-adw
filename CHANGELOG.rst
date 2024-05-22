@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+24.06.01 - 2024.06.01
+=====================
+* Update Requests to 2.32.1
+
+=====================
 24.03.01 - 2024.03.01
 =====================
 * Update instantclient to version 19.22

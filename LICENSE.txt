@@ -1,6 +1,6 @@
-Usage Report to ADW 24.03.01.
+Usage Report to ADW 24.06.01.
 
-Copyright (c) 2023, Oracle and/or its affiliates. 
+Copyright (c) 2024, Oracle and/or its affiliates. 
 
 The Universal Permissive License (UPL), Version 1.0 
 
