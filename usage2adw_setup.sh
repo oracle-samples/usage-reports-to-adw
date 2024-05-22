@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=24.03.01
+export VERSION=24.06.01
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
