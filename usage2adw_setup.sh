@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=24.06.01
+export VERSION=24.06.03
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -970,10 +970,10 @@ SetupOL8Packages()
    ###########################################
    # Install Oracle Instant Client
    ###########################################
-   export RPM_BAS=oracle-instantclient19.22-basic-19.22.0.0.0-1.x86_64
-   export RPM_SQL=oracle-instantclient19.22-sqlplus-19.22.0.0.0-1.x86_64
-   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1922000/
-   export RPM_LOC=/usr/lib/oracle/19.22
+   export RPM_BAS=oracle-instantclient19.23-basic-19.23.0.0.0-1.x86_64
+   export RPM_SQL=oracle-instantclient19.23-sqlplus-19.23.0.0.0-1.x86_64
+   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1923000/
+   export RPM_LOC=/usr/lib/oracle/19.23
 
    echo "" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
