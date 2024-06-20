@@ -20,13 +20,13 @@ Copyright 2019 Kenneth Reitz
 ___________________________________________________________________________________________
 
 python-oracledb
-* Copyright 2023, Oracle Corporation
+* Copyright 2024, Oracle Corporation
 * License: The Universal Permissive License (UPL), Version 1.0 and The Apache Software License, Version 2.0
 * Source code: https://github.com/oracle/python-oracledb
 * Project home: https://oracle.github.io/python-oracledb/
 
 oci
-* Copyright 2023, Oracle Corporation
+* Copyright 2024, Oracle Corporation
 * License: The Universal Permissive License (UPL), Version 1.0 and The Apache Software License, Version 2.0
 * Source code: https://github.com/oracle/oci-python-sdk
 * Project home: https://github.com/oracle/oci-python-sdk
