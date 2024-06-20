@@ -1,12 +1,12 @@
 #********************************************************************************************
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2024, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #********************************************************************************************
 
 title: Usage2ADW
-description: OCI Usage and Cost Reports to Autonomous Database Version 23.09.10
+description: OCI Usage and Cost Reports to Autonomous Database Version 24.06.03
 schemaVersion: 1.0.0
-version: "20230910"
+version: "20240603"
 locale: "en"
 
 groupings:
@@ -318,6 +318,7 @@ variables:
     enum:
     - VM.Standard.E3.Flex
     - VM.Standard.E4.Flex
+    - VM.Standard.E5.Flex
     - VM.Optimized3.Flex
     - VM.Standard3.Flex
     default: VM.Standard3.Flex
@@ -336,7 +337,7 @@ variables:
     title: Extract usage from date
     description: Please specify the date to extract from, in format (YYYY-MM)
     type: string
-    default: "2023-05"
+    default: "2024-05"
     pattern: "^(2019|202[0-9])-(0[0-9]|1[0-2])$"
     required: true
     visible: true
