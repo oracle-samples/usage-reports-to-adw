@@ -87,6 +87,7 @@
 ##########################################################################
 # TO DO
 ##########################################################################
+# announcements
 # paas_ocvs_vmware
 # edge_waas_policies
 # identity_compartments
@@ -94,6 +95,12 @@
 # identity_domains_idps
 # identity_domains_kmsi
 # identity_domains_policies
+# functions_apps
+# functions_fns
+# network_firewalls_policies
+# database_postgresql
+# datasafe_targets
+# certificates
 ##########################################################################
 
 import sys
@@ -3497,8 +3504,7 @@ def main_process():
             handle_identity_domains_dyngroup(connection)
             handle_identity_domains_groups(connection)
             handle_identity_domains_users(connection)
-            # Can be enabled when idpk added to domain_policies at showoci
-            # handle_identity_policies(connection)
+            handle_identity_policies(connection)
 
     except oracledb.DatabaseError as e:
         print("\nError manipulating database - " + str(e) + "\n")
