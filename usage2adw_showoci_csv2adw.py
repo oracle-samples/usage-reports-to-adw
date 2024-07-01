@@ -6,6 +6,7 @@
 # usage2adw_showoci_csv2adw.py
 #
 # @author: Adi Zohar
+# @contributer: Roy Pillay
 #
 # coding: utf-8
 ##########################################################################
@@ -77,22 +78,22 @@
 # - OCI_SHOWOCI_MONITOR_ALARMS
 # - OCI_SHOWOCI_MONITOR_NOTIFICATIONS
 # - OCI_SHOWOCI_OPEN_SEARCH
+# - OCI_SHOWOCI_IDENTITY_DOMAINS
+# - OCI_SHOWOCI_IDENTITY_DOMAINS_DYNGROUP
+# - OCI_SHOWOCI_IDENTITY_DOMAINS_GROUPS
+# - OCI_SHOWOCI_IDENTITY_DOMAINS_USERS
+# - OCI_SHOWOCI_IDENTITY_POLICIES
 #
 ##########################################################################
 # TO DO
 ##########################################################################
-#
 # paas_ocvs_vmware
 # edge_waas_policies
 # identity_compartments
 # identity_domains_auth
-# identity_domains
-# identity_domains_dyngroup
-# identity_domains_groups
 # identity_domains_idps
 # identity_domains_kmsi
-# identity_domains_users
-# identity_policy
+# identity_domains_policies
 ##########################################################################
 
 import sys
@@ -105,7 +106,7 @@ import os
 import oci
 import base64
 
-version = "23.10.19"
+version = "24.07.02"
 cmd = None
 file_num = 0
 
@@ -219,7 +220,7 @@ def get_column_value_from_array(column, array, limit_size):
             value = ""
         return value
     else:
-        print("   Column not found in CSV --> " + column)
+        print("   Column not found in CSV --> " + column + " Please update showoci code")
         return ""
 
 
@@ -271,6 +272,304 @@ def set_parser_arguments():
         return None
 
     return result
+
+
+##########################################################################
+# Check Table Structure for Identity Domains
+##########################################################################
+def handle_identity_domains(connection):
+    try:
+
+        json = {
+            'table_name': "OCI_SHOWOCI_IDENTITY_DOMAINS",
+            'csv_file': "identity_domains.csv",
+            'items': [
+                {'col': 'tenant_name                   ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tenant_id                     ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                            ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'y'},
+                {'col': 'display_name                  ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'description                   ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'url                           ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'home_region_url               ', 'csv': '    ', 'type': 'varchar2(2000)', 'pk': 'n'},
+                {'col': 'home_region                   ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'type                          ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'license_type                  ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'is_hidden_on_login            ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'time_created                  ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'lifecycle_state               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'freeform_tags                 ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'defined_tags                  ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'replica_regions               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'users                         ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'groups                        ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'dynamic_groups                ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'kmsi_setting                  ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'identity_providers            ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'authentication_factor_settings', 'csv': '    ', 'type': 'Number        ', 'pk': 'n'},
+                {'col': 'compartment_id                ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment_path              ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment_name              ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'extract_date                  ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'}
+            ]
+        }
+        handle_table(connection, json, "id", "display_name")
+    except Exception as e:
+        raise Exception("\nError at procedure: handle_domains - " + str(e))
+
+
+##########################################################################
+# Check Table Structure for Identity Domains Dynamic Groups
+##########################################################################
+def handle_identity_domains_dyngroup(connection):
+    try:
+
+        json = {
+            'table_name': "OCI_SHOWOCI_IDENTITY_DOMAINS_DYNGROUP",
+            'csv_file': "identity_domains_dyngroup.csv",
+            'items': [
+                {'col': 'tenant_name                  ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tenant_id                    ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'domain_id                    ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'domain_name                  ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                           ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'ocid                         ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'y'},
+                {'col': 'schemas                      ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'meta_resource_type           ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'meta_created                 ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'meta_last_modified           ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'meta_location                ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'meta_version                 ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'idcs_prevented_operations    ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'idcs_created_by              ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'idcs_last_modified_by        ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'idcs_last_upgraded_in_release', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'tags                         ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'compartment_ocid             ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'matching_rule                ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'description                  ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'display_name                 ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'grants                       ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'dynamic_group_app_roles      ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'freeform_tags                ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'defined_tags                 ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'extract_date                 ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'}
+            ]
+        }
+        handle_table(connection, json, "ocid", "display_name")
+
+    except Exception as e:
+        raise Exception("\nError at procedure: handle_domains_dynamic_group - " + str(e))
+
+
+##########################################################################
+# Check Table Structure for Identity Domains Groups
+##########################################################################
+def handle_identity_domains_groups(connection):
+    try:
+
+        json = {
+            'table_name': "OCI_SHOWOCI_IDENTITY_DOMAINS_GROUPS",
+            'csv_file': "identity_domains_groups.csv",
+            'items': [
+                {'col': 'tenant_name                   ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tenant_id                     ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'domain_id                     ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'domain_name                   ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                            ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'ocid                          ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'y'},
+                {'col': 'display_name                  ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'schemas                       ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'meta_resource_type            ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'meta_created                  ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'meta_last_modified            ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'meta_location                 ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'meta_version                  ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'idcs_prevented_operations     ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'idcs_created_by               ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'idcs_last_modified_by         ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'idcs_last_upgraded_in_release ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'compartment_ocid              ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'external_id                   ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'non_unique_display_name       ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tags                          ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'freeform_tags                 ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'defined_tags                  ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'members                       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'members_ids                   ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'description                   ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'creation_mechanism            ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'password_policy               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'synced_from_app               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'grants                        ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'owners                        ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'app_roles                     ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_instance_level_schema_names', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_domain_level_schema_names  ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_domain_level_schema        ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_instance_level_schema      ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'dg_membership_type            ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'dg_membership_rule            ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'gid_number                    ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'requestable_group             ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'extract_date                  ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'}
+            ]
+        }
+        handle_table(connection, json, "ocid", "display_name")
+
+    except Exception as e:
+        raise Exception("\nError at procedure: handle_domains_groups - " + str(e))
+
+
+##########################################################################
+# Check Table Structure for Identity Domains Users
+##########################################################################
+def handle_identity_domains_users(connection):
+    try:
+
+        json = {
+            'table_name': "OCI_SHOWOCI_IDENTITY_DOMAINS_USERS",
+            'csv_file': "identity_domains_users.csv",
+            'items': [
+                {'col': 'tenant_name                               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tenant_id                                 ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'domain_id                                 ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'domain_name                               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                                        ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'ocid                                      ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'y'},
+                {'col': 'display_name                              ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment_ocid                          ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'external_id                               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'user_name                                 ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'description                               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'nick_name                                 ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'title                                     ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'user_type                                 ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'locale                                    ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'preferred_language                        ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'timezone                                  ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'active                                    ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'schemas                                   ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'meta_resource_type                        ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'meta_created                              ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'meta_last_modified                        ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'meta_location                             ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'meta_version                              ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'idcs_prevented_operations                 ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'idcs_created_by                           ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'idcs_last_modified_by                     ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'family_name                               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'given_name                                ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tags                                      ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'freeform_tags                             ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'defined_tags                              ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'phone_numbers                             ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'ims                                       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'emails                                    ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'entitlements                              ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'x509_certificates                         ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'groups                                    ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'groups_ids                                ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'is_federated_user                         ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'is_authentication_delegated               ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'status                                    ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'provider                                  ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'creation_mechanism                        ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'do_not_show_getting_started               ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'bypass_notification                       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'is_account_recovery_enrolled              ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'account_recovery_required                 ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'user_flow_controlled_by_external_client   ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'is_group_membership_normalized            ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'is_group_membership_synced_to_users_groups', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'password_last_successful_set_date         ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'password_cant_change                      ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'password_cant_expire                      ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'password_must_change                      ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'password_expired                          ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'password_last_successful_validation_date  ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'password_last_failed_validation_date      ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'password_applicable_password_policy       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'password_last_successful_login_date       ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'state_previous_successful_login_date      ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'state_last_failed_login_date              ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'state_login_attempts                      ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'state_recovery_attempts                   ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'state_recovery_enroll_attempts            ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'state_max_concurrent_sessions             ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'state_recovery_locked_date                ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'state_recovery_locked_on                  ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'state_locked_date                         ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'state_locked_expired                      ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'state_locked_on                           ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'state_locked_reason                       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'mfa_preferred_authentication_factor       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'mfa_status                                ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'mfa_preferred_third_party_vendor          ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'mfa_preferred_authentication_method       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'mfa_login_attempts                        ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'mfa_enabled_on                            ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'mfa_ignored_apps                          ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'posix_uid_number                          ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'posix_gid_number                          ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'posix_gecos                               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'posix_home_directory                      ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'posix_login_shell                         ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'risk_level                                ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'risk_scores                               ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'db_is_db_user                             ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_domain_level_schema                    ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_instance_level_schema                  ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_global_roles                           ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_user_name                              ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'db_login_attempts                         ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'can_use_api_keys                          ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'can_use_auth_tokens                       ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'can_use_console_password                  ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'can_use_customer_secret_keys              ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'can_use_o_auth2_client_credentials        ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'can_use_smtp_credentials                  ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'can_use_db_credentials                    ', 'csv': '    ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'roles                                     ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'api_keys                                  ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'customer_secret_keys                      ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'auth_tokens                               ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'smtp_credentials                          ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'o_auth2_client_credentials                ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'db_credentials                            ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'allow_self_change                         ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'extract_date                              ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'}
+            ]
+        }
+        handle_table(connection, json, "ocid", "display_name")
+
+    except Exception as e:
+        raise Exception("\nError at procedure: handle_domains_users - " + str(e))
+
+
+##########################################################################
+# Check Table Structure for Identity Domains Policy
+##########################################################################
+def handle_identity_policies(connection):
+    try:
+
+        json = {
+            'table_name': "OCI_SHOWOCI_IDENTITY_POLICIES",
+            'csv_file': "identity_policy.csv",
+            'items': [
+                {'col': 'tenant_name           ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tenant_id             ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment           ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                    ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'seq                   ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'statement             ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'extract_date          ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'idpk                  ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'y'}
+            ]
+        }
+        handle_table(connection, json)
+
+    except Exception as e:
+        raise Exception("\nError at procedure: handle_domain_policy - " + str(e))
 
 
 ##########################################################################
@@ -1051,11 +1350,9 @@ def handle_load_balancer_listeners(connection):
             'items': [
                 {'col': 'tenant_name        ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'tenant_id          ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'id                 ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'y'},
-                {'col': 'loadbalancer_id    ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'region_name        ', 'csv': '     ', 'type': 'varchar2(100) ', 'pk': 'n'},
-                {'col': 'compartment_path   ', 'csv': '     ', 'type': 'varchar2(2000)', 'pk': 'n'},
                 {'col': 'compartment_name   ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment_path   ', 'csv': '     ', 'type': 'varchar2(2000)', 'pk': 'n'},
                 {'col': 'name               ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'status             ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'shape              ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
@@ -1072,10 +1369,14 @@ def handle_load_balancer_listeners(connection):
                 {'col': 'listener_host      ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'listener_path      ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'listener_rule      ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
-                {'col': 'lb_certificates    ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
-                {'col': 'defined_tags       ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
-                {'col': 'freeform_tags      ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'time_created       ', 'csv': '     ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'lb_certificates    ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'ssl_cipher_suites  ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'routing_policies   ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'freeform_tags      ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'defined_tags       ', 'csv': '     ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'loadbalancer_id    ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                 ', 'csv': '     ', 'type': 'varchar2(1000)', 'pk': 'y'},
                 {'col': 'extract_date       ', 'csv': '     ', 'type': 'date          ', 'pk': 'n'}
             ]
         }
@@ -2456,30 +2757,29 @@ def handle_security_logging(connection):
             'items': [
                 {'col': 'tenant_name                 ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'tenant_id                   ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'id                          ', 'csv': 'log_id', 'type': 'varchar2(1000)', 'pk': 'y'},
                 {'col': 'region_name                 ', 'csv': '      ', 'type': 'varchar2(100) ', 'pk': 'n'},
                 {'col': 'compartment_name            ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'compartment_path            ', 'csv': '      ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'log_group                   ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'log_group_description       ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'log_group_time_last_modified', 'csv': '      ', 'type': 'date          ', 'pk': 'n'},
                 {'col': 'log_name                    ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'is_enabled                  ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'lifecycle_state             ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'log_type                    ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'retention_duration          ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'archiving                   ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'is_enabled                  ', 'csv': '      ', 'type': 'varchar2(5)   ', 'pk': 'n'},
+                {'col': 'lifecycle_state             ', 'csv': '      ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'log_type                    ', 'csv': '      ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'time_created                ', 'csv': '      ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'retention_duration          ', 'csv': '      ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'time_last_modified          ', 'csv': '      ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'archiving                   ', 'csv': '      ', 'type': 'varchar2(5)   ', 'pk': 'n'},
                 {'col': 'source_service              ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'source_category             ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'source_sourcetype           ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'source_resource             ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'freeform_tags               ', 'csv': '      ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'source_parameters           ', 'csv': '      ', 'type': 'varchar2(4000)', 'pk': 'n'},
-                {'col': 'defined_tags                ', 'csv': '      ', 'type': 'varchar2(4000)', 'pk': 'n'},
-                {'col': 'time_last_modified          ', 'csv': '      ', 'type': 'date          ', 'pk': 'n'},
-                {'col': 'log_group_time_last_modified', 'csv': '      ', 'type': 'date          ', 'pk': 'n'},
                 {'col': 'log_group_id                ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'log_id                      ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'time_created                ', 'csv': '      ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'id                          ', 'csv': 'log_id', 'type': 'varchar2(1000)', 'pk': 'y'},
+                {'col': 'freeform_tags               ', 'csv': '      ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'defined_tags                ', 'csv': '      ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'extract_date                ', 'csv': '      ', 'type': 'date          ', 'pk': 'n'}
             ]
         }
@@ -2662,14 +2962,12 @@ def handle_monitor_notifications(connection):
             'items': [
                 {'col': 'tenant_name                 ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'tenant_id                   ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'id                          ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'y'},
                 {'col': 'region_name                 ', 'csv': '            ', 'type': 'varchar2(100) ', 'pk': 'n'},
-                {'col': 'compartment_name            ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'compartment_path            ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'topic_compartment_name      ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'topic_compartment_path      ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'topic_name                  ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'topic_description           ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'topic_time_created          ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
                 {'col': 'topic_etag                  ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'topic_api_endpoint          ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'topic_freeform_tags         ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
@@ -2677,10 +2975,12 @@ def handle_monitor_notifications(connection):
                 {'col': 'topic_id                    ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'protocol                    ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'endpoint                    ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'compartment_name            ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment_path            ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'etag                        ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'freeform_tags               ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'defined_tags                ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
-                {'col': 'created_time                ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'topic_time_created          ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'id                          ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'y'},
                 {'col': 'extract_date                ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'}
             ]
         }
@@ -2991,8 +3291,11 @@ def handle_table(connection, inputdata, resource_id="", resource_name="", resour
 
                     # executemany every batch size
                     process_location = "before executemany"
+
+                    # print("\nsql" + str(sql), "data: " + str(data))
                     if data:
                         if len(data) % batch_size == 0:
+                            # print("\ndata" + str(data), "batchsize: " + str(batch_size))
                             cursor.executemany(sql, data)
                             data = []
 
@@ -3190,6 +3493,12 @@ def main_process():
             handle_monitor_db_management(connection)
             handle_monitor_alarms(connection)
             handle_monitor_notifications(connection)
+            handle_identity_domains(connection)
+            handle_identity_domains_dyngroup(connection)
+            handle_identity_domains_groups(connection)
+            handle_identity_domains_users(connection)
+            # Can be enabled when idpk added to domain_policies at showoci
+            # handle_identity_policies(connection)
 
     except oracledb.DatabaseError as e:
         print("\nError manipulating database - " + str(e) + "\n")
