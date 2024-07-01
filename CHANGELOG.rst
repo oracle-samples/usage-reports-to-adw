@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+24.07.02 - 2024.07.02
+=====================
+* Added Identity Policies and Identity Domain csv to adw
+
+=====================
 24.06.03 - 2024.06.03
 =====================
 * Update instantclient to version 19.23
