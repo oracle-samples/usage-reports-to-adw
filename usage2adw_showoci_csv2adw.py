@@ -88,19 +88,28 @@
 # TO DO
 ##########################################################################
 # announcements
-# paas_ocvs_vmware
+# certificates
+# certificates_ca_bundles
+# database_db_pdbs
+# database_postgresql
+# datasafe_targets
 # edge_waas_policies
-# identity_compartments
+# functions_apps
+# functions_fns
 # identity_domains_auth
 # identity_domains_idps
 # identity_domains_kmsi
 # identity_domains_policies
-# functions_apps
-# functions_fns
+# identity_domains_pwd_policies
+# identity_domains_rules
+# identity_network_sources
+# identity_tag_namespaces
 # network_firewalls_policies
-# database_postgresql
-# datasafe_targets
-# certificates
+# paas_ocvs_clusters
+# paas_ocvs_vmware
+# paas_oic
+# security_log_unified_agents
+# streams_queues
 ##########################################################################
 
 import sys
