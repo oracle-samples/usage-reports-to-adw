@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=24.07.02
+export VERSION=24.07.18
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -740,6 +740,20 @@ SetupApp()
       CONSTRAINT OCI_LOAD_STATUS PRIMARY KEY (TENANT_NAME, FILE_NAME) USING INDEX ENABLE
    );
 
+   -------------------------------
+   -- OCI_RESOURCES
+   -------------------------------
+   prompt Creating Table OCI_RESOURCES
+
+   create table OCI_RESOURCES (
+      RESOURCE_ID             VARCHAR2(200) NOT NULL,
+      RESOURCE_NAME           VARCHAR2(1000),
+      SOURCE_TENANT           VARCHAR2(100),
+      SOURCE_TABLE            VARCHAR2(100),
+      LAST_LOADED             DATE,
+      CONSTRAINT OCI_RESOURCES_PK PRIMARY KEY (RESOURCE_ID) USING INDEX
+   );
+   
 " | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
@@ -857,6 +871,9 @@ DropTables()
    prompt Dropping Table OCI_LOAD_STATUS
    drop table OCI_LOAD_STATUS; 
 
+   prompt Dropping Table OCI_RESOURCES
+   drop table OCI_RESOURCES; 
+
 " | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
@@ -927,6 +944,9 @@ TruncateTables()
 
    prompt Truncating Table OCI_INTERNAL_COST
    truncate table OCI_INTERNAL_COST; 
+
+   prompt Truncating Table OCI_RESOURCES
+   truncate table OCI_RESOURCES; 
 
 " | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
 
