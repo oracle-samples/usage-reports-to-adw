@@ -92,10 +92,10 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 
 ## 3rd Party Dependencies including tested versions
 
-- Python 3.9.18-2
-- oracledb 2.1.0
+- Python 3.9.19
+- oracledb 2.4.0
 - requests 2.32.1
-- OCI Python SDK 2.122.0
+- OCI Python SDK 2.134.0
 
 ## Contributing
 
