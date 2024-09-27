@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+24.10.01 - 2024.10.01
+=====================
+* Fixed bugs and updated dependencies
+
+=====================
 24.07.02 - 2024.07.02
 =====================
 * Added Identity Policies and Identity Domain csv to adw
