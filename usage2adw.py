@@ -487,7 +487,7 @@ def check_database_table_structure_usage(connection, tenant_name):
             # if table OCI_USAGE_TAG_KEYS not exist, create it
             if val == 0:
                 print("   Table OCI_USAGE_TAG_KEYS was not exist, creating")
-                sql = """CREATE TABLE OCI_USAGE_TAG_KEYS (TENANT_NAME VARCHAR2(100), TAG_KEY VARCHAR2(100),
+                sql = """CREATE TABLE OCI_USAGE_TAG_KEYS (TENANT_NAME VARCHAR2(100), TAG_KEY VARCHAR2(1000),
                 CONSTRAINT OCI_USAGE_TAG_KEYS_PK PRIMARY KEY(TENANT_NAME,TAG_KEY)
                 )"""
                 cursor.execute(sql)
