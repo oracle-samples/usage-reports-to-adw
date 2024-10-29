@@ -26,6 +26,7 @@
 # - OCI_SHOWOCI_DATABASE_EXA_INFRA
 # - OCI_SHOWOCI_DATABASE_EXA_CC_VMS
 # - OCI_SHOWOCI_DATABASES
+# - OCI_SHOWOCI_DATABASES_PDBS
 # - OCI_SHOWOCI_DATABASE_VM_BM
 # - OCI_SHOWOCI_DATABASES_ADB
 # - OCI_SHOWOCI_DB_NOSQL
@@ -122,7 +123,7 @@ import os
 import oci
 import base64
 
-version = "24.07.02"
+version = "24.11.01"
 cmd = None
 file_num = 0
 
@@ -1023,6 +1024,46 @@ def handle_database(connection):
         handle_table(connection, json, "id", "name")
     except Exception as e:
         raise Exception("\nError at procedure: handle_database - " + str(e))
+
+
+##########################################################################
+# Check Table Structure for Database PDBS
+##########################################################################
+def handle_database_pdbs(connection):
+    try:
+
+        json = {
+            'table_name': "OCI_SHOWOCI_DATABASES_PDBS",
+            'csv_file': "database_db_pdbs.csv",
+            'items': [
+                {'col': 'tenant_name         ', 'csv': '           ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tenant_id           ', 'csv': '           ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                  ', 'csv': 'id         ', 'type': 'varchar2(1000)', 'pk': 'y'},
+                {'col': 'region_name         ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'availability_domain ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'compartment_path    ', 'csv': '           ', 'type': 'varchar2(2000)', 'pk': 'n'},
+                {'col': 'compartment_name    ', 'csv': '           ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'name                ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'system_name         ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'system_shape        ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'database_name       ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'time_created        ', 'csv': '           ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'lifecycle_state     ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'connection_strings  ', 'csv': '           ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'open_mode           ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'is_restricted       ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'management_status   ', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'is_refreshable_clone', 'csv': '           ', 'type': 'varchar2(100) ', 'pk': 'n'},
+                {'col': 'database_id         ', 'csv': '           ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'dbsystem_id         ', 'csv': '           ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'defined_tags        ', 'csv': '           ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'freeform_tags       ', 'csv': '           ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'extract_date        ', 'csv': '           ', 'type': 'date          ', 'pk': 'n'}
+            ]
+        }
+        handle_table(connection, json, "id", "name")
+    except Exception as e:
+        raise Exception("\nError at procedure: handle_database_pdbs - " + str(e))
 
 
 ##########################################################################
@@ -3453,6 +3494,7 @@ def main_process():
             handle_block_volume_backups(connection)
             handle_database_all(connection)
             handle_database(connection)
+            handle_database_pdbs(connection)
             handle_database_backups(connection)
             handle_database_exa_cs_vms(connection)
             handle_database_exa_cc_vms(connection)
