@@ -9,7 +9,7 @@ Oracle Application Express (APEX) will be used for reporting.
 
 ## Must be deployed at Home Region and VCN must have access to the internet using Internet Gateway or NAT Gateway and utilize Vault Secret for database password.
 
-**DISCLAIMER – This is not an official Oracle application,  It does not supported by Oracle Support, It should NOT be used for utilization calculation purposes, and rather OCI's official 
+**DISCLAIMER - This is not an official Oracle application,  It does not supported by Oracle Support, It should NOT be used for utilization calculation purposes, and rather OCI's official 
 [cost analysis](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/costanalysisoverview.htm) 
 and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm) features should be used instead.**
 
@@ -24,8 +24,16 @@ Make sure you have an existing Master Encryption Key, [Master Key Documentation]
 
 Create Secret for the Autonomous Database Password, [Secret Documentation](https://docs.oracle.com/en-us/iaas/Content/KeyManagement/Tasks/managingsecrets_topic-To_create_a_new_secret.htm#createnewsecret)
 
-The password must meet the strong password complexity criteria based on Oracle Cloud security standards, [doc](https://docs.oracle.com/en/cloud/paas/autonomous-database/adbsa/manage-users-create.html#ADBSA-GUID-72DFAF2A-C4C3-4FAC-A75B-846CC6EDBA3F).
+The password must meet the strong password complexity criteria based on Oracle Cloud security standards, [doc](https://docs.oracle.com/en/cloud/paas/autonomous-database/serverless/adbsb/manage-users-create.html#GUID-72DFAF2A-C4C3-4FAC-A75B-846CC6EDBA3F)
 
+**Please ensure that your password meets the following criteria:**
+
+- Length: Between 12 and 30 characters.
+- The password cannot contain the username.
+- Character types: Must include at least one uppercase letter, one lowercase letter, and one numeric character (e.g. 0-9).
+- No dictionary words: Avoid using common words found in the dictionary.
+- Symbols: If you wish to use symbols, you may only use the "#" symbol.
+  
 
 ## 2. Generate Terraform stack from Usage Reports to ADW Github
 
@@ -84,8 +92,8 @@ Option to tag the resources
 ```
 
    - New IAM Dynamic Group and Policy will be created - 
-     New Dynamic Group and Policy will be created – This option required Admin access
-   - I have already created Dynamic Group and Policy per the documentation – 
+     New Dynamic Group and Policy will be created - This option required Admin access
+   - I have already created Dynamic Group and Policy per the documentation - 
      Choose this option if you already created Dynamic group and policies according to the documentation.
      Below is the requirement:
    - APPCOMP is the compartment where the usage2adw will be installed
@@ -132,9 +140,9 @@ Option to tag the resources
 ```
 
    - Autonomous Database Deployment Option - Public or Private Endpoint
-   - Autonomous database name – the name to be assigned to the Autonomous database
+   - Autonomous database name - the name to be assigned to the Autonomous database
    - Database Secret - Choose the Secret Compartment and Secret you created
-   - Database License – License Included or Bring your own license if you have
+   - Database License - License Included or Bring your own license if you have
    - Network Security Group - For Privatendpoint - choose network security group name
    - Private End Point Label - the host name for the private end point
 
@@ -161,10 +169,10 @@ Option to tag the resources
 
 ```
    - Availability Domain to deploy the instance
-   - Instance Name – the name of the compute instance 
-   - Compute Shape – Compute Shape to deploy the instance
-   - SSH Public Key – The public key you generated at the prerequisite stage
-   - Extract Usage From Date – Load Data since which date with format of YYYY-MM (i.e. 2020-08)
+   - Instance Name - the name of the compute instance 
+   - Compute Shape - Compute Shape to deploy the instance
+   - SSH Public Key - The public key you generated at the prerequisite stage
+   - Extract Usage From Date - Load Data since which date with format of YYYY-MM (i.e. 2020-08)
    - Extract Tag Key 1 to special tag column 1 - use this tag to load to special column 1 for better filter and report
    - Extract Tag Key 2 to special tag column 2 - use this tag to load to special column 2 for better filter and report
 

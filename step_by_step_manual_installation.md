@@ -137,6 +137,15 @@ Use Existing Master Key or Create new Encryption Master Key
 --> Write down the secret OCID
 ```
 
+**Please ensure that your password meets the following criteria:**
+
+- Length: Between 12 and 30 characters.
+- The password cannot contain the username.
+- Character types: Must include at least one uppercase letter, one lowercase letter, and one numeric character (e.g. 0-9).
+- No dictionary words: Avoid using common words found in the dictionary.
+- Symbols: If you wish to use symbols, you may only use the "#" symbol.
+
+  
 ## 10. Download Autonomous database Wallet
 
 2 options to download the Autonomous Wallet:
