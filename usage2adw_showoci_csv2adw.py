@@ -91,7 +91,6 @@
 # announcements
 # certificates
 # certificates_ca_bundles
-# database_db_pdbs
 # database_postgresql
 # datasafe_targets
 # edge_waas_policies
@@ -123,7 +122,7 @@ import os
 import oci
 import base64
 
-version = "24.11.01"
+version = "24.11.04"
 cmd = None
 file_num = 0
 
@@ -1335,13 +1334,13 @@ def handle_file_storage(connection):
                 {'col': 'id                 ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'y'},
                 {'col': 'region_name        ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'availability_domain', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'compartment_path   ', 'csv': '    ', 'type': 'varchar2(2000)', 'pk': 'n'},
-                {'col': 'compartment_name   ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'display_name       ', 'csv': '    ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment_path   ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'compartment_name   ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'display_name       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'size_gb            ', 'csv': '    ', 'type': 'number        ', 'pk': 'n'},
-                {'col': 'exports            ', 'csv': '    ', 'type': 'varchar2(2000)', 'pk': 'n'},
-                {'col': 'snapshots          ', 'csv': '    ', 'type': 'varchar2(2000)', 'pk': 'n'},
-                {'col': 'mount_ips          ', 'csv': '    ', 'type': 'varchar2(2000)', 'pk': 'n'},
+                {'col': 'exports            ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'snapshots          ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'mount_ips          ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'defined_tags       ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'freeform_tags      ', 'csv': '    ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'time_created       ', 'csv': '    ', 'type': 'date          ', 'pk': 'n'},
