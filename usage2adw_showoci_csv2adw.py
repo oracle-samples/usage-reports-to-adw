@@ -107,9 +107,7 @@
 # network_firewalls_policies
 # paas_ocvs_clusters
 # paas_ocvs_vmware
-# paas_oic
 # security_log_unified_agents
-# streams_queues
 ##########################################################################
 
 import sys

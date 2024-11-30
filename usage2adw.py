@@ -77,7 +77,7 @@ import time
 import base64
 
 
-version = "24.11.01"
+version = "25.01.01"
 work_report_dir = os.curdir + "/work_report_dir"
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client
@@ -1224,6 +1224,8 @@ def check_database_table_structure_cost(connection, tag_special_key, tag_special
                     COST_UNIT_PRICE_OVERAGE NUMBER,
                     COST_MY_COST            NUMBER,
                     COST_MY_COST_OVERAGE    NUMBER,
+                    COST_ATTRIBUTED_COST    NUMBER,
+                    USG_ATTRIBUTED_USAGE    NUMBER,
                     COST_CURRENCY_CODE      VARCHAR2(10),
                     COST_BILLING_UNIT       VARCHAR2(1000),
                     COST_OVERAGE_FLAG       VARCHAR2(10),
@@ -1270,6 +1272,28 @@ def check_database_table_structure_cost(connection, tag_special_key, tag_special
             if val == 0:
                 print("   Column TAG_SPECIAL2 does not exist in the table OCI_COST, adding...")
                 sql = "alter table OCI_COST add (TAG_SPECIAL2 VARCHAR2(4000))"
+                cursor.execute(sql)
+
+            # check if COST_ATTRIBUTED_COST column exist in OCI_COST table, if not create
+            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='COST_ATTRIBUTED_COST'"
+            cursor.execute(sql)
+            val, = cursor.fetchone()
+
+            # if column COST_ATTRIBUTED_COST not exist, create it
+            if val == 0:
+                print("   Column COST_ATTRIBUTED_COST does not exist in the table OCI_COST, adding...")
+                sql = "alter table OCI_COST add (COST_ATTRIBUTED_COST NUMBER)"
+                cursor.execute(sql)
+
+            # check if USG_ATTRIBUTED_USAGE column exist in OCI_COST table, if not create
+            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='USG_ATTRIBUTED_USAGE'"
+            cursor.execute(sql)
+            val, = cursor.fetchone()
+
+            # if column USG_ATTRIBUTED_USAGE not exist, create it
+            if val == 0:
+                print("   Column USG_ATTRIBUTED_USAGE does not exist in the table OCI_COST, adding...")
+                sql = "alter table OCI_COST add (USG_ATTRIBUTED_USAGE NUMBER)"
                 cursor.execute(sql)
 
             # check if OCI_COST_TAG_KEYS table exist, if not create
@@ -1568,6 +1592,8 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
             COST_UNIT_PRICE_OVERAGE,
             COST_MY_COST,
             COST_MY_COST_OVERAGE,
+            COST_ATTRIBUTED_COST,
+            USG_ATTRIBUTED_USAGE,
             COST_CURRENCY_CODE,
             COST_BILLING_UNIT,
             COST_OVERAGE_FLAG,
@@ -1580,8 +1606,8 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
             :1, :2, to_date(:3,'YYYY-MM-DD HH24:MI'), to_date(:4,'YYYY-MM-DD HH24:MI'), :5,
             :6, :7, :8, :9, :10,
             :11, to_number(:12), to_number(:13) ,:14, :15,
-            :16, to_number(:17), to_number(:18), to_number(:19), to_number(:20),
-            :21, :22, :23, :24, :25, :26, :27, :28
+            :16, to_number(:17), to_number(:18), to_number(:19), to_number(:20), to_number(:21), to_number(:22),
+            :23, :24, :25, :26, :27, :28, :29, :30
             ) """
 
             # insert bulk to database
@@ -1656,6 +1682,8 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
                     cost_currencyCode = get_column_value_from_array('cost/currencyCode', row)
                     cost_overageFlag = get_column_value_from_array('cost/overageFlag', row)
                     lineItem_isCorrection = get_column_value_from_array('lineItem/isCorrection', row)
+                    cost_attributedCost = get_column_value_from_array('cost/attributedCost', row)
+                    usage_attributedUsage = get_column_value_from_array('usage/attributedUsage', row)
 
                     # Check if cost_subscriptionId is number if not assign "" for internal tenant which assigned tenant_id to the subscriptions
                     if not str(cost_subscriptionId).replace(".", "").isnumeric():
@@ -1702,6 +1730,8 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
                         cost_unitPriceOverage,
                         cost_myCost,
                         cost_myCostOverage,
+                        cost_attributedCost,
+                        usage_attributedUsage,
                         cost_currencyCode,
                         cost_billingUnitReadable,
                         cost_overageFlag,

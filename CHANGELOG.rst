@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+25.01.01 - 2025.01.01
+=====================
+* Added attributedCost (COST_ATTRIBUTED_COST) and attributedUsage (USG_ATTRIBUTED_USAGE)
+
+=====================
 24.11.01 - 2024.11.01
 =====================
 * Added database_pdbs csv

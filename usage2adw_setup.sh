@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=24.10.01
+export VERSION=25.01.01
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -636,6 +636,8 @@ SetupApp()
       COST_UNIT_PRICE_OVERAGE NUMBER,
       COST_MY_COST            NUMBER,
       COST_MY_COST_OVERAGE    NUMBER,
+      COST_ATTRIBUTED_COST    NUMBER,
+      USG_ATTRIBUTED_USAGE    NUMBER,
       COST_CURRENCY_CODE      VARCHAR2(10),
       COST_BILLING_UNIT       VARCHAR2(1000),
       COST_OVERAGE_FLAG       VARCHAR2(10),
