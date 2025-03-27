@@ -2890,7 +2890,7 @@ def handle_quotas(connection):
                 {'col': 'compartment_path            ', 'csv': '      ', 'type': 'varchar2(4000)', 'pk': 'n'},
                 {'col': 'name                        ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
                 {'col': 'description                 ', 'csv': '      ', 'type': 'varchar2(1000)', 'pk': 'n'},
-                {'col': 'statements                  ', 'csv': '      ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'statements                  ', 'csv': '      ', 'type': 'clob          ', 'pk': 'n'},
                 {'col': 'time_created                ', 'csv': '      ', 'type': 'date          ', 'pk': 'n'},
                 {'col': 'extract_date                ', 'csv': '      ', 'type': 'date          ', 'pk': 'n'}
             ]
@@ -3299,6 +3299,9 @@ def handle_table(connection, inputdata, resource_id="", resource_name="", resour
         ################################################
         num_rows = 0
         process_location = "Before Load Data"
+
+        # Allow larger data sizes for CSV field
+        csv.field_size_limit(sys.maxsize)
 
         with open(path_filename, 'rt') as file_in:
             csv_reader = csv.DictReader(file_in)
