@@ -20,6 +20,8 @@ variable "db_secret_id" {}
 variable "extract_from_date" {}
 variable "extract_tag1_special_key" {}
 variable "extract_tag2_special_key" {}
+variable "extract_tag3_special_key" {}
+variable "extract_tag4_special_key" {}
 variable "tenancy_ocid" {}
 
 variable "service_tags" {}
@@ -82,6 +84,8 @@ resource "oci_core_instance" "usagevm" {
       extract_from_date         = var.extract_from_date,
       extract_tag1_special_key  = var.extract_tag1_special_key,
       extract_tag2_special_key  = var.extract_tag2_special_key,
+      extract_tag3_special_key  = var.extract_tag3_special_key,
+      extract_tag4_special_key  = var.extract_tag4_special_key,
       admin_url                 = var.admin_url
       application_url           = var.application_url
       lb_admin_url              = var.lb_admin_url

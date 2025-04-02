@@ -34,9 +34,13 @@ runcmd:
   - echo "EXTRACT_DATE=${extract_from_date}" >> $CRED
   - echo "TAG_SPECIAL=${extract_tag1_special_key}" >> $CRED
   - echo "TAG2_SPECIAL=${extract_tag2_special_key}" >> $CRED
+  - echo "TAG3_SPECIAL=${extract_tag3_special_key}" >> $CRED
+  - echo "TAG4_SPECIAL=${extract_tag4_special_key}" >> $CRED
   - chown opc:opc $CRED
 
-  # Sleep 60 seconds to wait for the policy to be created 
+  # Sleep 80 seconds to wait for the policy and services to be created and synched
+  - echo "Waiting 80 seconds..." >> $LOG
+  - sleep 20
   - echo "Waiting 60 seconds..." >> $LOG
   - sleep 20
   - echo "Waiting 40 seconds..." >> $LOG

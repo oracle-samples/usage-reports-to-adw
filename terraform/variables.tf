@@ -1,5 +1,5 @@
 #********************************************************************************************
-# Copyright (c) 2024, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #********************************************************************************************
 
@@ -75,6 +75,8 @@ variable "instance_availability_domain" { default = "" }
 variable "extract_from_date"            { default = "" } 
 variable "extract_tag1_special_key"     { default = "" }
 variable "extract_tag2_special_key"     { default = "" }
+variable "extract_tag3_special_key"     { default = "" }
+variable "extract_tag4_special_key"     { default = "" }
 
 ##########################
 # OAC
