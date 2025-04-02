@@ -1,9 +1,9 @@
 #!/bin/bash
 #############################################################################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #
-# Author - Adi Zohar, Feb 28th 2020, Amended Aug 1st 2023
+# Author - Adi Zohar, Feb 28th 2020, Amended May 1st 2025
 #
 # Run Multi daily usage load for crontab use
 #
@@ -29,6 +29,8 @@ export DATABASE_USER=`grep "^DATABASE_USER" $CREDFILE | sed -s 's/DATABASE_USER=
 export DATABASE_NAME=`grep "^DATABASE_NAME" $CREDFILE | sed -s 's/DATABASE_NAME=//'`
 export TAG1_SPECIAL=`grep "^TAG_SPECIAL" $CREDFILE| sed -s 's/TAG_SPECIAL=//'`
 export TAG2_SPECIAL=`grep "^TAG2_SPECIAL" $CREDFILE| sed -s 's/TAG2_SPECIAL=//'`
+export TAG3_SPECIAL=`grep "^TAG3_SPECIAL" $CREDFILE| sed -s 's/TAG3_SPECIAL=//'`
+export TAG4_SPECIAL=`grep "^TAG4_SPECIAL" $CREDFILE| sed -s 's/TAG4_SPECIAL=//'`
 export EXTRACT_DATE=`grep "^EXTRACT_DATE" $CREDFILE| sed -s 's/EXTRACT_DATE=//'`
 export DATABASE_SECRET_ID=`grep "^DATABASE_SECRET_ID" $CREDFILE | sed -s 's/DATABASE_SECRET_ID=//'`
 export DATABASE_SECRET_TENANT=`grep "^DATABASE_SECRET_TENANT" $CREDFILE | sed -s 's/DATABASE_SECRET_TENANT=//'`
@@ -90,11 +92,25 @@ run_report()
         TAG2=$3
     fi
 
+    if [ -z "${4}" ]
+    then
+        TAG3=$TAG3_SPECIAL
+    else
+        TAG3=$4
+    fi
+
+    if [ -z "${5}" ]
+    then
+        TAG4=$TAG4_SPECIAL
+    else
+        TAG4=$5
+    fi
+
     DIR=${REPORT_DIR}/$NAME
     OUTPUT_FILE=${DIR}/${DATE}_${NAME}.txt
     mkdir -p $DIR
     echo "Running $NAME... to $OUTPUT_FILE "
-    python3 $APPDIR/usage2adw.py $tenant -du $DATABASE_USER -ds $DATABASE_SECRET_ID -dst $DATABASE_SECRET_TENANT -dn $DATABASE_NAME -d $EXTRACT_DATE -ts "${TAG1}" -ts2 "${TAG2}" $4 |tee -a $OUTPUT_FILE
+    python3 $APPDIR/usage2adw.py $tenant -du $DATABASE_USER -ds $DATABASE_SECRET_ID -dst $DATABASE_SECRET_TENANT -dn $DATABASE_NAME -d $EXTRACT_DATE -ts "${TAG1}" -ts2 "${TAG2}" -ts3 "${TAG3}" -ts4 "${TAG4}" $6 |tee -a $OUTPUT_FILE
     grep -i "Error" $OUTPUT_FILE
 
     ERROR=""
@@ -116,7 +132,7 @@ run_report()
 echo "Start running at `date`..."
 
 run_report local
-#run_report tenant2 tagspecial1 tagspecial2
-#run_report tenant3 tagspecial1 tagspecial2
+#run_report tenant2 tagspecial1 tagspecial2 tagspecial3 tagspecial4
+#run_report tenant3 tagspecial1 tagspecial2 tagspecial3 tagspecial4
 
 echo "Completed at `date`.."

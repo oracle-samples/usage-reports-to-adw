@@ -33,6 +33,8 @@ module "compute" {
     extract_from_date           = var.extract_from_date
     extract_tag1_special_key    = var.extract_tag1_special_key
     extract_tag2_special_key    = var.extract_tag2_special_key
+    extract_tag3_special_key    = var.extract_tag3_special_key
+    extract_tag4_special_key    = var.extract_tag4_special_key
     service_tags                = var.service_tags
 
     admin_url                   = module.adb.apex_url

@@ -1,9 +1,9 @@
 #!/bin/sh
 #############################################################################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #
-# Author - Adi Zohar, Jul 7th 2020, Updated 7/19/2022
+# Author - Adi Zohar, Jul 7th 2020, Updated 5/1/2025
 #
 # daily_report for crontab use
 #
@@ -259,41 +259,27 @@ prompt     <tr><td colspan=15 class=tabheader>Usage OCPU Daily Report - $DATE_PR
 
 with data as
 (
-    select tenant_name,
+   select tenant_name,
         trunc(USAGE_INTERVAL_START) as USAGE_INTERVAL_START,
-		USG_CONSUMED_MEASURE,
         max(USG_BILLED_QUANTITY) as USG_BILLED_QUANTITY
     from
     (
-        select 
-            tenant_name,
-            USAGE_INTERVAL_START,
-            USG_CONSUMED_MEASURE,
-            sum(USG_BILLED_QUANTITY) USG_BILLED_QUANTITY
-        from
-        (
-            select /*+ parallel(l,d) full(d) */
-                USAGE_INTERVAL_START,
+            select /*+ parallel(oci_cost,8) full(oci_cost) */ 
                 tenant_name,
-                USG_CONSUMED_MEASURE,
-                case
-                        when USG_CONSUMED_UNITS like '%MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-                    else USG_BILLED_QUANTITY
-                end as USG_BILLED_QUANTITY
-            from
-                oci_usage d
-            where
+                USAGE_INTERVAL_START,
+                sum(USG_BILLED_QUANTITY) as USG_BILLED_QUANTITY
+            from oci_cost
+            where 
                 USAGE_INTERVAL_START > trunc(sysdate-15) and
-                prd_service not in ('ORACLE_NOTIFICATION_SERVICE') and
-                prd_resource not in ('PIC_STANDARD_PERFORMANCE','PIC_COMPUTE_OUTBOUND_DATA_TRANSFER') and
-                USG_CONSUMED_MEASURE in ('OCPUS')
-            )
-        group by
-            tenant_name,
-			USAGE_INTERVAL_START,
-            USG_CONSUMED_MEASURE
+                upper(COST_BILLING_UNIT) like '%CPU%' and
+                upper(PRD_DESCRIPTION) not like '%MEMORY%' and
+                USG_BILLED_QUANTITY>0 and
+                COST_MY_COST<>0
+            group by 
+                tenant_name,
+                USAGE_INTERVAL_START
     )
-    group by tenant_name, USG_CONSUMED_MEASURE, trunc(USAGE_INTERVAL_START)
+    group by tenant_name, trunc(USAGE_INTERVAL_START)
 )
 select
     '<tr>'||
@@ -371,8 +357,6 @@ from
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-2 ) then USG_BILLED_QUANTITY else 0 end) DAY2,
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-1 ) then USG_BILLED_QUANTITY else 0 end) DAY1
         from data s
-        where
-			USG_CONSUMED_MEASURE = 'OCPUS'
         group by tenant_name
         order by 1
     )
@@ -387,41 +371,35 @@ with data as
 (
     select tenant_name,
         trunc(USAGE_INTERVAL_START) as USAGE_INTERVAL_START,
-		USG_CONSUMED_MEASURE,
         max(USG_BILLED_QUANTITY) as USG_BILLED_QUANTITY
     from
     (
-        select 
-            tenant_name,
-            USAGE_INTERVAL_START,
-            USG_CONSUMED_MEASURE,
-            sum(USG_BILLED_QUANTITY) USG_BILLED_QUANTITY
-        from
-        (
-            select /*+ parallel(l,d) full(d) */
-                USAGE_INTERVAL_START,
+            select /*+ parallel(oci_cost,8) full(oci_cost) */ 
                 tenant_name,
-                USG_CONSUMED_MEASURE,
-                case
-                        when USG_CONSUMED_UNITS like '%TB_MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000*1024/1000
-                        when USG_CONSUMED_UNITS like '%BYTE_MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000/1000/1000/1000/1000
-                        when USG_CONSUMED_UNITS like '%MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000/1000
-                    else USG_BILLED_QUANTITY/1000
-                end as USG_BILLED_QUANTITY
-            from
-                oci_usage d
-            where
+                USAGE_INTERVAL_START,
+                sum(
+                    USG_BILLED_QUANTITY * 
+                    ( case when COST_BILLING_UNIT like '%TB%' then 1000 else 1 end ) *
+                    ( case when COST_BILLING_UNIT like '%Hours%' then 1 else 744 end )
+                )/1000 as USG_BILLED_QUANTITY
+            from oci_cost
+            where 
                 USAGE_INTERVAL_START > trunc(sysdate-15) and
-                prd_service not in ('ORACLE_NOTIFICATION_SERVICE') and
-                prd_resource not in ('PIC_STANDARD_PERFORMANCE','PIC_COMPUTE_OUTBOUND_DATA_TRANSFER') and
-                USG_CONSUMED_MEASURE in ('STORAGE_SIZE')
-            )
-        group by
-            tenant_name,
-			USAGE_INTERVAL_START,
-            USG_CONSUMED_MEASURE
+                (
+                        COST_BILLING_UNIT like '%GB%' or 
+                        COST_BILLING_UNIT like '%Gigabyte%Month%' or 
+                        COST_BILLING_UNIT like '%TB%' or 
+                        COST_BILLING_UNIT like '%Storage Months%'
+                ) and
+                upper(PRD_DESCRIPTION) not like '%MEMORY%' and
+                USG_BILLED_QUANTITY>0 and
+                COST_MY_COST<>0 and
+                COST_PRODUCT_SKU not in ('B91962','B109546')
+            group by 
+                tenant_name,
+                USAGE_INTERVAL_START
     )
-    group by tenant_name, USG_CONSUMED_MEASURE, trunc(USAGE_INTERVAL_START)
+    group by tenant_name, trunc(USAGE_INTERVAL_START)
 )
 select
     '<tr>'||
@@ -499,8 +477,6 @@ from
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-2 ) then USG_BILLED_QUANTITY else 0 end) DAY2,
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-1 ) then USG_BILLED_QUANTITY else 0 end) DAY1
         from data s
-        where
-			USG_CONSUMED_MEASURE = 'STORAGE_SIZE'
         group by tenant_name
         order by 1
     )
@@ -509,58 +485,39 @@ prompt </table>
 prompt <br><br>
 
 prompt <table border=1 cellpadding=3 cellspacing=0 width=1024 >
-prompt     <tr><td colspan=15 class=tabheader>Usage OCPUs Daily Report by Service - $DATE_PRINT </td></tr>
+prompt     <tr><td colspan=16 class=tabheader>Usage OCPUs Daily Report by Service - $DATE_PRINT </td></tr>
 
 with data as
 (
-    select 
-        tenant_name,
-        prd_service, 
-        prd_resource,
+    select tenant_name,
+        prd_service,
         trunc(USAGE_INTERVAL_START) as USAGE_INTERVAL_START,
-        USG_CONSUMED_MEASURE,
         max(USG_BILLED_QUANTITY) as USG_BILLED_QUANTITY
     from
     (
-        select 
-            tenant_name,
-            prd_service, 
-            prd_resource,
-            USAGE_INTERVAL_START,
-            USG_CONSUMED_MEASURE,
-            sum(USG_BILLED_QUANTITY) USG_BILLED_QUANTITY
-        from
-        (
-            select /*+ parallel(l,d) full(d) */
-                USAGE_INTERVAL_START,
+            select /*+ parallel(oci_cost,8) full(oci_cost) */ 
                 tenant_name,
-                prd_service, 
-                prd_resource,
-                USG_CONSUMED_MEASURE,
-                case
-                        when USG_CONSUMED_UNITS like '%MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-                    else USG_BILLED_QUANTITY
-                end as USG_BILLED_QUANTITY
-            from
-                oci_usage d
-            where
+                prd_service,
+                USAGE_INTERVAL_START,
+                sum(USG_BILLED_QUANTITY) as USG_BILLED_QUANTITY
+            from oci_cost
+            where 
                 USAGE_INTERVAL_START > trunc(sysdate-15) and
-                USG_CONSUMED_MEASURE in ('OCPUS')
-            )
-        group by
-            tenant_name,
-            prd_service, 
-            prd_resource,
-            USAGE_INTERVAL_START,
-            USG_CONSUMED_MEASURE
+                upper(COST_BILLING_UNIT) like '%CPU%' and
+                upper(PRD_DESCRIPTION) not like '%MEMORY%' and
+                USG_BILLED_QUANTITY>0 and
+                COST_MY_COST<>0
+            group by 
+                tenant_name,
+                prd_service,
+                USAGE_INTERVAL_START
     )
-    group by tenant_name, prd_service,prd_resource,USG_CONSUMED_MEASURE, trunc(USAGE_INTERVAL_START)
+    group by tenant_name, prd_service, trunc(USAGE_INTERVAL_START)
 )
 select
     '<tr>'||
         '<th width=150 nowrap class=th1>Tenant Name</th>'||
         '<th width=150 nowrap class=th1>Service</th>'||
-        '<th width=150 nowrap class=th1>Resource</th>'||
         '<th width=80  nowrap class=th1>'||to_char(trunc(sysdate-14),'DD-MON-YYYY DY')||'</th>'||
         '<th width=80  nowrap class=th1>'||to_char(trunc(sysdate-13),'DD-MON-YYYY DY')||'</th>'||
         '<th width=80  nowrap class=th1>'||to_char(trunc(sysdate-12),'DD-MON-YYYY DY')||'</th>'||
@@ -583,7 +540,6 @@ select
     '<tr>'||
         '<td nowrap class=dc1> '||tenant_name||'</td> '||
         '<td nowrap class=dc1> '||prd_service||'</td> '||
-        '<td nowrap class=dc1> '||prd_resource||'</td> '||
         '<td nowrap class='||day14_class||'> '||to_char(day14,'999,999')||'</td>'||
         '<td nowrap class='||day13_class||'> '||to_char(day13,'999,999')||'</td>'||
         '<td nowrap class='||day12_class||'> '||to_char(day12,'999,999')||'</td>'||
@@ -602,7 +558,7 @@ select
 from
 (
     select
-        tenant_name,prd_service,prd_resource,day1,day2,day3,day4,day5,day6,day7,day8,day9,day10,day11,day12,day13,day14,
+        tenant_name,prd_service,day1,day2,day3,day4,day5,day6,day7,day8,day9,day10,day11,day12,day13,day14,
         case when trunc(greatest(day1,day2,day3,day4,day5,day6,day7,day8,day9,day10,day11,day12,day13,day14)) = trunc(day1) then 'dcbold' else 'dcr' END as day1_class,
         case when trunc(greatest(day1,day2,day3,day4,day5,day6,day7,day8,day9,day10,day11,day12,day13,day14)) = trunc(day2) then 'dcbold' else 'dcr' END as day2_class,
         case when trunc(greatest(day1,day2,day3,day4,day5,day6,day7,day8,day9,day10,day11,day12,day13,day14)) = trunc(day3) then 'dcbold' else 'dcr' END as day3_class,
@@ -620,7 +576,7 @@ from
     from
     (
         select
-            tenant_name,prd_service,prd_resource,
+            tenant_name,prd_service,
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-14) then USG_BILLED_QUANTITY else 0 end) DAY14,
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-13) then USG_BILLED_QUANTITY else 0 end) DAY13,
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-12) then USG_BILLED_QUANTITY else 0 end) DAY12,
@@ -636,9 +592,7 @@ from
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-2 ) then USG_BILLED_QUANTITY else 0 end) DAY2,
             sum(case when trunc(USAGE_INTERVAL_START) = trunc(sysdate-1 ) then USG_BILLED_QUANTITY else 0 end) DAY1
         from data s
-        where
-            USG_CONSUMED_MEASURE = 'OCPUS'
-        group by tenant_name,prd_service,prd_resource
+        group by tenant_name,prd_service
         order by 1
     )
 );
@@ -672,11 +626,11 @@ from
     where segment_name like '%OCI_COST%'
     union all
     select
-        'Usage Tables and Indexes' object_name,
+        'Recycle Bin' object_name,
         to_char(sum(bytes/1024/1024/1024),'999,999.99') GB
     from
         user_segments
-    where segment_name like '%OCI_USAGE%'
+    where segment_name like 'BIN%'
     union all
     select
         'Total All Objects' object_name,
@@ -701,7 +655,7 @@ then
 fi
 
 echo ""
-echo "Sending e-mail to $MAIL_TO ..."
+echo "Sending e-mail to $MAIL_TO ..., File Content = $OUTPUT_FILE"
 
 ####################
 # Sending e-mail

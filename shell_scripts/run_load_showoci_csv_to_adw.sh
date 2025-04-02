@@ -1,9 +1,9 @@
 #!/bin/bash
 #############################################################################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #
-# Author - Adi Zohar, Feb 8th 2023
+# Author - Adi Zohar, Feb 8th 2023, Amended May 1st 2025
 #
 # Run load_showoci_csv_to_adw
 #

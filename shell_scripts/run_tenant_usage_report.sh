@@ -1,6 +1,6 @@
 #!/bin/sh
 #############################################################################################################################
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #
 # Author - Adi Zohar, Apr 28 2023
@@ -117,188 +117,53 @@ run_report()
             select
                 USAGE_INTERVAL_START,
                 dense_rank() over (partition by null order by USAGE_INTERVAL_START desc) rn
-            from oci_usage_stats
+            from oci_cost_stats
             where tenant_name='${TENANT_NAME}'
-        ) where rn=3
+        ) where rn=48
     ),
     data as
     (
-        select 
+        select /*+ use_nl(l,d) leading(l) */
             USAGE_INTERVAL_START,
-            prd_service,
-            prd_resource,
-            sum(USG_BILLED_QUANTITY) as USG_BILLED_QUANTITY,
-            max(USG_BILLED_QUANTITY) as max_BILLED_QUANTITY,
-            USG_CONSUMED_UNITS,
-            USG_CONSUMED_MEASURE,
-            count(distinct USG_RESOURCE_ID) TOTAL_SERVICES
+            COST_PRODUCT_SKU || ' ' || min(replace(PRD_DESCRIPTION,COST_PRODUCT_SKU||' - ','')) product,
+            min(COST_BILLING_UNIT) COST_BILLING_UNIT,
+            sum(USG_BILLED_QUANTITY) USG_BILLED_QUANTITY,
+            sum(COST_MY_COST) as COST_PER_HOUR,
+            sum(COST_MY_COST)*365 as COST_PER_YEAR
         from
-        (
-            select /*+ use_nl(l,d) leading(l) */
-                USAGE_INTERVAL_START,
-                case when tag_special like '%oke%' then prd_service||' OKE' else prd_service end prd_service,
-                prd_resource,
-                prd_region,
-                prd_compartment_path,
-                case
-                    when USG_CONSUMED_UNITS like '%BYTE_MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000/1000/1000/1000
-                    when USG_CONSUMED_UNITS like '%MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-                else USG_BILLED_QUANTITY
-                end as USG_BILLED_QUANTITY,
-                case
-                    when USG_CONSUMED_UNITS like '%BYTE_MS%' then 'GB'
-                    when USG_CONSUMED_UNITS like '%MS%' then replace(replace(USG_CONSUMED_UNITS,'MS',''),'_','')
-                    else USG_CONSUMED_UNITS
-                end as USG_CONSUMED_UNITS,
-                USG_CONSUMED_MEASURE,
-                USG_RESOURCE_ID
-            from
-                last_date l,
-                oci_usage d
-            where
-                tenant_name='${TENANT_NAME}' and
-                tenant_id='${TENANT_ID}' and
-                USAGE_INTERVAL_START = l.DATE_FILTER and
-                prd_service not in ('ORACLE_NOTIFICATION_SERVICE') and
-                prd_resource not in ('PIC_STANDARD_PERFORMANCE','PIC_COMPUTE_OUTBOUND_DATA_TRANSFER')
-        )
-        group by
-            USAGE_INTERVAL_START,
-            prd_service,
-            prd_resource,
-            USG_CONSUMED_UNITS,
-            USG_CONSUMED_MEASURE
-        order by 1,2,3,4
+            last_date l,
+            oci_cost d
+        where
+            tenant_name='${TENANT_NAME}' and
+            tenant_id='${TENANT_ID}' and
+            USAGE_INTERVAL_START = l.DATE_FILTER and
+            USG_BILLED_QUANTITY>0 and
+            COST_MY_COST<>0
+        group by USAGE_INTERVAL_START,COST_PRODUCT_SKU
+        order by COST_PER_HOUR desc
     )
     select
         '<tr>'||
             '<th width=100 nowrap class=th1>Usage Time</th>'||
-            '<th width=80  nowrap class=th1>Service</th>'||
-            '<th width=80  nowrap class=th1>Resource</th>'||
-            '<th width=100 nowrap class=th1>Usage</th>'||
+            '<th width=80  nowrap class=th1>Product</th>'||
             '<th width=100 nowrap class=th1>Units</th>'||
-            '<th width=100 nowrap class=th1>Unique Resources</th>'||
-            '<th width=100 nowrap class=th1>Max Single Resource</th>'||
+            '<th width=100 nowrap class=th1>Usage</th>'||
+            '<th width=100 nowrap class=th1>Cost Per Hour</th>'||
+            '<th width=100 nowrap class=th1>Cost Per Year</th>'||
         '</tr>'
         as line
     from dual
     union all
     select  '<tr>'||
                 '<td nowrap class=dcl'||mod(rownum,2)||'>'||to_char(USAGE_INTERVAL_START,'MM/DD/YYYY HH24:MI')||'</td>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||prd_service||'</td>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||prd_resource||'</td>'||
-                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(USG_BILLED_QUANTITY,'999,999,999,999')||' '||USG_CONSUMED_UNITS||'</td>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||USG_CONSUMED_MEASURE||'</td>'||
-                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(TOTAL_SERVICES,'999,999')||'</td>'||
-                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(max_BILLED_QUANTITY,'999,999,999,999')||'</td>'||
+                '<td nowrap class=dcl'||mod(rownum,2)||'>'||product||'</td>'||
+                '<td nowrap class=dcl'||mod(rownum,2)||'>'||COST_BILLING_UNIT||'</td>'||
+                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(USG_BILLED_QUANTITY,'999,999,999,999')||'</td>'||
+                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(COST_PER_HOUR,'999,999,999,999')||'</td>'||
+                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(COST_PER_YEAR,'999,999,999,999')||'</td>'||
             '</tr>' as line
     from
         data
-    where
-        USG_BILLED_QUANTITY>0
-    ;
-
-    prompt </table>
-
-    prompt <br>
-    prompt <table border=1 cellpadding=3 cellspacing=0 width=980 >
-    prompt     <tr><td colspan=9 class=tabheader>Usage report for $USER_NAME - $TENANT_NAME : $TENANT_ID </td></tr>
-
-    with last_date as
-    (
-        select distinct USAGE_INTERVAL_START as DATE_FILTER
-        from
-        (
-            select
-                USAGE_INTERVAL_START,
-                dense_rank() over (partition by null order by USAGE_INTERVAL_START desc) rn
-            from oci_usage_stats
-            where tenant_name='${TENANT_NAME}'
-        ) where rn=3
-    ),
-    data as
-    (
-        select 
-            USAGE_INTERVAL_START,
-            prd_service,
-            prd_resource,
-            prd_region,
-            prd_compartment_path,
-            sum(USG_BILLED_QUANTITY) as USG_BILLED_QUANTITY,
-            max(USG_BILLED_QUANTITY) as max_BILLED_QUANTITY,
-            USG_CONSUMED_UNITS,
-            USG_CONSUMED_MEASURE,
-            count(distinct USG_RESOURCE_ID) TOTAL_SERVICES
-        from
-        (
-            select /*+ use_nl(l,d) leading(l) */
-                USAGE_INTERVAL_START,
-                case when tag_special like '%oke%' then prd_service||' OKE' else prd_service end prd_service,
-                prd_resource,
-                prd_region,
-                prd_compartment_path,
-                case
-                    when USG_CONSUMED_UNITS like '%BYTE_MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000/1000/1000/1000
-                    when USG_CONSUMED_UNITS like '%MS%' then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-                else USG_BILLED_QUANTITY
-                end as USG_BILLED_QUANTITY,
-                case
-                    when USG_CONSUMED_UNITS like '%BYTE_MS%' then 'GB'
-                    when USG_CONSUMED_UNITS like '%MS%' then replace(replace(USG_CONSUMED_UNITS,'MS',''),'_','')
-                    else USG_CONSUMED_UNITS
-                end as USG_CONSUMED_UNITS,
-                USG_CONSUMED_MEASURE,
-                USG_RESOURCE_ID
-            from
-                last_date l,
-                oci_usage d
-            where
-                tenant_name='${TENANT_NAME}' and
-                tenant_id='${TENANT_ID}' and
-                USAGE_INTERVAL_START = l.DATE_FILTER and
-                prd_service not in ('ORACLE_NOTIFICATION_SERVICE') and
-                prd_resource not in ('PIC_STANDARD_PERFORMANCE','PIC_COMPUTE_OUTBOUND_DATA_TRANSFER')
-        )
-        group by
-            USAGE_INTERVAL_START,
-            prd_compartment_path,
-            prd_service,
-            prd_region,
-            prd_resource,
-            USG_CONSUMED_UNITS,
-            USG_CONSUMED_MEASURE
-        order by 1,2,3,4
-    )
-    select
-        '<tr>'||
-            '<th width=100 nowrap class=th1>Usage Time</th>'||
-            '<th width=80  nowrap class=th1>Service</th>'||
-            '<th width=80  nowrap class=th1>Resource</th>'||
-            '<th width=100 nowrap class=th1>Usage</th>'||
-            '<th width=100 nowrap class=th1>Units</th>'||
-            '<th width=100 nowrap class=th1>Unique Resources</th>'||
-            '<th width=100 nowrap class=th1>Max Single Resource</th>'||
-            '<th width=80  nowrap class=th1>Region</th>'||
-            '<th width=150 nowrap class=th1>Compartment</th>'||
-        '</tr>'
-        as line
-    from dual
-    union all
-    select  '<tr>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||to_char(USAGE_INTERVAL_START,'MM/DD/YYYY HH24:MI')||'</td>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||prd_service||'</td>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||prd_resource||'</td>'||
-                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(USG_BILLED_QUANTITY,'999,999,999,999')||' '||USG_CONSUMED_UNITS||'</td>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||USG_CONSUMED_MEASURE||'</td>'||
-                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(TOTAL_SERVICES,'999,999')||'</td>'||
-                '<td nowrap class=dcc'||mod(rownum,2)||'>'||to_char(max_BILLED_QUANTITY,'999,999,999,999')||'</td>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||prd_region||'</td>'||
-                '<td nowrap class=dcl'||mod(rownum,2)||'>'||prd_compartment_path||'</td>'||
-            '</tr>' as line
-    from
-        data
-    where
-        USG_BILLED_QUANTITY>0
     ;
 
     prompt </table>
