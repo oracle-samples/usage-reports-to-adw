@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+25.05.01 - 2025.05.01
+=====================
+* Removed handling usage files which deprecated it includes all relevant tables OCI_USAGE,..
+* Removed OCI_INTERNAL_COST which based on OCI_USAGE
+* Redesigned the APEX app Usage area fetching data from OCI_COST 
+* Added Tag Special Key 3 and Tag Special Key 4
+
+=====================
 25.01.01 - 2025.01.01
 =====================
 * Added attributedCost (COST_ATTRIBUTED_COST) and attributedUsage (USG_ATTRIBUTED_USAGE)

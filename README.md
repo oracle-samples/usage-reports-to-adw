@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-Usage2adw is a tool which uses the Python SDK to extract the usage and cost reports from your tenant and load it to Oracle Autonomous Database. (DbaaS can be used as well)
+Usage2adw is a tool which uses the Python SDK to extract the cost reports from your tenant and load it to Oracle Autonomous Database. (DbaaS can be used as well)
 Authentication to OCI by User or instance principals.
 
 It uses APEX for Visualization and generates Daily e-mail report.
@@ -14,14 +14,14 @@ and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/
 For application issues, please open ticket at [github issues](https://github.com/oracle-samples/usage-reports-to-adw/issues) 
 
 
-**Developed by Adi Zohar, 2020-2024**
+**Developed by Adi Zohar, 2020-2025**
 
 ## Documentation
 
-- Usage Current State - Report the current state of a tenant using the usage files.
-- Usage Over Time - Report usage over time for OCPUs and Storage using the usage files.
-- Cost Analysis - Report Cost analysis for a chosen time period using the cost files.
-- Cost Over Time - Report Cost over time by house, day, week, month using the cost files.
+- Current State - Report the current state of a tenant.
+- CPU and Storage Over Time - Report usage over time for OCPUs and Storage.
+- Cost Analysis - Report Cost analysis for a chosen time period.
+- Cost Over Time - Report Cost over time by house, day, week, month.
 - Rate Card for Used Product - Report the rate card from the cost files.
 - ShowOCI Data (If Enabled) - Report ShowOCI data if ShowOCI enabled and data loaded to ADW.
 
@@ -36,7 +36,7 @@ For application issues, please open ticket at [github issues](https://github.com
 
 ![](img/screen_8.png)
 
-## Usage Reports
+## Cost Reports
 
 ![](img/screen_1.png)
 ![](img/screen_2.png)
@@ -46,13 +46,13 @@ For application issues, please open ticket at [github issues](https://github.com
 
 ![](img/report_05.png)
 
-## Usage Reports Overview
+## Cost Reports Overview
 
 A usage report is a comma-separated value (CSV) file that can be used to get a detailed breakdown of resources in Oracle Cloud Infrastructure for audit or invoice reconciliation.
 
-## How Usage Reports Work
+## How Cost Reports Work
 
-The usage report is automatically generated daily, and is stored in an Oracle-owned Object Storage bucket. It contains one row per each Oracle Cloud Infrastructure resource (such as instance, Object Storage bucket, VNIC) per hour along with consumption information, metadata, and tags. Usage reports generally contain 24 hours of usage data, although occasionally a usage report may contain late-arriving data that is older than 24 hours.
+The cost report is automatically generated daily, and is stored in an Oracle-owned Object Storage bucket. It contains one row per each Oracle Cloud Infrastructure resource (such as instance, Object Storage bucket, VNIC) per hour along with consumption information, metadata, and tags. Cost reports generally contain 24 hours of usage and cost data, although occasionally a cost report may contain late-arriving data that is older than 24 hours.
 
 More information can be found at [usagereportsoverview.htm](https://docs.cloud.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm)
 
@@ -78,9 +78,6 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 
 ## Database Tables
 
-- OCI_USAGE - Raw data of the usage reports
-- OCI_USAGE_STATS - Summary Stats of the Usage Report for quick query if only filtered by tenant and date
-- OCI_USAGE_TAG_KEYS - Tag keys of the usage reports
 - OCI_COST - Raw data of the cost reports
 - OCI_COST_STATS - Summary Stats of the Cost Report for quick query if only filtered by tenant and date
 - OCI_COST_TAG_KEYS - Tag keys of the cost reports
@@ -88,14 +85,13 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 - OCI_PRICE_LIST - Has the price list and the cost per product
 - OCI_LOAD_STATUS - Has the load file statistics
 - OCI_TENANT - Has the display name of the child tenants (Manual Update)
-- OCI_INTERNAL_COST - Used for internal rate cards
 
 ## 3rd Party Dependencies including tested versions
 
 - Python 3.9.19
-- oracledb 2.4.0
+- oracledb 3.0.0
 - requests 2.32.1
-- OCI Python SDK 2.134.0
+- OCI Python SDK 2.144.1
 
 ## Contributing
 
@@ -125,7 +121,7 @@ Please consult the [security guide](./SECURITY.md) for our responsible security 
 
 ## License
 
-Copyright (c) 2024, Oracle and/or its affiliates. 
+Copyright (c) 2025, Oracle and/or its affiliates. 
 Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 
 See [LICENSE](./LICENSE.txt) for details.

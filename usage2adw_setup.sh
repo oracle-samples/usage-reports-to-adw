@@ -1,11 +1,11 @@
 #!/bin/bash
 #############################################################################################################################
-# Copyright (c) 2024, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #
 # Usage2ADW main Setup script
 # 
-# Written by Adi Zohar, October 2020, Amended Feb 2024
+# Written by Adi Zohar, October 2020, Amended May 2025
 #
 # Git Location     = https://github.com/oracle-samples/usage-reports-to-adw
 # Git Raw Location = https://raw.githubusercontent.com/oracle-samples/usage-reports-to-adw/main
@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=25.01.01
+export VERSION=25.05.01
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -141,6 +141,8 @@ ReadVariablesFromCredfile()
    export extract_from_date=`grep "^EXTRACT_DATE" $CREDFILE | sed -s 's/EXTRACT_DATE=//'`
    export extract_tag_special_key=`grep "^TAG_SPECIAL" $CREDFILE | sed -s 's/TAG_SPECIAL=//'`
    export extract_tag2_special_key=`grep "^TAG2_SPECIAL" $CREDFILE | sed -s 's/TAG2_SPECIAL=//'`
+   export extract_tag3_special_key=`grep "^TAG3_SPECIAL" $CREDFILE | sed -s 's/TAG3_SPECIAL=//'`
+   export extract_tag4_special_key=`grep "^TAG4_SPECIAL" $CREDFILE | sed -s 's/TAG4_SPECIAL=//'`
    export database_id=`grep "^DATABASE_ID" $CREDFILE | sed -s 's/DATABASE_ID=//'`
    export database_secret_id=`grep "^DATABASE_SECRET_ID" $CREDFILE | sed -s 's/DATABASE_SECRET_ID=//'`
    export database_secret_tenant=`grep "^DATABASE_SECRET_TENANT" $CREDFILE | sed -s 's/DATABASE_SECRET_TENANT=//'`
@@ -209,6 +211,8 @@ SetupCredential()
    printf "Please Enter Extract Start Date (Format YYYY-MM i.e. 2023-01): "; read EXTRACT_DATE
    printf "Please Enter Tag Key 1 to extract as Special Tag (Oracle-Tags.CreatedBy): "; read TAG_SPECIAL
    printf "Please Enter Tag Key 2 to extract as Special Tag (Oracle-Tags.Program): "; read TAG2_SPECIAL
+   printf "Please Enter Tag Key 3 to extract as Special Tag (Core.Project): "; read TAG3_SPECIAL
+   printf "Please Enter Tag Key 4 to extract as Special Tag (Core.Budget): "; read TAG4_SPECIAL
 
    if [ -z "$TAG_SPECIAL" ]; then
       TAG_SPECIAL="Oracle-Tags.CreatedBy"
@@ -222,6 +226,8 @@ SetupCredential()
    echo "EXTRACT_DATE=${EXTRACT_DATE}" >> $CREDFILE
    echo "TAG_SPECIAL=${TAG_SPECIAL}" >> $CREDFILE
    echo "TAG2_SPECIAL=${TAG2_SPECIAL}" >> $CREDFILE
+   echo "TAG3_SPECIAL=${TAG3_SPECIAL}" >> $CREDFILE
+   echo "TAG4_SPECIAL=${TAG4_SPECIAL}" >> $CREDFILE
    echo "" | tee -a $LOG
    echo "Below Data written to $CREDFILE:" | tee -a $LOG
    cat $CREDFILE | tee -a $LOG
@@ -524,23 +530,6 @@ SetupApp()
    -------------------------------
    -- OCI_TENANT
    -------------------------------
-   prompt Creating Table OCI_INTERNAL_COST
-
-   create table OCI_INTERNAL_COST (
-      RESOURCE_NAME       VARCHAR2(100) NOT NULL,
-      SERVICE_NAME        VARCHAR2(100),
-      BILLED_USAGE_UNIT   VARCHAR2(100),
-      CONSUMED_MEASURE    VARCHAR2(100),
-      RESOURCE_UNITS      VARCHAR2(100),
-      UNIT_COST           NUMBER,
-      CONVERSION_FACTOR   NUMBER,
-      EXIST_IN_FINANCE    CHAR(1),
-      CONVERSION_NOTES    VARCHAR2(500),
-      CONSTRAINT OCI_INTERNAL_COST_PK PRIMARY KEY (RESOURCE_NAME,BILLED_USAGE_UNIT) USING INDEX ENABLE
-   );
-   -------------------------------
-   -- OCI_TENANT
-   -------------------------------
    prompt Creating Table OCI_TENANT
 
    create table OCI_TENANT (
@@ -549,63 +538,6 @@ SetupApp()
       ADMIN_EMAIL             VARCHAR2(100),
       INFORMATION             VARCHAR2(1000),
       CONSTRAINT OCI_TENANT_PK PRIMARY KEY (TENANT_ID) USING INDEX
-   );
-
-   -------------------------------
-   -- OCI_USAGE
-   -------------------------------
-   prompt Creating Table OCI_USAGE
-
-   create table OCI_USAGE (
-      TENANT_NAME             VARCHAR2(100),
-      TENANT_ID               VARCHAR2(100),
-      FILE_ID                 VARCHAR2(30),
-      USAGE_INTERVAL_START    DATE,
-      USAGE_INTERVAL_END      DATE,
-      PRD_SERVICE             VARCHAR2(100),
-      PRD_RESOURCE            VARCHAR2(100),
-      PRD_COMPARTMENT_ID      VARCHAR2(100),
-      PRD_COMPARTMENT_NAME    VARCHAR2(100),
-      PRD_COMPARTMENT_PATH    VARCHAR2(1000),
-      PRD_REGION              VARCHAR2(100),
-      PRD_AVAILABILITY_DOMAIN VARCHAR2(100),
-      USG_RESOURCE_ID         VARCHAR2(1000),
-      USG_BILLED_QUANTITY     NUMBER,
-      USG_CONSUMED_QUANTITY   NUMBER,
-      USG_CONSUMED_UNITS      VARCHAR2(100),
-      USG_CONSUMED_MEASURE    VARCHAR2(100),
-      IS_CORRECTION           VARCHAR2(10),
-      TAGS_DATA               VARCHAR2(4000),
-      TAG_SPECIAL             VARCHAR2(4000),
-      TAG_SPECIAL2            VARCHAR2(4000)
-   ) COMPRESS;
-
-   CREATE INDEX OCI_USAGE_1IX ON OCI_USAGE(TENANT_NAME,USAGE_INTERVAL_START);
-
-   -------------------------------
-   -- OCI_USAGE_TAG_KEYS
-   -------------------------------
-   prompt Creating Table OCI_USAGE_TAG_KEYS
-
-   CREATE TABLE OCI_USAGE_TAG_KEYS (
-      TENANT_NAME VARCHAR2(100),
-      TAG_KEY VARCHAR2(1000),
-      CONSTRAINT OCI_USAGE_TAG_KEYS_PK PRIMARY KEY(TENANT_NAME,TAG_KEY)
-   );
-
-   -------------------------------
-   -- OCI_USAGE_TAG_KEYS
-   -------------------------------
-   prompt Creating Table OCI_USAGE_STATS
-
-   CREATE TABLE OCI_USAGE_STATS (
-      TENANT_NAME             VARCHAR2(100),
-      FILE_ID                 VARCHAR2(30),
-      USAGE_INTERVAL_START    DATE,
-      NUM_ROWS                NUMBER,
-      UPDATE_DATE             DATE,
-      AGENT_VERSION           VARCHAR2(30),
-      CONSTRAINT OCI_USAGE_STATS_PK PRIMARY KEY (TENANT_NAME,FILE_ID,USAGE_INTERVAL_START)
    );
 
    -------------------------------
@@ -644,7 +576,9 @@ SetupApp()
       IS_CORRECTION           VARCHAR2(10),
       TAGS_DATA               VARCHAR2(4000),
       TAG_SPECIAL             VARCHAR2(4000),
-      TAG_SPECIAL2            VARCHAR2(4000)
+      TAG_SPECIAL2            VARCHAR2(4000),
+      TAG_SPECIAL3            VARCHAR2(4000),
+      TAG_SPECIAL4            VARCHAR2(4000)
    ) COMPRESS;
 
    CREATE INDEX OCI_COST_1IX ON OCI_COST(TENANT_NAME,USAGE_INTERVAL_START);
@@ -706,19 +640,6 @@ SetupApp()
       RATE_MONTHLY_FLEX_PRICE NUMBER,
       RATE_UPDATE_DATE        DATE,
       CONSTRAINT OCI_PRICE_LIST_PK PRIMARY KEY (TENANT_NAME,TENANT_ID,COST_PRODUCT_SKU)
-   );
-
-   -------------------------------
-   -- OCI_INTERNAL_COST
-   -------------------------------
-   prompt Creating Table OCI_INTERNAL_COST
-
-   create table OCI_INTERNAL_COST (
-      RESOURCE_NAME       varchar2(100) NOT NULL,
-      SERVICE_NAME        varchar2(100),
-      BILLED_USAGE_UNIT   varchar2(100),
-      UNIT_COST           NUMBER,
-      CONSTRAINT OCI_INTERNAL_COST_PK PRIMARY KEY (RESOURCE_NAME) USING INDEX ENABLE
    );
 
    -------------------------------
@@ -840,20 +761,8 @@ DropTables()
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
    select to_char(sysdate,'YYYY-MM-DD HH24:MI') current_date from dual;
 
-   prompt Dropping Table OCI_USAGE
-   drop table OCI_USAGE ;
-
-   prompt Dropping Table OCI_INTERNAL_COST
-   drop table OCI_INTERNAL_COST ;
-
    prompt Dropping Table OCI_TENANT
    drop table OCI_TENANT ;
-
-   prompt Dropping Table OCI_USAGE_STATS
-   drop table OCI_USAGE_STATS ;
-
-   prompt Dropping Table OCI_USAGE_TAG_KEYS
-   drop table OCI_USAGE_TAG_KEYS ;
 
    prompt Dropping Table OCI_COST
    drop table OCI_COST;
@@ -917,15 +826,6 @@ TruncateTables()
    prompt Truncating Table OCI_TENANT
    truncate table OCI_TENANT ;
 
-   prompt Truncating Table OCI_USAGE
-   truncate table OCI_USAGE ;
-
-   prompt Truncating Table OCI_USAGE_STATS
-   truncate table OCI_USAGE_STATS ;
-
-   prompt Truncating Table OCI_USAGE_TAG_KEYS
-   truncate table OCI_USAGE_TAG_KEYS ;
-
    prompt Truncating Table OCI_COST
    truncate table OCI_COST;
 
@@ -943,9 +843,6 @@ TruncateTables()
 
    prompt Truncating Table OCI_LOAD_STATUS
    truncate table OCI_LOAD_STATUS; 
-
-   prompt Truncating Table OCI_INTERNAL_COST
-   truncate table OCI_INTERNAL_COST; 
 
    prompt Truncating Table OCI_RESOURCES
    truncate table OCI_RESOURCES; 
