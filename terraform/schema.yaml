@@ -62,6 +62,8 @@ groupings:
   - ${extract_from_date}
   - ${extract_tag1_special_key}
   - ${extract_tag2_special_key}
+  - ${extract_tag3_special_key}
+  - ${extract_tag4_special_key}
 
 - title: "Oracle Analytics (OAC) Configuration"
   variables:
@@ -366,7 +368,7 @@ variables:
     required: true
     visible: true
 
-  extract_tag2_special_key:
+  extract_tag4_special_key:
     title: Extract Tag Key 4 to special tag column
     description: Please specify the tag key 4 to load to Tag Special 4 column
     type: string
