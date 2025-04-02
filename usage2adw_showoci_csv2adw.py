@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 ##########################################################################
-# Copyright (c) 2024, Oracle and/or its affiliates.
+# Copyright (c) 2025, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/
 #
 # usage2adw_showoci_csv2adw.py
@@ -120,7 +120,7 @@ import os
 import oci
 import base64
 
-version = "24.11.04"
+version = "25.05.01"
 cmd = None
 file_num = 0
 
@@ -3299,8 +3299,6 @@ def handle_table(connection, inputdata, resource_id="", resource_name="", resour
         ################################################
         num_rows = 0
         process_location = "Before Load Data"
-
-        # Allow larger data sizes for CSV field
         csv.field_size_limit(sys.maxsize)
 
         with open(path_filename, 'rt') as file_in:

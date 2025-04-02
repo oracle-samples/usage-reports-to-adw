@@ -587,9 +587,10 @@ optional arguments:
   -f FILEID             File Id to load
   -ts TAGSPECIAL        tag special key 1 to load the data to TAG_SPECIAL column
   -ts2 TAGSPECIAL2      tag special key 2 to load the data to TAG_SPECIAL2 column
+  -ts3 TAGSPECIAL2      tag special key 3 to load the data to TAG_SPECIAL3 column
+  -ts4 TAGSPECIAL2      tag special key 4 to load the data to TAG_SPECIAL4 column
   -d FILEDATE           Minimum File Date to load (i.e. yyyy-mm-dd)
   -p PROXY              Set Proxy (i.e. www-proxy-server.com:80)
-  -su                   Skip Load Usage Files
   -sc                   Skip Load Cost Files
   -sr                   Skip Public Rate API
   -ip                   Use Instance Principals for Authentication
@@ -625,24 +626,14 @@ Connecting to database adirep_low
    Connected
 
 Checking Database Structure...
-   Table OCI_USAGE exist
-   Table OCI_USAGE_TAG_KEYS exist
    Table OCI_COST exist
    Table OCI_COST_TAG_KEYS exist
 
 Checking Last Loaded File...
-   Max Usage File Id Processed = 0001000000179319
    Max Cost  File Id Processed = 0001000000007463
 
 Connecting to Object Storage Service...
    Connected
-
-Handling Usage Report...
-   Processing file reports/usage-csv/0001000000179320.csv.gz - 375930, 2020-04-15 18:27
-   Completed  file reports/usage-csv/0001000000179320.csv.gz - 6455 Rows Inserted
-   Total 13 Tags Merged.
-
-   Total 1 Usage Files Loaded
 
 Handling Cost Report...
    Processing file reports/cost-csv/0001000000007464.csv.gz - 123150, 2020-04-16 01:44
@@ -660,341 +651,55 @@ Completed at 2020-04-21 12:05:46
 ## 13. Sample of database queries
 
 ```
----------------------------------------------------------------------
--- Current State - CPU per Service
----------------------------------------------------------------------
-with last_date as
-(
-    select distinct USAGE_INTERVAL_START
-    from 
-    (
-        select USAGE_INTERVAL_START, dense_rank() over (partition by null order by USAGE_INTERVAL_START desc) rn 
-        from oci_usage 
-        where 
-			-- tenant_name=:PARAM_TENANT_NAME and 
-			USAGE_INTERVAL_START >= sysdate-14
-    ) where rn=2 
-)
+------------------------------------------------------------------------
+-- Cost per specific hour
+------------------------------------------------------------------------
+set lines 199 trimsp on pages 1000 tab off
+col PRODUCT for a60 trunc
+col COST_BILLING_UNIT for a20 trunc
+col USG_BILLED_QUANTITY for 999,999,999
+col COST_PER_HOUR for 999,999,999.00
+col COST_PER_YEAR for 999,999,999
+
 select 
-    to_char(usage_interval_start,'DD-MON-YYYY HH24:MI') DATE_TIME,
-    prd_service, 
-    sum(
-        case when USG_CONSUMED_UNITS like '%MS%' 
-        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-        else USG_BILLED_QUANTITY
-        end 
-    ) as USG_BILLED_QUANTITY
-from oci_usage
+    COST_PRODUCT_SKU || ' ' || min(replace(PRD_DESCRIPTION,COST_PRODUCT_SKU||' - ','')) PRODUCT,
+    min(COST_BILLING_UNIT)   as COST_BILLING_UNIT,
+    sum(USG_BILLED_QUANTITY) as USG_BILLED_QUANTITY,
+    sum(COST_MY_COST)        as COST_PER_HOUR,
+    sum(COST_MY_COST)*365    as COST_PER_YEAR
+from oci_cost
 where 
-    -- tenant_name = :PARAM_TENANT_NAME and
-    -- prd_compartment_name = :PARAM_COMPARTMENT_NAME and
-    -- prd_compartment_path like :PARAM_COMPARTMENT_TOP ||'%' and
-    -- prd_service = :PARAM_PRODUCT_SERVICE and
-    -- prd_region = :PARAM_PRODUCT_REGION and
-    USAGE_INTERVAL_START = (select USAGE_INTERVAL_START from last_date) and
+    USAGE_INTERVAL_START = to_date('2025-03-01 10:00','YYYY-MM-DD HH24:MI') and
     USG_BILLED_QUANTITY>0 and
-    USG_CONSUMED_MEASURE='OCPUS'
+    COST_MY_COST<>0
 group by 
-    prd_service, to_char(usage_interval_start,'DD-MON-YYYY HH24:MI')
-order by 3 desc;
+    COST_PRODUCT_SKU
+order by COST_PER_HOUR desc;
 
----------------------------------------------------------------------
--- Current State - CPU per Service
----------------------------------------------------------------------
-with last_date as
-(
-    select distinct USAGE_INTERVAL_START
-    from 
-    (
-        select USAGE_INTERVAL_START, dense_rank() over (partition by null order by USAGE_INTERVAL_START desc) rn 
-        from oci_usage 
-        where 
-			-- tenant_name=:PARAM_TENANT_NAME and 
-			USAGE_INTERVAL_START >= sysdate-14
-    ) where rn=2 
-)
-select 
-    to_char(usage_interval_start,'DD-MON-YYYY HH24:MI') DATE_TIME,
-    prd_service,
-    round(sum(
-        case 
-            when USG_CONSUMED_UNITS = 'KB' then USG_BILLED_QUANTITY/1000/1000/1000
-            when USG_CONSUMED_UNITS = 'MB' then USG_BILLED_QUANTITY/1000/1000
-            when USG_CONSUMED_UNITS = 'GB' then USG_BILLED_QUANTITY/1000
-            when USG_CONSUMED_UNITS = 'TB' then USG_BILLED_QUANTITY
-        end
-    ),2) as USG_BILLED_QUANTITY
-from 
-(
-    select
-        usage_interval_start,
-        prd_service, 
-        sum(
-            case when USG_CONSUMED_UNITS like '%MS%' 
-            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-            else USG_BILLED_QUANTITY
-            end 
-        ) as USG_BILLED_QUANTITY,
-        case when USG_CONSUMED_UNITS like '%MS%' 
-            then replace(replace(USG_CONSUMED_UNITS,'MS',''),'_','')
-            else USG_CONSUMED_UNITS
-        end as USG_CONSUMED_UNITS
-    from oci_usage
-    where 
-        -- tenant_name = :PARAM_TENANT_NAME and
-        -- prd_compartment_name = :PARAM_COMPARTMENT_NAME and
-        -- prd_compartment_path like :PARAM_COMPARTMENT_TOP ||'%' and
-        -- prd_service = :PARAM_PRODUCT_SERVICE and
-        -- prd_region = :PARAM_PRODUCT_REGION and
-        USAGE_INTERVAL_START = (select USAGE_INTERVAL_START from last_date) and
-        USG_BILLED_QUANTITY>0 and
-        USG_CONSUMED_MEASURE='STORAGE_SIZE'
-    group by 
-        prd_service,
-        USG_CONSUMED_UNITS,
-        usage_interval_start
-)
-group by prd_service, to_char(usage_interval_start,'DD-MON-YYYY HH24:MI')
-order by 3 desc;
+------------------------------------------------------------------------
+-- Cost per day for last 30 days
+------------------------------------------------------------------------
+set lines 199 trimsp on pages 1000 tab off
+col tenant_name for a30 trunc
+col USAGE_DAY for a20 trunc
+col COST_MY_COST for 999,999,999.99
 
----------------------------------------------------------------------
--- Current State - Chart per Compartment
----------------------------------------------------------------------
-with last_date as
-(
-    select distinct USAGE_INTERVAL_START
-    from 
-    (
-        select USAGE_INTERVAL_START, dense_rank() over (partition by null order by USAGE_INTERVAL_START desc) rn 
-        from oci_usage 
-        where 
-			-- tenant_name=:PARAM_TENANT_NAME and 
-			USAGE_INTERVAL_START >= sysdate-14
-    ) where rn=2 
-)
-select 
-    to_char(usage_interval_start,'DD-MON-YYYY HH24:MI') DATE_TIME,
-    prd_compartment_name,
-    prd_service, 
-    sum(
-        case when USG_CONSUMED_UNITS like '%MS%' 
-        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-        else USG_BILLED_QUANTITY
-        end 
-    ) as USG_BILLED_QUANTITY
-from 
-	oci_usage
+select
+    tenant_name,
+    to_char(USAGE_INTERVAL_START,'YYYY-MM-DD DY') as USAGE_DAY, 
+    sum(COST_MY_COST) as COST_MY_COST
+from oci_cost_stats
 where 
-    -- tenant_name = :PARAM_TENANT_NAME and
-    -- prd_compartment_name = :PARAM_COMPARTMENT_NAME and
-    -- prd_compartment_path like :PARAM_COMPARTMENT_TOP ||'%' and
-    -- prd_service = :PARAM_PRODUCT_SERVICE and
-    -- prd_region = :PARAM_PRODUCT_REGION and
-    USAGE_INTERVAL_START = (select USAGE_INTERVAL_START from last_date) and
-    USG_BILLED_QUANTITY>0 and
-    USG_CONSUMED_MEASURE='OCPUS'
+    USAGE_INTERVAL_START >= trunc(sysdate-30)
+    and COST_MY_COST > 0
 group by 
-    prd_compartment_name, prd_service, to_char(usage_interval_start,'DD-MON-YYYY HH24:MI')
-order by 4 desc;
+    tenant_name,
+    to_char(USAGE_INTERVAL_START,'YYYY-MM-DD DY')
+order by 1,2;
 
----------------------------------------------------------------------
--- Current State - Storage Per Service in TB
----------------------------------------------------------------------
-with last_date as
-(
-    select distinct USAGE_INTERVAL_START
-    from 
-    (
-        select USAGE_INTERVAL_START, dense_rank() over (partition by null order by USAGE_INTERVAL_START desc) rn 
-        from oci_usage 
-        where 
-			-- tenant_name=:PARAM_TENANT_NAME and 
-			USAGE_INTERVAL_START >= sysdate-14
-    ) where rn=2 
-)
-select 
-    to_char(usage_interval_start,'DD-MON-YYYY HH24:MI') DATE_TIME,
-    prd_compartment_name,
-    prd_service,
-    round(sum(
-        case 
-            when USG_CONSUMED_UNITS = 'KB' then USG_BILLED_QUANTITY/1000/1000/1000
-            when USG_CONSUMED_UNITS = 'MB' then USG_BILLED_QUANTITY/1000/1000
-            when USG_CONSUMED_UNITS = 'GB' then USG_BILLED_QUANTITY/1000
-            when USG_CONSUMED_UNITS = 'TB' then USG_BILLED_QUANTITY
-        end
-    ),2) as USG_BILLED_QUANTITY
-from 
-(
-    select 
-        prd_compartment_name,
-        prd_service, 
-        usage_interval_start,
-        sum(
-            case when USG_CONSUMED_UNITS like '%MS%' 
-            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-            else USG_BILLED_QUANTITY
-            end 
-        ) as USG_BILLED_QUANTITY,
-        case when USG_CONSUMED_UNITS like '%MS%' 
-            then replace(replace(USG_CONSUMED_UNITS,'MS',''),'_','')
-            else USG_CONSUMED_UNITS
-        end as USG_CONSUMED_UNITS
-    from 
-		oci_usage
-    where 
-        -- tenant_name = :PARAM_TENANT_NAME and
-        -- prd_compartment_name = :PARAM_COMPARTMENT_NAME and
-        -- prd_compartment_path like :PARAM_COMPARTMENT_TOP ||'%' and
-        -- prd_service = :PARAM_PRODUCT_SERVICE and
-        -- prd_region = :PARAM_PRODUCT_REGION and
-        USAGE_INTERVAL_START = (select USAGE_INTERVAL_START from last_date) and
-        USG_BILLED_QUANTITY>0 and
-        USG_CONSUMED_MEASURE='STORAGE_SIZE'
-    group by 
-        prd_compartment_name,
-        prd_service,
-        USG_CONSUMED_UNITS,
-        usage_interval_start
-)
-group by prd_compartment_name, prd_service, to_char(usage_interval_start,'DD-MON-YYYY HH24:MI')
-order by 4 desc
-
----------------------------------------------------------------------
--- Current State - list
----------------------------------------------------------------------
-with last_date as
-(
-    select distinct USAGE_INTERVAL_START
-    from 
-    (
-        select USAGE_INTERVAL_START, dense_rank() over (partition by null order by USAGE_INTERVAL_START desc) rn 
-        from oci_usage 
-        where 
-			-- tenant_name=:PARAM_TENANT_NAME and 
-			USAGE_INTERVAL_START >= sysdate-14
-    ) where rn=2 
-)
-select 
-    to_char(usage_interval_start,'DD-MON-YYYY HH24:MI') DATE_TIME,
-    prd_compartment_path, 
-    prd_compartment_name, 
-    prd_region, 
-    prd_service, 
-    prd_resource,
-    USAGE_INTERVAL_START,
-    USAGE_INTERVAL_END,
-    sum(
-        case when USG_CONSUMED_UNITS like '%MS%' 
-        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-        else USG_BILLED_QUANTITY
-        end 
-    ) as USG_BILLED_QUANTITY,
-    case when USG_CONSUMED_UNITS like '%MS%' 
-        then replace(replace(USG_CONSUMED_UNITS,'MS',''),'_','')
-        else USG_CONSUMED_UNITS
-    end as USG_CONSUMED_UNITS, 
-    USG_CONSUMED_MEASURE
-from 
-	oci_usage
-where 
-    -- tenant_name = :PARAM_TENANT_NAME and
-    -- prd_compartment_name = :PARAM_COMPARTMENT_NAME and
-    -- prd_compartment_path like :PARAM_COMPARTMENT_TOP ||'%' and
-    -- prd_service = :PARAM_PRODUCT_SERVICE and
-    -- prd_region = :PARAM_PRODUCT_REGION and
-    USAGE_INTERVAL_START = (select USAGE_INTERVAL_START from last_date) and
-    USG_BILLED_QUANTITY>0
-group by 
-    prd_compartment_path, 
-    prd_compartment_name, 
-    prd_region, 
-    prd_service, 
-    prd_resource, 
-    USG_CONSUMED_UNITS, 
-    USG_CONSUMED_MEASURE,
-    USAGE_INTERVAL_START,
-    USAGE_INTERVAL_END
-order by 1,2,3,4,5
-
-
----------------------------------------------------------------------
--- CPUs over time
----------------------------------------------------------------------
-
-select 
-    to_char(USAGE_INTERVAL_START,'YYYY-MM-DD HH24:MI') USAGE_INTERVAL_START,
-    prd_service, 
-    sum(
-        case when USG_CONSUMED_UNITS like '%MS%' 
-        then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-        else USG_BILLED_QUANTITY
-        end 
-    ) as USG_BILLED_QUANTITY
-from 
-	oci_usage
-where 
-    -- tenant_name=:PARAM_TENANT and
-    -- prd_compartment_name = :PARAM_COMPARTMENT_NAME and
-    -- prd_compartment_path like :PARAM_COMPARTMENT_TOP ||'%') and
-    -- prd_service = :PARAM_PRODUCT_SERVICE and
-    -- prd_region = :PARAM_PRODUCT_REGION and
-    USAGE_INTERVAL_START >= add_months(sysdate,0-12) and
-    USG_BILLED_QUANTITY>0 and
-    USG_CONSUMED_MEASURE='OCPUS'
-group by 
-    to_char(USAGE_INTERVAL_START,'YYYY-MM-DD HH24:MI'),
-    prd_service
-order by 2 desc;
-
----------------------------------------------------------------------
--- Usage over Time 
----------------------------------------------------------------------
-select 
-    USAGE_INTERVAL_START,
-    prd_service,
-    round(sum(
-        case 
-            when USG_CONSUMED_UNITS = 'KB' then USG_BILLED_QUANTITY/1000/1000/1000
-            when USG_CONSUMED_UNITS = 'MB' then USG_BILLED_QUANTITY/1000/1000
-            when USG_CONSUMED_UNITS = 'GB' then USG_BILLED_QUANTITY/1000
-            when USG_CONSUMED_UNITS = 'TB' then USG_BILLED_QUANTITY
-        end
-    ),2) as USG_BILLED_QUANTITY
-from 
-(
-    select 
-        to_char(USAGE_INTERVAL_START,'YYYY-MM-DD HH24:MI') USAGE_INTERVAL_START,
-        prd_service, 
-        sum(
-            case when USG_CONSUMED_UNITS like '%MS%' 
-            then USG_BILLED_QUANTITY/((USAGE_INTERVAL_END-USAGE_INTERVAL_START)*24*60*60)/1000
-            else USG_BILLED_QUANTITY
-            end 
-        ) as USG_BILLED_QUANTITY,
-        case when USG_CONSUMED_UNITS like '%MS%' 
-            then replace(replace(USG_CONSUMED_UNITS,'MS',''),'_','')
-            else USG_CONSUMED_UNITS
-        end as USG_CONSUMED_UNITS
-    from oci_usage
-    where 
-        -- tenant_name=:PARAM_TENANT and
-        -- prd_compartment_name = :PARAM_COMPARTMENT_NAME and
-        -- prd_compartment_path like :PARAM_COMPARTMENT_TOP ||'%') and
-        -- prd_service = :PARAM_PRODUCT_SERVICE and
-        -- prd_region = :PARAM_PRODUCT_REGION and
-        USAGE_INTERVAL_START >= add_months(sysdate,0-12) and
-        USG_BILLED_QUANTITY>0 and
-        USG_CONSUMED_MEASURE='STORAGE_SIZE'
-    group by 
-        to_char(USAGE_INTERVAL_START,'YYYY-MM-DD HH24:MI'),
-        prd_service,
-        USG_CONSUMED_UNITS
-)
-group by USAGE_INTERVAL_START,prd_service order by 1,2 desc;
 ```
 
 ## License
 
-Copyright (c) 2024, Oracle and/or its affiliates. 
+Copyright (c) 2025, Oracle and/or its affiliates. 
 Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 

@@ -1,4 +1,4 @@
 This software is licensed under the Universal Permissive License (UPL) 1.0
 
 The Universal Permissive License (UPL), Version 1.0
-Copyright (c) 2016, 2024, Oracle and/or its affiliates.  All rights reserved.
+Copyright (c) 2016, 2025, Oracle and/or its affiliates.  All rights reserved.
