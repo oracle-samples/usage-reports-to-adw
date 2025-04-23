@@ -1,5 +1,5 @@
 #********************************************************************************************
-# Copyright (c) 2023, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #********************************************************************************************
 
@@ -43,7 +43,7 @@ resource oci_core_network_security_group_security_rule nsg_rule_1 {
 	protocol                  = "6"
 	source                    = local.all_cidr
 	source_type               = "CIDR_BLOCK"
-	stateless                 = "true"
+	stateless                 = "false"
 	tcp_options {
         destination_port_range {
           max = "1522"
@@ -61,7 +61,7 @@ resource oci_core_network_security_group_security_rule nsg_rule_2 {
 	protocol                  = "6"
 	source                    = local.all_cidr
 	source_type               = "CIDR_BLOCK"
-	stateless                 = "true"
+	stateless                 = "false"
 	tcp_options {
         destination_port_range {
           max = "443"
@@ -78,7 +78,7 @@ resource oci_core_network_security_group_security_rule nsg_rule_3 {
 	direction                 = "EGRESS"
 	network_security_group_id = oci_core_network_security_group.vcn_nsg[count.index].id
 	protocol                  = "all"
-	stateless                 = "true"
+	stateless                 = "false"
 }
 
 ############################################
