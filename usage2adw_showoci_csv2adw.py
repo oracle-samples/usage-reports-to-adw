@@ -84,6 +84,8 @@
 # - OCI_SHOWOCI_IDENTITY_DOMAINS_GROUPS
 # - OCI_SHOWOCI_IDENTITY_DOMAINS_USERS
 # - OCI_SHOWOCI_IDENTITY_POLICIES
+# - OCI_SHOWOCI_ADVISOR_RESOURCE_ACTION
+# - OCI_SHOWOCI_ADVISOR_RECOMMENDATIONS
 #
 ##########################################################################
 # TO DO
@@ -120,7 +122,7 @@ import os
 import oci
 import base64
 
-version = "25.05.01"
+version = "25.05.08"
 cmd = None
 file_num = 0
 
@@ -3114,6 +3116,81 @@ def handle_compute_reservations(connection):
 
 
 ##########################################################################
+# Check Table Structure for handle_compute_reservations
+##########################################################################
+def handle_advisor_recommendations(connection):
+    try:
+
+        json = {
+            'table_name': "OCI_SHOWOCI_ADVISOR_RECOMMENDATIONS",
+            'csv_file': "advisor_recommendations.csv",
+            'items': [
+                {'col': 'tenant_name                 ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tenant_id                   ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                          ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'y'},
+                {'col': 'name                        ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'description                 ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'compartment_id              ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'importance                  ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'nodes_shapes                ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'extended_metadata           ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'estimated_cost_saving       ', 'csv': '            ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'time_status_begin           ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'time_status_end             ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'time_updated                ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'time_created                ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'extract_date                ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'}
+            ]
+        }
+        handle_table(connection, json, "id", "name")
+    except Exception as e:
+        raise Exception("\nError at procedure: handle_advisor_recommendations - " + str(e))
+
+
+##########################################################################
+# Check Table Structure for handle_advisor_resource_action
+##########################################################################
+def handle_advisor_resource_action(connection):
+    try:
+
+        json = {
+            'table_name': "OCI_SHOWOCI_ADVISOR_RESOURCE_ACTION",
+            'csv_file': "advisor_resource_actions.csv",
+            'items': [
+                {'col': 'tenant_name                 ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'tenant_id                   ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'id                          ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'y'},
+                {'col': 'compartment_name            ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment_id              ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'compartment_path            ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'name                        ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'category_id                 ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'recommendation_id           ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'recommendation_name         ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'resource_id                 ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'resource_type               ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'action_type                 ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'action_description          ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'action_url                  ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'lifecycle_state             ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'estimated_cost_saving       ', 'csv': '            ', 'type': 'number        ', 'pk': 'n'},
+                {'col': 'status                      ', 'csv': '            ', 'type': 'varchar2(1000)', 'pk': 'n'},
+                {'col': 'metadata                    ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'extended_metadata           ', 'csv': '            ', 'type': 'varchar2(4000)', 'pk': 'n'},
+                {'col': 'time_status_begin           ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'time_status_end             ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'time_created                ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'time_updated                ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'},
+                {'col': 'extract_date                ', 'csv': '            ', 'type': 'date          ', 'pk': 'n'}
+            ]
+        }
+        handle_table(connection, json, "id", "name")
+
+    except Exception as e:
+        raise Exception("\nError at procedure: handle_advisor_resource_action - " + str(e))
+
+
+##########################################################################
 # Check Table Structure for Compute
 ##########################################################################
 def variable_generation(item, index):
@@ -3554,6 +3631,8 @@ def main_process():
             handle_identity_domains_groups(connection)
             handle_identity_domains_users(connection)
             handle_identity_policies(connection)
+            handle_advisor_resource_action(connection)
+            handle_advisor_recommendations(connection)
 
     except oracledb.DatabaseError as e:
         print("\nError manipulating database - " + str(e) + "\n")
