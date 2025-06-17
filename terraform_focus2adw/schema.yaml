@@ -1,0 +1,496 @@
+#********************************************************************************************
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
+# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
+#********************************************************************************************
+
+title: Focus2ADW
+description: OCI FOCUS Reports to Autonomous Database Version 25.07.01
+schemaVersion: 1.0.0
+version: "20250701"
+locale: "en"
+
+groupings:
+
+- title: "Compartment"
+  variables:
+  - ${compartment_ocid}
+
+- title: "Resource Tags"
+  variables:
+  - ${service_tags}
+
+- title: "Identity Configuration"
+  visible: true
+  variables:
+  - ${option_iam}
+  - ${new_policy_name}
+  - ${new_dynamic_group_name}
+
+- title: "Network Configuration"
+  visible: true
+  variables:
+  - ${network_vcn_compartment_id}
+  - ${network_vcn_id}
+  - ${network_subnet_compartment_id}
+  - ${network_subnet_id}
+
+- title: "Autonomous Database Configuration"
+  visible: true
+  variables:
+  - ${option_autonomous_database}
+  - ${db_db_name}
+  - ${db_secret_compartment_id}
+  - ${db_secret_id}
+  - ${db_license_model}
+  - ${db_network_nsg_name}
+  - ${db_private_end_point_label}
+
+- title: "Load Balancer Configuration"
+  visible: true
+  variables:
+  - ${option_loadbalancer}
+  - ${loadbalancer_name}
+  - ${loadbalancer_subnet_compartment_id}
+  - ${loadbalancer_subnet_id}
+
+- title: "Instance Configuration"
+  variables:
+  - ${instance_availability_domain}
+  - ${instance_name}
+  - ${instance_shape}
+  - ${ssh_public_key}
+  - ${extract_from_date}
+  - ${extract_tag1_special_key}
+  - ${extract_tag2_special_key}
+  - ${extract_tag3_special_key}
+  - ${extract_tag4_special_key}
+
+- title: "Oracle Analytics (OAC) Configuration"
+  variables:
+  - ${option_oac}
+  - ${analytics_instance_name}
+  - ${analytics_instance_capacity_value}
+  - ${analytics_instance_feature_set}
+  - ${analytics_instance_license_type}
+  - ${analytics_instance_idcs_access_token}
+
+variables:
+
+  ###################################################
+  # Main Menu
+  ###################################################
+  compartment_ocid:
+    title: Stack Compartment
+    description: Choose the compartment where all the provisioned resources will be deployed *** Deployment must be at Home Region ***
+    type: oci:identity:compartment:id
+    required: true
+
+  service_tags:
+    title: Add Tags
+    type: oci:identity:tag:value
+    required: false
+
+  ###################################################
+  # Identity Configuration
+  ###################################################
+  option_iam:
+    title: Identity Options
+    description: IAM Dynamic Group and Policies can be created for you under the root compartment, it required Admin access.
+    visible: true
+    type: enum
+    enum:
+     - New IAM Dynamic Group and Policy will be created
+     - I have already created Dynamic Group and Policy per the documentation
+    default: I have already created Dynamic Group and Policy per the documentation
+    required: true
+
+  new_dynamic_group_name:
+    title: Dynamic Group Name
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9-_]+$
+    type: string
+    maxLength: 30
+    default: Focus2ADW_DynamicGroup
+    visible:
+      eq:
+       - ${option_iam}
+       - New IAM Dynamic Group and Policy will be created
+
+  new_policy_name:
+    title: Policy Name
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9-_]+$
+    type: string
+    maxLength: 30
+    default: Focus2ADW_Policy
+    visible:
+      eq:
+       - ${option_iam}
+       - New IAM Dynamic Group and Policy will be created
+
+  ###################################################
+  # Network Configuration
+  ###################################################
+  network_vcn_compartment_id:
+    title: VCN Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible: true
+
+  network_vcn_id:
+    title: VCN
+    type: oci:core:vcn:id
+    dependsOn:
+      compartmentId: ${network_vcn_compartment_id}
+    required: true
+    visible: true
+
+  network_subnet_compartment_id:
+    title: Subnet Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible: true
+
+  network_subnet_id:
+    title: Subnet
+    type: oci:core:subnet:id
+    dependsOn:
+      compartmentId: ${network_subnet_compartment_id}
+      vcnId: ${network_vcn_id}
+    required: true
+    visible: true
+
+
+  ###################################################
+  # Database Configuration
+  ###################################################
+  option_autonomous_database:
+    title: Autonomous Database Deployment Option
+    description: Deployed Autonomous Database in Public or Private Endpoint.
+    visible: true
+    type: enum
+    enum:
+     - Public
+     - Private Endpoint
+    default: Public
+    required: true
+
+  db_db_name:
+    title: Autonomous Database Name
+    description: Choose an Autonomous Database Name
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9]+$
+    type: string
+    maxLength: 14
+    visible: true
+
+  db_secret_compartment_id:
+    title: Secret Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible: true
+
+  db_secret_id:
+    title: Secret Id
+    description: Provide database password secret id should be created under KMS Vault.
+    type: oci:kms:secret:id
+    dependsOn:
+      compartmentId: ${db_secret_compartment_id}
+    required: true
+    visible: true
+
+  db_license_model:
+    title: Database License
+    description: Choose your database license type.
+    type: enum
+    enum:
+    - LICENSE_INCLUDED
+    - BRING_YOUR_OWN_LICENSE
+    default: BRING_YOUR_OWN_LICENSE
+    required: true
+    visible: true
+
+  db_network_nsg_name:
+    title: Network Security Group
+    description: Choose your Network Security Group Name.
+    type: string
+    maxLength: 30
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9-_]+$
+    default: Focus2ADW_NSG
+    visible: 
+      eq:
+       - ${option_autonomous_database}
+       - Private Endpoint
+
+  db_private_end_point_label:
+    title: Private End Point Label
+    description: Choose your Private End Point Label for the ADB
+    type: string
+    required: true
+    pattern: ^[A-Za-z][A-Za-z_]+$
+    maxLength: 12
+    default: usageadb
+    visible: 
+      eq:
+       - ${option_autonomous_database}
+       - Private Endpoint
+
+
+  ###################################################
+  # Load Balancer Configuration
+  ###################################################
+  option_loadbalancer:
+    title: Load Balancer Options
+    description: Public Load Balancer can be provisioned to access the Private End-Point.
+    type: enum
+    enum:
+     - Provision Public Load Balancer
+     - No Public Load Balancer
+    default: No Public Load Balancer
+    required: true
+    visible: 
+      eq:
+       - ${option_autonomous_database}
+       - Private Endpoint
+
+  loadbalancer_name:
+    title: Load Balancer Name
+    description: Choose your Load Balancer Name.
+    type: string
+    maxLength: 30
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9-_]+$
+    default: Focus2ADW_LB
+    visible:
+      eq:
+       - ${option_loadbalancer}
+       - Provision Public Load Balancer
+
+  loadbalancer_subnet_compartment_id:
+    title: Load Balancer Public Subnet Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible:
+      eq:
+       - ${option_loadbalancer}
+       - Provision Public Load Balancer
+
+  loadbalancer_subnet_id:
+    title: Load Balancer Public Subnet
+    type: oci:core:subnet:id
+    dependsOn:
+      compartmentId: ${loadbalancer_subnet_compartment_id}
+      vcnId: ${network_vcn_id}
+      hidePrivateSubnet: true
+    required: true
+    visible:
+      eq:
+       - ${option_loadbalancer}
+       - Provision Public Load Balancer
+
+
+  ###########################
+  # instance
+  ###########################
+  instance_name: 
+    title: Instance Name
+    description: Provide the instance name
+    type: string  
+    minLength: 1
+    maxLength: 12
+    pattern: ^[A-Za-z][A-Za-z0-9]+$
+    default: Focus2ADWVM
+    required: true   
+
+  ssh_public_key:
+    type: oci:core:ssh:publickey
+    title: SSH Public Key
+    description: Use public key to secure your VM, Private key pair will be needed later.
+    required: true
+  
+  instance_shape:
+    title: Compute Shape
+    description: The shape for the Focus2ADW compute instances
+    type: enum
+    enum:
+    - VM.Standard.E3.Flex
+    - VM.Standard.E4.Flex
+    - VM.Standard.E5.Flex
+    - VM.Optimized3.Flex
+    - VM.Standard3.Flex
+    default: VM.Standard3.Flex
+    required: true
+    visible: true
+
+  instance_availability_domain:
+    title: Availability Domain
+    description: The name of the availability domain in which to create compute instances, must be at home region
+    type: oci:identity:availabilitydomain:name
+    required: true
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+
+  extract_from_date:
+    title: Extract usage from date
+    description: Please specify the date to extract from, in format (YYYY-MM), Not earlier than 2024-08
+    type: string
+    default: "2024-08"
+    pattern: "^(202[4-9])-(0[0-9]|1[0-2])$"
+    required: true
+    visible: true
+
+  extract_tag1_special_key:
+    title: Extract Tag Key 1 to special tag column
+    description: Please specify the tag key 1 to load to Tag Special 1 column
+    type: string
+    default: "Oracle-Tags.CreatedBy"
+    required: true
+    visible: true
+
+  extract_tag2_special_key:
+    title: Extract Tag Key 2 to special tag column
+    description: Please specify the tag key 2 to load to Tag Special 2 column
+    type: string
+    default: "Oracle-Tags.Project"
+    required: true
+    visible: true
+
+  extract_tag3_special_key:
+    title: Extract Tag Key 3 to special tag column
+    description: Please specify the tag key 3 to load to Tag Special 3 column
+    type: string
+    default: "Core.Project"
+    required: true
+    visible: true
+
+  extract_tag4_special_key:
+    title: Extract Tag Key 4 to special tag column
+    description: Please specify the tag key 4 to load to Tag Special 4 column
+    type: string
+    default: "Core.Budget"
+    required: true
+    visible: true
+
+
+  ###################################################
+  # Analytics Configuration
+  ###################################################
+  option_oac:
+    title: Oracle Analytics (OAC) Options
+    description: Advance Analytics using Oracle Analytics (OAC) - Required experience with Oracle Analytics
+    visible: true
+    type: enum
+    enum:
+     - Deploy Oracle Analytics Cloud
+     - Do Not Deploy Oracle Analytics Cloud
+    default: Do Not Deploy Oracle Analytics Cloud
+    required: true
+
+  analytics_instance_name: 
+    title: Oracle Analytics Name
+    description: Provide the Oracle Analytics name
+    type: string  
+    minLength: 1
+    maxLength: 18
+    pattern: ^[A-Za-z][A-Za-z0-9]+$
+    default: Focus2ADWOAC
+    required: true   
+    visible:
+       eq:
+        - ${option_oac}
+        - Deploy Oracle Analytics Cloud   
+
+  analytics_instance_capacity_value:
+    title: Analytics Instance Capacity
+    description: Provide the number of OCPUs for the Analytics Instance.
+    type: enum
+    enum:
+    - 1
+    - 2
+    - 4
+    - 6
+    - 8
+    - 10
+    - 12
+    - 16
+    - 24
+    - 36
+    - 52
+    required: true
+    visible:
+       eq:
+        - ${option_oac}
+        - Deploy Oracle Analytics Cloud   
+
+  analytics_instance_feature_set:
+    title: Analytics Instance Type
+    description: Choose the Analytics Product Type.
+    type: enum
+    enum:
+    - OAC Standard Edition
+    - OAC Enterprise Edition
+    default: SELF_SERVICE_ANALYTICS
+    required: true
+    visible:
+       eq:
+        - ${option_oac}
+        - Deploy Oracle Analytics Cloud   
+
+  analytics_instance_license_type:
+    title: Analytics License
+    description: Choose your Oracle Analytics Cloud License Type.
+    type: enum
+    enum:
+    - LICENSE_INCLUDED
+    - BRING_YOUR_OWN_LICENSE
+    default: BRING_YOUR_OWN_LICENSE
+    required: true
+    visible:
+       eq:
+        - ${option_oac}
+        - Deploy Oracle Analytics Cloud   
+
+  analytics_instance_idcs_access_token:
+    title: IDCS access token identifying a stripe and service administrator user
+    description: Provide IDCS Access token. See Pre-req section in the Installation Document.
+    type: string
+    required: true
+    visible:
+      eq:
+      - ${option_oac}
+      - Deploy Oracle Analytics Cloud   
+
+
+  ###########################
+  # Connections Variables
+  ###########################
+  tenancy_ocid:
+     title: Tenancy ID
+     description: The Oracle Cloud Identifier (OCID) for your tenancy.
+     type: string
+     required: true
+     visible: false
+  
+  region:
+     title: Region
+     description: The region in which to create all resources.
+     type: oci:identity:region:name
+     required: true
+     visible: false
+
+  user_ocid:
+     title: User ID
+     description: The Oracle Cloud Identifier (OCID) for the user
+     type: string
+     visible: false
+
+  fingerprint:
+     title: Private Key Fingerprint
+     type: string
+     visible: false
+
