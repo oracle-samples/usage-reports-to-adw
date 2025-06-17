@@ -7,7 +7,7 @@ Focus2adw is a tool which uses the Python SDK to extract the FOCUS reports from 
 
 ## Step by Step installation using Oracle Cloud Resource Management and Terraform
 
-Please follow the usage2adw terraform [usage2adw terraform](https://github.com/oracle-samples/usage-reports-to-adw/step_by_step_terraform.md) 
+Please follow the usage2adw terraform [usage2adw terraform](https://github.com/oracle-samples/usage-reports-to-adw/blob/main/step_by_step_terraform.md) 
 
 For option 3:
 
