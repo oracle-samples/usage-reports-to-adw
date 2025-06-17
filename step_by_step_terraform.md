@@ -57,6 +57,8 @@ OCI -> Menu -> Developer Services -> Resource Management -> Stacks
 --> Choose Zip File
 --> Browse to the Zip file downloaded from GitHub.
 
+--> Working Directory - Change to "usage-reports-to-adw-main/terraform"
+
 --> Name = Usage2ADW Usage and Cost Reports to Autonomous Database with APEX Reporting
 --> Press Next 
 
@@ -116,7 +118,7 @@ Option to tag the resources
          Allow dynamic-group UsageDownloadGroup to inspect compartments in tenancy
          Allow dynamic-group UsageDownloadGroup to inspect tenancies in tenancy
          Allow dynamic-group UsageDownloadGroup to read autonomous-database in compartment {APPCOMP}
-	 Allow dynamic-group UsageDownloadGroup to read secret-bundles in compartment {APPCOMP}
+	      Allow dynamic-group UsageDownloadGroup to read secret-bundles in compartment {APPCOMP}
          *** Please don't change the usage report tenant OCID, it is fixed.
      
 ```
