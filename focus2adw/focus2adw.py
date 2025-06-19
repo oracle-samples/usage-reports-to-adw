@@ -571,13 +571,13 @@ def update_focus_reference(connection, tag_special_key1, tag_special_key2, tag_s
             sql = """merge into OCI_FOCUS_REFERENCE a
             using
             (
-                    select :Source_Tenant_Name as Source_Tenant_Name, 'TAG_SPECIAL_KEY1' as REF_TYPE, :tag_special_key1 as ref_name from DUAL
+                    select :Source_Tenant_Name as Source_Tenant_Name, 'TAG_SPECIAL_KEY1' as REF_TYPE, :tag_special_key1 as ref_name from DUAL where :tag_special_key1 is not null
                     union all
-                    select :Source_Tenant_Name as Source_Tenant_Name, 'TAG_SPECIAL_KEY2' as REF_TYPE, :tag_special_key2 as ref_name from DUAL
+                    select :Source_Tenant_Name as Source_Tenant_Name, 'TAG_SPECIAL_KEY2' as REF_TYPE, :tag_special_key2 as ref_name from DUAL where :tag_special_key2 is not null
                     union all
-                    select :Source_Tenant_Name as Source_Tenant_Name, 'TAG_SPECIAL_KEY3' as REF_TYPE, :tag_special_key3 as ref_name from DUAL
+                    select :Source_Tenant_Name as Source_Tenant_Name, 'TAG_SPECIAL_KEY3' as REF_TYPE, :tag_special_key3 as ref_name from DUAL where :tag_special_key3 is not null
                     union all
-                    select :Source_Tenant_Name as Source_Tenant_Name, 'TAG_SPECIAL_KEY4' as REF_TYPE, :tag_special_key4 as ref_name from DUAL
+                    select :Source_Tenant_Name as Source_Tenant_Name, 'TAG_SPECIAL_KEY4' as REF_TYPE, :tag_special_key4 as ref_name from DUAL where :tag_special_key4 is not null
             ) b
             on (a.Source_Tenant_Name=b.Source_Tenant_Name and a.REF_TYPE=b.REF_TYPE)
             when matched then update set a.ref_name = b.ref_name

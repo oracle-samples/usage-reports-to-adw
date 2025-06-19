@@ -141,7 +141,7 @@ ReadVariablesFromCredfile()
 
    export db_db_name=`grep "^DATABASE_NAME" $CREDFILE | sed -s 's/DATABASE_NAME=//'`
    export extract_from_date=`grep "^EXTRACT_DATE" $CREDFILE | sed -s 's/EXTRACT_DATE=//'`
-   export extract_tag_special_key=`grep "^TAG_SPECIAL" $CREDFILE | sed -s 's/TAG_SPECIAL=//'`
+   export extract_tag1_special_key=`grep "^TAG1_SPECIAL" $CREDFILE | sed -s 's/TAG1_SPECIAL=//'`
    export extract_tag2_special_key=`grep "^TAG2_SPECIAL" $CREDFILE | sed -s 's/TAG2_SPECIAL=//'`
    export extract_tag3_special_key=`grep "^TAG3_SPECIAL" $CREDFILE | sed -s 's/TAG3_SPECIAL=//'`
    export extract_tag4_special_key=`grep "^TAG4_SPECIAL" $CREDFILE | sed -s 's/TAG4_SPECIAL=//'`
@@ -211,13 +211,13 @@ SetupCredential()
    printf "Please Enter ADB Application Secret Id from KMS Vault: "; read DATABASE_SECRET_ID
    printf "Please Enter ADB Application Secret Tenant Profile - The Tenancy name in which the Secret Vault resides (For instance principle use 'local'):"; read DATABASE_SECRET_TENANT
    printf "Please Enter Extract Start Date (Format YYYY-MM i.e. 2023-01): "; read EXTRACT_DATE
-   printf "Please Enter Tag Key 1 to extract as Special Tag (Oracle-Tags.CreatedBy): "; read TAG_SPECIAL
+   printf "Please Enter Tag Key 1 to extract as Special Tag (Oracle-Tags.CreatedBy): "; read TAG1_SPECIAL
    printf "Please Enter Tag Key 2 to extract as Special Tag (Oracle-Tags.Program): "; read TAG2_SPECIAL
    printf "Please Enter Tag Key 3 to extract as Special Tag (Core.Project): "; read TAG3_SPECIAL
    printf "Please Enter Tag Key 4 to extract as Special Tag (Core.Budget): "; read TAG4_SPECIAL
 
-   if [ -z "$TAG_SPECIAL" ]; then
-      TAG_SPECIAL="Oracle-Tags.CreatedBy"
+   if [ -z "$TAG1_SPECIAL" ]; then
+      TAG1_SPECIAL="Oracle-Tags.CreatedBy"
    fi
 
    echo "DATABASE_USER=FOCUS" > $CREDFILE
@@ -226,7 +226,7 @@ SetupCredential()
    echo "DATABASE_SECRET_ID=${DATABASE_SECRET_ID}" >> $CREDFILE 
    echo "DATABASE_SECRET_TENANT=${DATABASE_SECRET_TENANT}" >> $CREDFILE 
    echo "EXTRACT_DATE=${EXTRACT_DATE}" >> $CREDFILE
-   echo "TAG_SPECIAL=${TAG_SPECIAL}" >> $CREDFILE
+   echo "TAG1_SPECIAL=${TAG1_SPECIAL}" >> $CREDFILE
    echo "TAG2_SPECIAL=${TAG2_SPECIAL}" >> $CREDFILE
    echo "TAG3_SPECIAL=${TAG3_SPECIAL}" >> $CREDFILE
    echo "TAG4_SPECIAL=${TAG4_SPECIAL}" >> $CREDFILE
@@ -488,7 +488,7 @@ SetupApp()
    slog=$LOGDIR/db_creation_user_${DATE}.log
    echo "   Internal LOG=$slog" | tee -a $LOG
    
-   echo "4. Creating FOCUS user on ADWC instance and enable APEX Workspace" | tee -a $LOG
+   echo "4. Creating F${DATABASE_USER} user on ADWC instance and enable APEX Workspace" | tee -a $LOG
    echo "   commands executed:" | tee -a $LOG
    echo "   sqlplus ADMIN/xxxxxxxx@${db_db_name}" | tee -a $LOG
    echo "   create user ${DATABASE_USER} identified by xxxxxxxxx;" | tee -a $LOG
@@ -934,10 +934,10 @@ SetupOL8Packages()
    ###########################################
    # Install Oracle Instant Client
    ###########################################
-   export RPM_BAS=oracle-instantclient19.26-basic-19.26.0.0.0-1.x86_64
-   export RPM_SQL=oracle-instantclient19.26-sqlplus-19.26.0.0.0-1.x86_64
-   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1926000/
-   export RPM_LOC=/usr/lib/oracle/19.26
+   export RPM_BAS=oracle-instantclient19.27-basic-19.27.0.0.0-1.x86_64
+   export RPM_SQL=oracle-instantclient19.27-sqlplus-19.27.0.0.0-1.x86_64
+   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1927000/
+   export RPM_LOC=/usr/lib/oracle/19.27
 
    echo "" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
