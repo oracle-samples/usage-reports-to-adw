@@ -488,21 +488,21 @@ SetupApp()
    slog=$LOGDIR/db_creation_user_${DATE}.log
    echo "   Internal LOG=$slog" | tee -a $LOG
    
-   echo "4. Creating F${DATABASE_USER} user on ADWC instance and enable APEX Workspace" | tee -a $LOG
+   echo "4. Creating ${DATABASE_USER} user on ADWC instance and enable APEX Workspace" | tee -a $LOG
    echo "   commands executed:" | tee -a $LOG
    echo "   sqlplus ADMIN/xxxxxxxx@${db_db_name}" | tee -a $LOG
    echo "   create user ${DATABASE_USER} identified by xxxxxxxxx;" | tee -a $LOG
-   echo "   grant create dimension, connect, resource, dwrole, unlimited tablespace to focus;" | tee -a $LOG
-   echo "   exec apex_instance_admin.add_workspace(p_workspace => 'FOCUS', p_primary_schema => 'FOCUS');" | tee -a $LOG
+   echo "   grant create dimension, connect, resource, dwrole, unlimited tablespace to ${DATABASE_USER};" | tee -a $LOG
+   echo "   exec apex_instance_admin.add_workspace(p_workspace => '${DATABASE_USER}', p_primary_schema => '${DATABASE_USER}');" | tee -a $LOG
    
    echo "set lines 199 trimsp on pages 0 feed on
    create user ${DATABASE_USER} identified by ${db_app_password};
-   grant create dimension, connect, resource, dwrole, unlimited tablespace to focus;
-   exec apex_instance_admin.add_workspace(p_workspace => 'FOCUS', p_primary_schema => 'FOCUS');
+   grant create dimension, connect, resource, dwrole, unlimited tablespace to ${DATABASE_USER};
+   exec apex_instance_admin.add_workspace(p_workspace => '${DATABASE_USER}', p_primary_schema => '${DATABASE_USER}');
 " | sqlplus -s ADMIN/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `grep ORA- $slog | egrep -v 'ORA-01920|ORA-20987|06512'| wc -l` > 0 )); then
-      echo "   Error creating FOCUS user, please check log $slog, aborting." | tee -a $LOG
+      echo "   Error creating ${DATABASE_USER} user, please check log $slog, aborting." | tee -a $LOG
       exit 1
    else
       echo "   Okay." | tee -a $LOG
