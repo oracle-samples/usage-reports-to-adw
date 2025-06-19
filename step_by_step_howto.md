@@ -188,18 +188,18 @@ bash -c "export usage2adw_param=-upgrade_app; $(curl -L https://raw.githubuserco
 
 If you deployed usage2adw before Jan 2022 you may need to download new Oracle Instant Client - check next section
 
-## 6. How to upgrade Oracle Instant Client to Version 19.19 (Apr 2023)
+## 6. How to upgrade Oracle Instant Client to Version 19.26 (Jan 2025)
 
 ```
 # If Oracle Linux 8 please run the below to install glibc:
 sudo dnf install -y libnsl
 
-# Install 19.19:
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-basic-19.22.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-sqlplus-19.22.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1922000/oracle-instantclient19.22-tools-19.22.0.0.0-1.x86_64.rpm
+# Install 19.26:
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1926000/oracle-instantclient19.26-basic-19.26.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1926000/oracle-instantclient19.26-sqlplus-19.26.0.0.0-1.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1926000/oracle-instantclient19.26-tools-19.26.0.0.0-1.x86_64.rpm
 sudo rm -f /usr/lib/oracle/current
-sudo ln -s /usr/lib/oracle/19.22 /usr/lib/oracle/current
+sudo ln -s /usr/lib/oracle/19.26 /usr/lib/oracle/current
 
 # Check by running the application
 $HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh

@@ -73,7 +73,7 @@ import time
 import base64
 
 
-version = "25.05.01"
+version = "25.07.01"
 work_report_dir = os.curdir + "/work_report_dir"
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client
@@ -344,71 +344,6 @@ def set_parser_arguments():
     return result
 
 
-##########################################################################
-# Check Resource Table Structure
-##########################################################################
-def check_database_table_structure_resource(connection):
-    try:
-        # open cursor
-        with connection.cursor() as cursor:
-
-            # check if OCI_RESOURCES table exist, if not create
-            sql = "select count(*) from user_tables where table_name = 'OCI_RESOURCES'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if table not exist, create it
-            if val == 0:
-                print("   Table OCI_RESOURCES was not exist, creating")
-                sql = """create table OCI_RESOURCES (
-                    RESOURCE_ID             VARCHAR2(200) NOT NULL,
-                    RESOURCE_NAME           VARCHAR2(1000),
-                    SOURCE_TENANT           VARCHAR2(100),
-                    SOURCE_TABLE            VARCHAR2(100),
-                    LAST_LOADED             DATE,
-                    CONSTRAINT OCI_RESOURCES_PK PRIMARY KEY (RESOURCE_ID) USING INDEX)"""
-                cursor.execute(sql)
-                print("   Table OCI_RESOURCES created")
-            else:
-                print("   Table OCI_RESOURCES exist")
-
-    except oracledb.DatabaseError as e:
-        print("\nError manipulating database at check_database_table_structure_resource() - " + str(e) + "\n")
-        raise SystemExit
-
-    except Exception as e:
-        raise Exception("\nError manipulating database at check_database_table_structure_resource() - " + str(e))
-
-
-##########################################################################
-# Check Index Structure Usage to be created after the first load
-##########################################################################
-def check_database_index_structure_cost(connection):
-    try:
-        # open cursor
-        with connection.cursor() as cursor:
-
-            # check if index OCI_COST_1IX exist in OCI_COST table, if not create
-            sql = "select count(*) from user_indexes where table_name = 'OCI_COST' and index_name='OCI_COST_1IX'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if index not exist, create it
-            if val == 0:
-                print("\nChecking Index for OCI_COST")
-                print("   Index OCI_COST_1IX does not exist for table OCI_COST, adding...")
-                sql = "CREATE INDEX OCI_COST_1IX ON OCI_COST(TENANT_NAME,USAGE_INTERVAL_START)"
-                cursor.execute(sql)
-                print("   Index created.")
-
-    except oracledb.DatabaseError as e:
-        print("\nError manipulating database at check_database_index_structure_cost() - " + str(e) + "\n")
-        raise SystemExit
-
-    except Exception as e:
-        raise Exception("\nError manipulating database at check_database_index_structure_cost() - " + str(e))
-
-
 #########################################################################
 # insert load stats
 ##########################################################################
@@ -589,7 +524,7 @@ def update_price_list(connection, tenant_name):
 ##########################################################################
 # update_cost_reference
 ##########################################################################
-def update_cost_reference(connection, tag_special_key, tag_special_key2, tag_special_key3, tag_special_key4, tenant_name):
+def update_cost_reference(connection, tag_special_key1, tag_special_key2, tag_special_key3, tag_special_key4, tenant_name):
     try:
         start_time = time.time()
 
@@ -644,93 +579,30 @@ def update_cost_reference(connection, tag_special_key, tag_special_key2, tag_spe
             connection.commit()
             print("   Merge Completed, " + str(cursor.rowcount) + " rows merged" + get_time_elapsed(start_time))
 
-            # Tag Special Key1
-            if tag_special_key:
+            start_time = time.time()
+            # run merge to OCI_COST_REFERENCE for the tag special key
+            print("   Handling Tag Special Keys...")
 
-                start_time = time.time()
-                # run merge to OCI_COST_REFERENCE for the tag special key
-                print("   Handling Tag Special Key 1: '" + tag_special_key + "'")
+            sql = """merge into OCI_COST_REFERENCE a
+            using
+            (
+                    select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY' as REF_TYPE, :tag_special_key1 as ref_name from DUAL where :tag_special_key1 is not null
+                    union all
+                    select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY2' as REF_TYPE, :tag_special_key2 as ref_name from DUAL where :tag_special_key2 is not null
+                    union all
+                    select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY3' as REF_TYPE, :tag_special_key3 as ref_name from DUAL where :tag_special_key3 is not null
+                    union all
+                    select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY4' as REF_TYPE, :tag_special_key4 as ref_name from DUAL where :tag_special_key4 is not null
+            ) b
+            on (a.Tenant_Name=b.Tenant_Name and a.REF_TYPE=b.REF_TYPE)
+            when matched then update set a.ref_name = b.ref_name
+            when not matched then insert (Tenant_Name,REF_TYPE,REF_NAME)
+            values (b.Tenant_Name,b.REF_TYPE,b.REF_NAME)
+            """
 
-                sql = """merge into OCI_COST_REFERENCE a
-                using
-                (
-                        select :tenant_name as TENANT_NAME, 'TAG_SPECIAL_KEY' as REF_TYPE, :tag_special_key as ref_name from DUAL
-                ) b
-                on (a.TENANT_NAME=b.TENANT_NAME and a.REF_TYPE=b.REF_TYPE)
-                when matched then update set a.ref_name = b.ref_name
-                when not matched then insert (TENANT_NAME,REF_TYPE,REF_NAME)
-                values (b.TENANT_NAME,b.REF_TYPE,b.REF_NAME)
-                """
-
-                cursor.execute(sql, tenant_name=tenant_name, tag_special_key=tag_special_key)
-                connection.commit()
-                print("   Merge Completed, " + str(cursor.rowcount) + " rows merged" + get_time_elapsed(start_time))
-
-            # Tag Special Key2
-            if tag_special_key2:
-
-                start_time = time.time()
-                # run merge to OCI_COST_REFERENCE for the tag special key
-                print("   Handling Tag Special Key 2: '" + tag_special_key2 + "'")
-
-                sql = """merge into OCI_COST_REFERENCE a
-                using
-                (
-                        select :tenant_name as TENANT_NAME, 'TAG_SPECIAL_KEY2' as REF_TYPE, :tag_special_key2 as ref_name from DUAL
-                ) b
-                on (a.TENANT_NAME=b.TENANT_NAME and a.REF_TYPE=b.REF_TYPE)
-                when matched then update set a.ref_name = b.ref_name
-                when not matched then insert (TENANT_NAME,REF_TYPE,REF_NAME)
-                values (b.TENANT_NAME,b.REF_TYPE,b.REF_NAME)
-                """
-
-                cursor.execute(sql, tenant_name=tenant_name, tag_special_key2=tag_special_key2)
-                connection.commit()
-                print("   Merge Completed, " + str(cursor.rowcount) + " rows merged" + get_time_elapsed(start_time))
-
-            # Tag Special Key3
-            if tag_special_key3:
-
-                start_time = time.time()
-                # run merge to OCI_COST_REFERENCE for the tag special key
-                print("   Handling Tag Special Key 3: '" + tag_special_key3 + "'")
-
-                sql = """merge into OCI_COST_REFERENCE a
-                using
-                (
-                        select :tenant_name as TENANT_NAME, 'TAG_SPECIAL_KEY3' as REF_TYPE, :tag_special_key3 as ref_name from DUAL
-                ) b
-                on (a.TENANT_NAME=b.TENANT_NAME and a.REF_TYPE=b.REF_TYPE)
-                when matched then update set a.ref_name = b.ref_name
-                when not matched then insert (TENANT_NAME,REF_TYPE,REF_NAME)
-                values (b.TENANT_NAME,b.REF_TYPE,b.REF_NAME)
-                """
-
-                cursor.execute(sql, tenant_name=tenant_name, tag_special_key3=tag_special_key3)
-                connection.commit()
-                print("   Merge Completed, " + str(cursor.rowcount) + " rows merged" + get_time_elapsed(start_time))
-
-            # Tag Special Key4
-            if tag_special_key4:
-
-                start_time = time.time()
-                # run merge to OCI_COST_REFERENCE for the tag special key
-                print("   Handling Tag Special Key 4: '" + tag_special_key4 + "'")
-
-                sql = """merge into OCI_COST_REFERENCE a
-                using
-                (
-                        select :tenant_name as TENANT_NAME, 'TAG_SPECIAL_KEY4' as REF_TYPE, :tag_special_key4 as ref_name from DUAL
-                ) b
-                on (a.TENANT_NAME=b.TENANT_NAME and a.REF_TYPE=b.REF_TYPE)
-                when matched then update set a.ref_name = b.ref_name
-                when not matched then insert (TENANT_NAME,REF_TYPE,REF_NAME)
-                values (b.TENANT_NAME,b.REF_TYPE,b.REF_NAME)
-                """
-
-                cursor.execute(sql, tenant_name=tenant_name, tag_special_key4=tag_special_key4)
-                connection.commit()
-                print("   Merge Completed, " + str(cursor.rowcount) + " rows merged" + get_time_elapsed(start_time))
+            cursor.execute(sql, Tenant_Name=tenant_name, tag_special_key1=tag_special_key1, tag_special_key2=tag_special_key2, tag_special_key3=tag_special_key3, tag_special_key4=tag_special_key4)
+            connection.commit()
+            print("   Merge Completed, " + str(cursor.rowcount) + " rows merged" + get_time_elapsed(start_time))
 
     except oracledb.DatabaseError as e:
         print("\nError manipulating database at update_cost_reference() - " + str(e) + "\n")
@@ -858,13 +730,6 @@ def update_oci_tenant_with_tenant_ids(connection, tenant_name, short_tenant_id):
             connection.commit()
             print("   Update Tenant Display Name Table, " + str(cursor.rowcount) + " rows inserted" + get_time_elapsed(start_time))
 
-            # Update name for current tenant
-            start_time = time.time()
-            sql = "update oci_tenant set tenant_name=:tenant_name where tenant_id=:tenant_id and tenant_name is null"
-            cursor.execute(sql, tenant_id=short_tenant_id, tenant_name=tenant_name)
-            connection.commit()
-            print("   Update Current Tenant Name, " + str(cursor.rowcount) + " rows Updated" + get_time_elapsed(start_time))
-
     except oracledb.DatabaseError as e:
         print("\nError manipulating database at update_oci_tenant_with_tenant_ids() - " + str(e) + "\n")
         raise SystemExit
@@ -876,359 +741,36 @@ def update_oci_tenant_with_tenant_ids(connection, tenant_name, short_tenant_id):
 ##########################################################################
 # Check Table Structure Cost
 ##########################################################################
-def check_database_table_structure_cost(connection, tag_special_key, tag_special_key2, tag_special_key3, tag_special_key4, tenant_name):
+def check_database_table_structure(connection):
     try:
         # open cursor
         with connection.cursor() as cursor:
 
             # check if OCI_TENANT table exist, if not create
-            sql = "select count(*) from user_tables where table_name = 'OCI_TENANT'"
+            sql = "select count(*) from user_tables where table_name in ('OCI_TENANT','OCI_COST','OCI_COST_TAG_KEYS','OCI_COST_STATS','OCI_COST_REFERENCE','OCI_PRICE_LIST','OCI_LOAD_STATUS','OCI_RESOURCES')"
             cursor.execute(sql)
             val, = cursor.fetchone()
 
             # if table not exist, create it
-            if val == 0:
-                print("   Table OCI_TENANT was not exist, creating")
-                sql = """create table OCI_TENANT (
-                    TENANT_ID               VARCHAR2(100),
-                    TENANT_NAME             VARCHAR2(100),
-                    ADMIN_EMAIL             VARCHAR2(100),
-                    INFORMATION             VARCHAR2(1000),
-                    CONSTRAINT OCI_TENANT_PK PRIMARY KEY (TENANT_ID) USING INDEX
-                    ) """
-                cursor.execute(sql)
-                print("   Table OCI_TENANT created")
+            if val < 8:
+                print("   Cost Tables were not created, please run usage2adw_setup.sh -create_tables !")
+                print("   Aborting !")
+                raise SystemExit
             else:
-                print("   Table OCI_TENANT exist")
-
-            # check if OCI_COST table exist, if not create
-            sql = "select count(*) from user_tables where table_name = 'OCI_COST'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if table not exist, create it
-            if val == 0:
-                print("   Table OCI_COST was not exist, creating")
-                sql = """create table OCI_COST (
-                    TENANT_NAME             VARCHAR2(100),
-                    TENANT_ID               VARCHAR2(100),
-                    FILE_ID                 VARCHAR2(30),
-                    USAGE_INTERVAL_START    DATE,
-                    USAGE_INTERVAL_END      DATE,
-                    PRD_SERVICE             VARCHAR2(100),
-                    PRD_RESOURCE            VARCHAR2(100),
-                    PRD_COMPARTMENT_ID      VARCHAR2(100),
-                    PRD_COMPARTMENT_NAME    VARCHAR2(100),
-                    PRD_COMPARTMENT_PATH    VARCHAR2(1000),
-                    PRD_REGION              VARCHAR2(100),
-                    PRD_AVAILABILITY_DOMAIN VARCHAR2(100),
-                    USG_RESOURCE_ID         VARCHAR2(1000),
-                    USG_BILLED_QUANTITY     NUMBER,
-                    USG_BILLED_QUANTITY_OVERAGE NUMBER,
-                    COST_SUBSCRIPTION_ID    NUMBER,
-                    COST_PRODUCT_SKU        VARCHAR2(10),
-                    PRD_DESCRIPTION         VARCHAR2(1000),
-                    COST_UNIT_PRICE         NUMBER,
-                    COST_UNIT_PRICE_OVERAGE NUMBER,
-                    COST_MY_COST            NUMBER,
-                    COST_MY_COST_OVERAGE    NUMBER,
-                    COST_ATTRIBUTED_COST    NUMBER,
-                    USG_ATTRIBUTED_USAGE    NUMBER,
-                    COST_CURRENCY_CODE      VARCHAR2(10),
-                    COST_BILLING_UNIT       VARCHAR2(1000),
-                    COST_OVERAGE_FLAG       VARCHAR2(10),
-                    IS_CORRECTION           VARCHAR2(10),
-                    TAGS_DATA               VARCHAR2(4000),
-                    TAG_SPECIAL             VARCHAR2(4000),
-                    TAG_SPECIAL2            VARCHAR2(4000),
-                    TAG_SPECIAL3            VARCHAR2(4000),
-                    TAG_SPECIAL4            VARCHAR2(4000)
-                ) COMPRESS
-                """
-
-                cursor.execute(sql)
-                print("   Table OCI_COST created")
-            else:
-                print("   Table OCI_COST exist")
-
-            # check if TENANT_ID column exist in OCI_COST table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='TENANT_ID'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if columns TENANT_ID not exist, create it
-            if val == 0:
-                print("   Column TENANT_ID does not exist in the table OCI_COST, adding...")
-                sql = "alter table OCI_COST add (TENANT_ID VARCHAR2(100))"
-                cursor.execute(sql)
-
-            # check if TAG_SPECIAL column exist in OCI_COST table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='TAG_SPECIAL'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if column TAG_SPECIAL not exist, create it
-            if val == 0:
-                print("   Column TAG_SPECIAL does not exist in the table OCI_COST, adding...")
-                sql = "alter table OCI_COST add (TAG_SPECIAL VARCHAR2(4000))"
-                cursor.execute(sql)
-
-            # check if TAG_SPECIAL2 column exist in OCI_COST table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='TAG_SPECIAL2'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if column TAG_SPECIAL2 not exist, create it
-            if val == 0:
-                print("   Column TAG_SPECIAL2 does not exist in the table OCI_COST, adding...")
-                sql = "alter table OCI_COST add (TAG_SPECIAL2 VARCHAR2(4000))"
-                cursor.execute(sql)
-
-            # check if TAG_SPECIAL3 column exist in OCI_COST table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='TAG_SPECIAL3'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if column TAG_SPECIAL3 not exist, create it
-            if val == 0:
-                print("   Column TAG_SPECIAL3 does not exist in the table OCI_COST, adding...")
-                sql = "alter table OCI_COST add (TAG_SPECIAL3 VARCHAR2(4000))"
-                cursor.execute(sql)
-
-            # check if TAG_SPECIAL4 column exist in OCI_COST table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='TAG_SPECIAL4'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if column TAG_SPECIAL4 not exist, create it
-            if val == 0:
-                print("   Column TAG_SPECIAL4 does not exist in the table OCI_COST, adding...")
-                sql = "alter table OCI_COST add (TAG_SPECIAL4 VARCHAR2(4000))"
-                cursor.execute(sql)
-
-            # check if COST_ATTRIBUTED_COST column exist in OCI_COST table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='COST_ATTRIBUTED_COST'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if column COST_ATTRIBUTED_COST not exist, create it
-            if val == 0:
-                print("   Column COST_ATTRIBUTED_COST does not exist in the table OCI_COST, adding...")
-                sql = "alter table OCI_COST add (COST_ATTRIBUTED_COST NUMBER)"
-                cursor.execute(sql)
-
-            # check if USG_ATTRIBUTED_USAGE column exist in OCI_COST table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST' and column_name='USG_ATTRIBUTED_USAGE'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if column USG_ATTRIBUTED_USAGE not exist, create it
-            if val == 0:
-                print("   Column USG_ATTRIBUTED_USAGE does not exist in the table OCI_COST, adding...")
-                sql = "alter table OCI_COST add (USG_ATTRIBUTED_USAGE NUMBER)"
-                cursor.execute(sql)
-
-            # check if OCI_COST_TAG_KEYS table exist, if not create
-            sql = "select count(*) from user_tables where table_name = 'OCI_COST_TAG_KEYS'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if table OCI_COST_TAG_KEYS not exist, create it
-            if val == 0:
-                print("   Table OCI_COST_TAG_KEYS was not exist, creating")
-                sql = """CREATE TABLE OCI_COST_TAG_KEYS (TENANT_NAME VARCHAR2(100), TAG_KEY VARCHAR2(1000),
-                CONSTRAINT OCI_COST_TAG_KEYS_PK PRIMARY KEY(TENANT_NAME,TAG_KEY)
-                )"""
-                cursor.execute(sql)
-                print("   Table OCI_COST_TAG_KEYS created")
-            else:
-                print("   Table OCI_COST_TAG_KEYS exist")
-
-            # check if OCI_COST_STATS table exist, if not create
-            sql = "select count(*) from user_tables where table_name = 'OCI_COST_STATS'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if table OCI_COST_STATS not exist, create it
-            if val == 0:
-                print("   Table OCI_COST_STATS was not exist, creating")
-                sql = """CREATE TABLE OCI_COST_STATS (
-                    TENANT_NAME             VARCHAR2(100),
-                    FILE_ID                 VARCHAR2(30),
-                    USAGE_INTERVAL_START    DATE,
-                    NUM_ROWS                NUMBER,
-                    COST_MY_COST            NUMBER,
-                    COST_MY_COST_OVERAGE    NUMBER,
-                    COST_CURRENCY_CODE      VARCHAR2(30),
-                    UPDATE_DATE             DATE,
-                    AGENT_VERSION           VARCHAR2(30),
-                    CONSTRAINT OCI_COST_STATS_PK PRIMARY KEY (TENANT_NAME,FILE_ID,USAGE_INTERVAL_START)
-                )
-                """
-
-                cursor.execute(sql)
-                print("   Table OCI_COST_STATS created")
-
-                update_cost_stats(connection, tenant_name)
-            else:
-                print("   Table OCI_COST_STATS exist")
-
-            # check if COST_MY_COST_OVERAGE columns exist in OCI_COST_STATS table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_COST_STATS' and column_name='COST_MY_COST_OVERAGE'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if columns COST_MY_COST_OVERAGE not exist, create them
-            if val == 0:
-                print("   Column COST_MY_COST_OVERAGE does not exist in the table OCI_COST_STATS, adding...")
-                sql = "alter table OCI_COST_STATS add (COST_MY_COST_OVERAGE NUMBER, COST_CURRENCY_CODE VARCHAR2(10))"
-                cursor.execute(sql)
-
-            # check if OCI_COST_REFERENCE table exist, if not create
-            sql = "select count(*) from user_tables where table_name = 'OCI_COST_REFERENCE'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if table OCI_COST_REFERENCE not exist, create it
-            if val == 0:
-                print("   Table OCI_COST_REFERENCE was not exist, creating")
-                sql = """CREATE TABLE OCI_COST_REFERENCE (
-                    TENANT_NAME             VARCHAR2(100),
-                    REF_TYPE                VARCHAR2(100),
-                    REF_NAME                VARCHAR2(1000),
-                    CONSTRAINT OCI_REFERENCE_PK PRIMARY KEY (TENANT_NAME,REF_TYPE,REF_NAME)
-                )
-                """
-
-                cursor.execute(sql)
-                print("   Table OCI_COST_REFERENCE created")
-
-                update_cost_reference(connection, tag_special_key, tag_special_key2, tag_special_key3, tag_special_key4, tenant_name)
-            else:
-                print("   Table OCI_COST_REFERENCE exist")
+                print("   Cost Tables exist")
 
     except oracledb.DatabaseError as e:
-        print("\nError manipulating database at check_database_table_structure_cost() - " + str(e) + "\n")
+        print("\nError manipulating database at check_database_table_structures() - " + str(e) + "\n")
         raise SystemExit
 
     except Exception as e:
-        raise Exception("\nError manipulating database at check_database_table_structure_cost() - " + str(e))
-
-
-##########################################################################
-# Check Table Structure Price List
-##########################################################################
-def check_database_table_structure_price_list(connection, tenant_name):
-    try:
-        # open cursor
-        with connection.cursor() as cursor:
-
-            # check if OCI_PRICE_LIST table exist, if not create
-            sql = "select count(*) from user_tables where table_name = 'OCI_PRICE_LIST'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if table not exist, create it
-            if val == 0:
-                print("   Table OCI_PRICE_LIST was not exist, creating")
-                sql = """create table OCI_PRICE_LIST (
-                    TENANT_NAME             VARCHAR2(100),
-                    TENANT_ID               VARCHAR2(100),
-                    COST_PRODUCT_SKU        VARCHAR2(10),
-                    PRD_DESCRIPTION         VARCHAR2(1000),
-                    COST_CURRENCY_CODE      VARCHAR2(10),
-                    COST_UNIT_PRICE         NUMBER,
-                    COST_LAST_UPDATE        DATE,
-                    RATE_DESCRIPTION        VARCHAR2(1000),
-                    RATE_PAYGO_PRICE        NUMBER,
-                    RATE_MONTHLY_FLEX_PRICE NUMBER,
-                    RATE_UPDATE_DATE        DATE,
-                    CONSTRAINT OCI_PRICE_LIST_PK PRIMARY KEY (TENANT_NAME,TENANT_ID,COST_PRODUCT_SKU)
-                ) """
-                cursor.execute(sql)
-                print("   Table OCI_PRICE_LIST created")
-                update_price_list(connection, tenant_name)
-                update_public_rates(connection, tenant_name)
-            else:
-                print("   Table OCI_PRICE_LIST exist")
-
-            # check if TENANT_ID column exist in OCI_PRICE_LIST table, if not create
-            sql = "select count(*) from user_tab_columns where table_name = 'OCI_PRICE_LIST' and column_name='TENANT_ID'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if columns not exist, create them
-            if val == 0:
-                print("   Column TENANT_ID does not exist in the table OCI_PRICE_LIST, adding...")
-                sql = "alter table OCI_PRICE_LIST add (TENANT_ID VARCHAR2(100))"
-                cursor.execute(sql)
-
-                print("   truncating OCI_PRICE_LIST to make PK changes")
-                sql = "truncate table OCI_PRICE_LIST"
-                cursor.execute(sql)
-                print("   Modifying OCI_PRICE_LIST primary key to include TENANT_ID..")
-                sql = "alter table OCI_PRICE_LIST drop primary key"
-                cursor.execute(sql)
-                sql = "alter table OCI_PRICE_LIST ADD CONSTRAINT OCI_PRICE_LIST_PK PRIMARY KEY (TENANT_NAME,TENANT_ID,COST_PRODUCT_SKU)"
-                cursor.execute(sql)
-                print("   Table OCI_PRICE_LIST Changes Completed.")
-
-    except oracledb.DatabaseError as e:
-        print("\nError manipulating database at check_database_table_price_list() - " + str(e) + "\n")
-        raise SystemExit
-
-    except Exception as e:
-        raise Exception("\nError manipulating database at check_database_table_price_list() - " + str(e))
-
-
-##########################################################################
-# Check Table Structure Load Status
-##########################################################################
-def check_database_table_structure_load_status(connection):
-    try:
-        # open cursor
-        with connection.cursor() as cursor:
-
-            # check if OCI_PRICE_LIST table exist, if not create
-            sql = "select count(*) from user_tables where table_name = 'OCI_LOAD_STATUS'"
-            cursor.execute(sql)
-            val, = cursor.fetchone()
-
-            # if table not exist, create it
-            if val == 0:
-                print("   Table OCI_LOAD_STATUS was not exist, creating")
-                sql = """create table OCI_LOAD_STATUS (
-                        TENANT_NAME      varchar2(100) NOT NULL,
-                        FILE_TYPE        varchar2(100) NOT NULL,
-                        FILE_ID          varchar2(1000) NOT NULL,
-                        FILE_NAME        varchar2(1000) NOT NULL,
-                        FILE_DATE        DATE,
-                        FILE_SIZE        number,
-                        NUM_ROWS         number,
-                        LOAD_START_TIME  DATE,
-                        LOAD_END_TIME    DATE,
-                        AGENT_VERSION    varchar2(100),
-                        BATCH_ID         number,
-                        BATCH_TOTAL      number,
-                        CONSTRAINT OCI_LOAD_STATUS PRIMARY KEY (TENANT_NAME, FILE_NAME) USING INDEX ENABLE
-                ) """
-                cursor.execute(sql)
-                print("   Table OCI_LOAD_STATUS created")
-            else:
-                print("   Table OCI_LOAD_STATUS exist")
-
-    except oracledb.DatabaseError as e:
-        print("\nError manipulating database at check_database_table_structure_load_status() - " + str(e) + "\n")
-        raise SystemExit
-
-    except Exception as e:
-        raise Exception("\nError manipulating database at check_database_table_structure_load_status() - " + str(e))
+        raise Exception("\nError manipulating database at check_database_table_structures() - " + str(e))
 
 
 #########################################################################
 # Load Cost File
 ##########################################################################
-def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, tenancy, compartments, file_num, total_files, costusage_namespace_name, costusage_bucket_name):
+def load_cost_file(connection, object_storage, object_file, max_file_name, cmd, tenancy, compartments, file_num, total_files, costusage_namespace_name, costusage_bucket_name):
     start_time = time.time()
     start_time_str = get_current_date_time()
     num_files = 0
@@ -1247,9 +789,9 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
         file_id = filename[:-7]
         file_time = str(o.time_created)[0:16]
 
-        # if file already loaded, skip (check if < max_file_id
-        if str(max_file_id) != "None":
-            if file_id <= str(max_file_id):
+        # if file already loaded, skip (check if < max_file_name)
+        if max_file_name:
+            if file_name_full <= max_file_name:
                 print("   Skipping   file " + file_name_full + " - " + str(file_size_mb) + " MB, " + file_time + ", #" + str(file_num) + "/" + str(total_files) + ", File already loaded")
                 return num_files
 
@@ -1352,36 +894,17 @@ def load_cost_file(connection, object_storage, object_file, max_file_id, cmd, te
                             valueadj = str(value).replace("#", "").replace("=", "")
 
                             # if tagspecial
-                            if cmd.tagspecial:
-                                if keyadj == cmd.tagspecial:
-                                    if len(valueadj) < 4000:
-                                        tag_special = valueadj
-                                        # remove oracle idcs from the e-mail
-                                        tag_special = tag_special.replace("oracleidentitycloudservice/", "")
+                            if cmd.tagspecial and keyadj == cmd.tagspecial:
+                                tag_special = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
 
-                            # if tagspecial2
-                            if cmd.tagspecial2:
-                                if keyadj == cmd.tagspecial2:
-                                    if len(valueadj) < 4000:
-                                        tag_special2 = valueadj
-                                        # remove oracle idcs from the e-mail
-                                        tag_special2 = tag_special2.replace("oracleidentitycloudservice/", "")
+                            if cmd.tagspecial2 and keyadj == cmd.tagspecial2:
+                                tag_special2 = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
 
-                            # if tagspecial3
-                            if cmd.tagspecial3:
-                                if keyadj == cmd.tagspecial3:
-                                    if len(valueadj) < 4000:
-                                        tag_special3 = valueadj
-                                        # remove oracle idcs from the e-mail
-                                        tag_special3 = tag_special3.replace("oracleidentitycloudservice/", "")
+                            if cmd.tagspecial3 and keyadj == cmd.tagspecial3:
+                                tag_special3 = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
 
-                            # if tagspecial4
-                            if cmd.tagspecial4:
-                                if keyadj == cmd.tagspecial4:
-                                    if len(valueadj) < 4000:
-                                        tag_special4 = valueadj
-                                        # remove oracle idcs from the e-mail
-                                        tag_special4 = tag_special4.replace("oracleidentitycloudservice/", "")
+                            if cmd.tagspecial4 and keyadj == cmd.tagspecial4:
+                                tag_special4 = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
 
                             # check if length < 4000 to avoid overflow database column
                             if len(tags_data) + len(keyadj) + len(valueadj) + 2 < 4000:
@@ -1607,7 +1130,7 @@ def main_process():
     ############################################
     # connect to database
     ############################################
-    max_cost_file_id = ""
+    max_cost_file_name = ""
     try:
         print("\nConnecting to database " + cmd.dname)
         with oracledb.connect(user=cmd.duser, password=dbpass, dsn=cmd.dname) as connection:
@@ -1618,10 +1141,7 @@ def main_process():
 
                 # Check tables structure
                 print("\nChecking Database Structure...")
-                check_database_table_structure_cost(connection, cmd.tagspecial, cmd.tagspecial2, cmd.tagspecial3, cmd.tagspecial4, tenancy.name)
-                check_database_table_structure_price_list(connection, tenancy.name)
-                check_database_table_structure_load_status(connection)
-                check_database_table_structure_resource(connection)
+                check_database_table_structure(connection)
 
                 ###############################
                 # enable hints
@@ -1633,14 +1153,13 @@ def main_process():
 
                 ###############################
                 # fetch max file id processed
-                # for usage and cost
                 ###############################
                 print("\nChecking Last Loaded Files... started at " + get_current_date_time())
 
-                sql = "select /*+ full(a) parallel(a,8) */ nvl(max(file_id),'0') as file_id from OCI_COST a where TENANT_NAME=:tenant_name"
+                sql = "select nvl(max(file_name),'0') as max_file_name from OCI_LOAD_STATUS a where TENANT_NAME=:tenant_name"
                 cursor.execute(sql, tenant_name=str(tenancy.name))
-                max_cost_file_id, = cursor.fetchone()
-                print("   Max Cost  File Id Processed = " + str(max_cost_file_id))
+                max_cost_file_name, = cursor.fetchone()
+                print("   Max Cost File Name Processed = " + str(max_cost_file_name))
 
                 print("Completed Checking at " + get_current_date_time())
 
@@ -1661,16 +1180,20 @@ def main_process():
             cost_num = 0
             if not cmd.skip_cost:
                 print("\nHandling Cost Report... started at " + get_current_date_time())
-                objects = oci.pagination.list_call_get_all_results(object_storage.list_objects, costusage_namespace_name, costusage_bucket_name, fields="timeCreated,size", prefix="reports/cost-csv/", start="reports/cost-csv/" + max_cost_file_id).data
+                objects = oci.pagination.list_call_get_all_results(
+                    object_storage.list_objects,
+                    costusage_namespace_name,
+                    costusage_bucket_name,
+                    fields="timeCreated,size",
+                    prefix="reports/cost-csv/",
+                    start=max_cost_file_name + "-next"
+                ).data
 
                 total_files = len(objects.objects)
                 print("Total " + str(total_files) + " cost files found to scan...")
                 for index, object_file in enumerate(objects.objects, start=1):
-                    cost_num += load_cost_file(connection, object_storage, object_file, max_cost_file_id, cmd, tenancy, compartments, index, total_files, costusage_namespace_name, costusage_bucket_name)
+                    cost_num += load_cost_file(connection, object_storage, object_file, max_cost_file_name, cmd, tenancy, compartments, index, total_files, costusage_namespace_name, costusage_bucket_name)
                 print("\n   Total " + str(cost_num) + " Cost Files Loaded, completed at " + get_current_date_time())
-
-            # Handle Index structure if not exist
-            check_database_index_structure_cost(connection)
 
             #############################
             # Update oci_cost_stats if
