@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=25.05.01
+export VERSION=25.07.01
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -50,6 +50,7 @@ Usage()
    echo "                        |"
    echo "    -setup_app          | Setup Usage2ADW Application"
    echo "    -upgrade_app        | Upgrade Usage2ADW Application"
+   echo "    -create_tables      | Create Usage2ADW Tables"
    echo "    -drop_tables        | Drop Usage2ADW Tables"
    echo "    -truncate_tables    | Truncate Usage2ADW Tables"
    echo "    -setup_credential   | Setup Usage2ADW Credentials"
@@ -307,7 +308,7 @@ EnableAPEXApplication()
    -----------------------------
    @/home/opc/usage_reports_to_adw/usage2adw_demo_apex_app.sql
 
-" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
+" | sqlplus -s ${DATABASE_USER}/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
@@ -460,70 +461,23 @@ UpgradeApp()
 }
 
 ########################################################################################################
-# Main Setup App
+# Create Tables
 ########################################################################################################
-SetupApp()
+CreateTables()
 {
    echo "###########################################################################" >> $LOG
-   echo "# Setup Application started at `date`" >> $LOG
+   echo "# Create Tables at `date`" >> $LOG
    echo "###########################################################################" >> $LOG
 
-   ReadVariablesFromCredfile 1
-   GenerateWalletFromADB 2
-
-   ###########################################
-   # Check OCI Connectivity
-   ###########################################
+   number=$1
    echo "" | tee -a $LOG
-   echo "3. Checking OCI Connectivity using instance principles..." | tee -a $LOG
-   echo "   Executed: python3 check_connectivity.sh" | tee -a $LOG
-
-   slog=$LOGDIR/check_connectivity_${DATE}.log
-   echo "   Internal LOG=$slog" | tee -a $LOG
-   python3 $APPDIR/usage2adw_check_connectivity.py | tee -a $slog | tee -a $LOG
-   if (( `grep Error $slog | wc -l` > 0 )); then
-      echo "   Error querying OCI, please check the log $slog" | tee -a $LOG
-      echo "   Please check the documentation to have the dynamic group and policy correctted" | tee -a $LOG
-      echo "   Once fixed you can rerun the script $SCRIPT" | tee -a $LOG
-      echo "" | tee -a $LOG
-      echo "   Script will continue incase creating the database on different tenant or child tenant..." | tee -a $LOG
-   else
-      echo "   Okay." | tee -a $LOG
-   fi
-
-   ###########################################
-   # create application schema and enable APEX
-   ###########################################
-   echo "" | tee -a $LOG
-   slog=$LOGDIR/db_creation_user_${DATE}.log
-   echo "   Internal LOG=$slog" | tee -a $LOG
-   
-   echo "4. Creating USAGE user on ADWC instance and enable APEX Workspace" | tee -a $LOG
-   echo "   commands executed:" | tee -a $LOG
-   echo "   sqlplus ADMIN/xxxxxxxx@${db_db_name}" | tee -a $LOG
-   echo "   create user usage identified by xxxxxxxxx;" | tee -a $LOG
-   echo "   grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;" | tee -a $LOG
-   echo "   exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');" | tee -a $LOG
-   
-   echo "set lines 199 trimsp on pages 0 feed on
-   create user usage identified by ${db_app_password};
-   grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;
-   exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');
-" | sqlplus -s ADMIN/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
-
-   if (( `grep ORA- $slog | egrep -v 'ORA-01920|ORA-20987|06512'| wc -l` > 0 )); then
-      echo "   Error creating USAGE user, please check log $slog, aborting." | tee -a $LOG
-      exit 1
-   else
-      echo "   Okay." | tee -a $LOG
-   fi
 
    ###########################################
    # create usage2adw tables
    ###########################################
    echo "" | tee -a $LOG
    slog=$LOGDIR/create_tables_${DATE}.log
-   echo "5. Create Usage2ADW Tables" | tee -a $LOG
+   echo "$number. Create Usage2ADW Tables" | tee -a $LOG
    echo "   Internal LOG=$slog" | tee -a $LOG
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
    
@@ -686,6 +640,72 @@ SetupApp()
    else
       echo "   Okay." | tee -a $LOG
    fi
+
+}
+
+########################################################################################################
+# Main Setup App
+########################################################################################################
+SetupApp()
+{
+   echo "###########################################################################" >> $LOG
+   echo "# Setup Application started at `date`" >> $LOG
+   echo "###########################################################################" >> $LOG
+
+   ReadVariablesFromCredfile 1
+   GenerateWalletFromADB 2
+
+   ###########################################
+   # Check OCI Connectivity
+   ###########################################
+   echo "" | tee -a $LOG
+   echo "3. Checking OCI Connectivity using instance principles..." | tee -a $LOG
+   echo "   Executed: python3 check_connectivity.sh" | tee -a $LOG
+
+   slog=$LOGDIR/check_connectivity_${DATE}.log
+   echo "   Internal LOG=$slog" | tee -a $LOG
+   python3 $APPDIR/usage2adw_check_connectivity.py | tee -a $slog | tee -a $LOG
+   if (( `grep Error $slog | wc -l` > 0 )); then
+      echo "   Error querying OCI, please check the log $slog" | tee -a $LOG
+      echo "   Please check the documentation to have the dynamic group and policy correctted" | tee -a $LOG
+      echo "   Once fixed you can rerun the script $SCRIPT" | tee -a $LOG
+      echo "" | tee -a $LOG
+      echo "   Script will continue incase creating the database on different tenant or child tenant..." | tee -a $LOG
+   else
+      echo "   Okay." | tee -a $LOG
+   fi
+
+   ###########################################
+   # create application schema and enable APEX
+   ###########################################
+   echo "" | tee -a $LOG
+   slog=$LOGDIR/db_creation_user_${DATE}.log
+   echo "   Internal LOG=$slog" | tee -a $LOG
+   
+   echo "4. Creating USAGE user on ADWC instance and enable APEX Workspace" | tee -a $LOG
+   echo "   commands executed:" | tee -a $LOG
+   echo "   sqlplus ADMIN/xxxxxxxx@${db_db_name}" | tee -a $LOG
+   echo "   create user usage identified by xxxxxxxxx;" | tee -a $LOG
+   echo "   grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;" | tee -a $LOG
+   echo "   exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');" | tee -a $LOG
+   
+   echo "set lines 199 trimsp on pages 0 feed on
+   create user usage identified by ${db_app_password};
+   grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;
+   exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');
+" | sqlplus -s ADMIN/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
+
+   if (( `grep ORA- $slog | egrep -v 'ORA-01920|ORA-20987|06512'| wc -l` > 0 )); then
+      echo "   Error creating USAGE user, please check log $slog, aborting." | tee -a $LOG
+      exit 1
+   else
+      echo "   Okay." | tee -a $LOG
+   fi
+
+   ###########################################
+   # create Usage2ADW tables
+   ###########################################
+   CreateTables 5
 
    ###########################################
    # Enable APEX
@@ -889,10 +909,11 @@ SetupOL8Packages()
    ###########################################
    # Install Oracle Instant Client
    ###########################################
-   export RPM_BAS=oracle-instantclient19.23-basic-19.23.0.0.0-1.x86_64
-   export RPM_SQL=oracle-instantclient19.23-sqlplus-19.23.0.0.0-1.x86_64
-   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1923000/
-   export RPM_LOC=/usr/lib/oracle/19.23
+                  
+   export RPM_BAS=oracle-instantclient19.27-basic-19.27.0.0.0-1.x86_64
+   export RPM_SQL=oracle-instantclient19.27-sqlplus-19.27.0.0.0-1.x86_64
+   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1927000/
+   export RPM_LOC=/usr/lib/oracle/19.27
 
    echo "" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
@@ -1041,6 +1062,7 @@ case $usage2adw_param in
     -policy_requirement ) PolicyRequirement ;;
     -setup_app          ) SetupApp ;;
     -upgrade_app        ) UpgradeApp ;;
+    -create_tables      ) ReadVariablesFromCredfile 1; CreateTables 2 ;;
     -drop_tables        ) DropTables ;;
     -truncate_tables    ) TruncateTables ;;
     -setup_credential   ) SetupCredential ;;

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+25.07.01 - 2025.07.01
+=====================
+* Added Focus report handling under focus2adw folder, it is beta release
+* Change the way fetching the last file to make the overall load faster
+* Move table creation to the setup script usage2adw_setup.sh and remove it from the python usage2adw.py
+* Added -createTables flag to the setup script usage2adw_setup.sh
+* Changed to InstantClient 19.27
+
+=====================
 25.05.01 - 2025.05.01
 =====================
 * Removed handling usage files which deprecated it includes all relevant tables OCI_USAGE,..
