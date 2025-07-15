@@ -35,7 +35,7 @@ resource "oci_database_autonomous_database" "adwc" {
     db_name                  = var.db_name
     display_name             = var.db_name
     license_model            = var.license_model
-    db_version               = "23AI"
+    db_version               = "23ai"
     db_workload              = "DW"
     is_auto_scaling_enabled  = "false"
     is_free_tier             = "false"

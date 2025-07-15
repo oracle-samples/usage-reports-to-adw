@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+25.07.15 - 2025.07.15
+=====================
+* Change database to 23ai
+
+=====================
 25.07.01 - 2025.07.01
 =====================
 * Added Focus report handling under focus2adw folder, it is beta release
