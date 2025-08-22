@@ -308,7 +308,7 @@ EnableAPEXApplication()
    -----------------------------
    @/home/opc/usage_reports_to_adw/usage2adw_demo_apex_app.sql
 
-" | sqlplus -s ${DATABASE_USER}/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
+" | sqlplus -s ADMIN/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
