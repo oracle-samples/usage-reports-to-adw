@@ -262,7 +262,7 @@ EnableAPEXApplication()
 
    number=$1
    echo "" | tee -a $LOG
-   echo "${number}. Enable APEX Application." | tee -a $LOG
+   echo "${number}. Enable APEX Application on $database_user user." | tee -a $LOG
 
    ###########################################
    # Enable APEX
@@ -278,27 +278,27 @@ EnableAPEXApplication()
    prompt Create APEX Workspace User
 
    begin
-      apex_util.set_workspace(p_workspace => 'USAGE');
+      apex_util.set_workspace(p_workspace => '${database_user}');
       apex_util.create_user(
-         p_user_name                    => 'USAGE',
+         p_user_name                    => '${database_user}',
          p_web_password                 => '&pass.',
          p_developer_privs              => 'ADMIN:CREATE:DATA_LOADER:EDIT:HELP:MONITOR:SQL',
          p_email_address                => 'usage@example.com',
-         p_default_schema               => 'USAGE',
+         p_default_schema               => '${database_user}',
          p_change_password_on_first_use => 'N' );
    end;
    /
 
    prompt Remove Application 100
    begin
-      apex_util.set_workspace(p_workspace => 'USAGE');
+      apex_util.set_workspace(p_workspace => '${database_user}');
       wwv_flow_api.remove_flow(100);
    end;
    /
 
    prompt Install Application 100
    declare
-      c_workspace constant apex_workspaces.workspace%type := 'USAGE';
+      c_workspace constant apex_workspaces.workspace%type := '${database_user}';
       c_app_id constant apex_applications.application_id%type := 100;
       c_app_alias constant apex_applications.alias%type := 'USAGE2ADW';
 
@@ -306,7 +306,7 @@ EnableAPEXApplication()
    begin
       apex_application_install.clear_all;
 
-      select workspace_id into l_workspace_id from apex_workspaces where workspace = 'USAGE';
+      select workspace_id into l_workspace_id from apex_workspaces where workspace = '${database_user}';
 
       apex_application_install.set_workspace_id(l_workspace_id);
       apex_application_install.set_application_id(c_app_id);
