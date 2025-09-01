@@ -19,7 +19,8 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=25.07.01
+export VERSION=25.09.01
+export DATABASE_ADMIN=ADMIN
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -145,6 +146,7 @@ ReadVariablesFromCredfile()
    export extract_tag3_special_key=`grep "^TAG3_SPECIAL" $CREDFILE | sed -s 's/TAG3_SPECIAL=//'`
    export extract_tag4_special_key=`grep "^TAG4_SPECIAL" $CREDFILE | sed -s 's/TAG4_SPECIAL=//'`
    export database_id=`grep "^DATABASE_ID" $CREDFILE | sed -s 's/DATABASE_ID=//'`
+   export database_user=`grep "^DATABASE_USER" $CREDFILE | sed -s 's/DATABASE_USER=//'`
    export database_secret_id=`grep "^DATABASE_SECRET_ID" $CREDFILE | sed -s 's/DATABASE_SECRET_ID=//'`
    export database_secret_tenant=`grep "^DATABASE_SECRET_TENANT" $CREDFILE | sed -s 's/DATABASE_SECRET_TENANT=//'`
 
@@ -156,9 +158,14 @@ ReadVariablesFromCredfile()
       exit 1
    fi
 
-   if [ -z "${DATABASE_SECRET_TENANT}" ]
+   if [ -z "${database_secret_tenant}" ]
    then
       export database_secret_tenant=local
+   fi
+
+   if [ -z "${database_user}" ]
+   then
+      export database_user=USAGE
    fi
 
    ###################################################
@@ -206,6 +213,7 @@ SetupCredential()
    echo "Setup Credentials..." | tee -a $LOG
    echo "" | tee -a $LOG
    printf "Please Enter Database Name     : "; read DATABASE_NAME
+   printf "Please Enter Database User (USAGE): "; read DATABASE_USER
    printf "Please Enter Database id (ocid): "; read DATABASE_ID
    printf "Please Enter ADB Application Secret Id from KMS Vault: "; read DATABASE_SECRET_ID
    printf "Please Enter ADB Application Secret Tenant Profile - The Tenancy name in which the Secret Vault resides (For instance principle use 'local'):"; read DATABASE_SECRET_TENANT
@@ -219,7 +227,11 @@ SetupCredential()
       TAG_SPECIAL="Oracle-Tags.CreatedBy"
    fi
 
-   echo "DATABASE_USER=USAGE" > $CREDFILE
+   if [ -z "$DATABASE_USER" ]; then
+      DATABASE_USER=USAGE
+   fi
+
+   echo "DATABASE_USER=${DATABASE_USER}" > $CREDFILE
    echo "DATABASE_ID=${DATABASE_ID}" >> $CREDFILE
    echo "DATABASE_NAME=${DATABASE_NAME}_low" >> $CREDFILE
    echo "DATABASE_SECRET_ID=${DATABASE_SECRET_ID}" >> $CREDFILE 
@@ -308,7 +320,7 @@ EnableAPEXApplication()
    -----------------------------
    @/home/opc/usage_reports_to_adw/usage2adw_demo_apex_app.sql
 
-" | sqlplus -s ADMIN/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
+" | sqlplus -s ${DATABASE_ADMIN}/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
@@ -631,7 +643,7 @@ CreateTables()
       CONSTRAINT OCI_RESOURCES_PK PRIMARY KEY (RESOURCE_ID) USING INDEX
    );
    
-" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
+" | sqlplus -s ${database_user}/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
@@ -684,7 +696,7 @@ SetupApp()
    
    echo "4. Creating USAGE user on ADWC instance and enable APEX Workspace" | tee -a $LOG
    echo "   commands executed:" | tee -a $LOG
-   echo "   sqlplus ADMIN/xxxxxxxx@${db_db_name}" | tee -a $LOG
+   echo "   sqlplus ${DATABASE_ADMIN}/xxxxxxxx@${db_db_name}" | tee -a $LOG
    echo "   create user usage identified by xxxxxxxxx;" | tee -a $LOG
    echo "   grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;" | tee -a $LOG
    echo "   exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');" | tee -a $LOG
@@ -693,7 +705,7 @@ SetupApp()
    create user usage identified by ${db_app_password};
    grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;
    exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');
-" | sqlplus -s ADMIN/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
+" | sqlplus -s ${DATABASE_ADMIN}/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `grep ORA- $slog | egrep -v 'ORA-01920|ORA-20987|06512'| wc -l` > 0 )); then
       echo "   Error creating USAGE user, please check log $slog, aborting." | tee -a $LOG
@@ -805,7 +817,7 @@ DropTables()
    prompt Dropping Table OCI_RESOURCES
    drop table OCI_RESOURCES; 
 
-" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
+" | sqlplus -s ${database_user}/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
@@ -867,7 +879,7 @@ TruncateTables()
    prompt Truncating Table OCI_RESOURCES
    truncate table OCI_RESOURCES; 
 
-" | sqlplus -s USAGE/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
+" | sqlplus -s ${database_user}/${db_app_password}@${db_db_name} | tee -a $slog | tee -a $LOG
 
    if (( `egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512' | wc -l` > 0 )); then
       egrep 'ORA-|SP2-' $slog | egrep -v 'ORA-00955|ORA-00001|ORA-06512'
