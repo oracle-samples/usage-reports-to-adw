@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=25.09.01
+export VERSION=25.10.01
 export DATABASE_ADMIN=ADMIN
 export APPDIR=/home/opc/usage_reports_to_adw
 export CREDFILE=$APPDIR/config.user
@@ -498,7 +498,7 @@ CreateTables()
    -------------------------------
    prompt Creating Table OCI_TENANT
 
-   create table OCI_TENANT (
+   create table if not exists OCI_TENANT (
       TENANT_ID               VARCHAR2(100),
       TENANT_NAME             VARCHAR2(100),
       ADMIN_EMAIL             VARCHAR2(100),
@@ -511,7 +511,7 @@ CreateTables()
    -------------------------------
    prompt Creating Table OCI_COST
 
-   create table OCI_COST (
+   create table if not exists OCI_COST (
       TENANT_NAME             VARCHAR2(100),
       TENANT_ID               VARCHAR2(100),
       FILE_ID                 VARCHAR2(30),
@@ -547,14 +547,14 @@ CreateTables()
       TAG_SPECIAL4            VARCHAR2(4000)
    ) COMPRESS;
 
-   CREATE INDEX OCI_COST_1IX ON OCI_COST(TENANT_NAME,USAGE_INTERVAL_START);
+   CREATE INDEX OCI_COST_1IX ON OCI_COST (TENANT_NAME,USAGE_INTERVAL_START);
 
    -------------------------------
    -- OCI_COST_TAG_KEYS
    -------------------------------
    prompt Creating Table OCI_COST_TAG_KEYS
 
-   CREATE TABLE OCI_COST_TAG_KEYS (TENANT_NAME VARCHAR2(100), TAG_KEY VARCHAR2(1000),
+   create table if not exists OCI_COST_TAG_KEYS (TENANT_NAME VARCHAR2(100), TAG_KEY VARCHAR2(1000),
       CONSTRAINT OCI_COST_TAG_KEYS_PK PRIMARY KEY(TENANT_NAME,TAG_KEY)
    );
 
@@ -563,7 +563,7 @@ CreateTables()
    -------------------------------
    prompt Creating Table OCI_COST_STATS
 
-   CREATE TABLE OCI_COST_STATS (
+   create table if not exists OCI_COST_STATS (
       TENANT_NAME             VARCHAR2(100),
       FILE_ID                 VARCHAR2(30),
       USAGE_INTERVAL_START    DATE,
@@ -581,7 +581,7 @@ CreateTables()
    -------------------------------
    prompt Creating Table OCI_COST_REFERENCE
 
-   CREATE TABLE OCI_COST_REFERENCE (
+   create table if not exists OCI_COST_REFERENCE (
       TENANT_NAME             VARCHAR2(100),
       REF_TYPE                VARCHAR2(100),
       REF_NAME                VARCHAR2(1000),
@@ -593,7 +593,7 @@ CreateTables()
    -------------------------------
    prompt Creating Table OCI_PRICE_LIST
 
-   create table OCI_PRICE_LIST (
+   create table if not exists OCI_PRICE_LIST (
       TENANT_NAME             VARCHAR2(100),
       TENANT_ID               VARCHAR2(100),
       COST_PRODUCT_SKU        VARCHAR2(10),
@@ -613,7 +613,7 @@ CreateTables()
    -------------------------------
    prompt Creating Table OCI_LOAD_STATUS
 
-   create table OCI_LOAD_STATUS (
+   create table if not exists OCI_LOAD_STATUS (
       TENANT_NAME      varchar2(100) NOT NULL,
       FILE_TYPE        varchar2(100) NOT NULL,
       FILE_ID          varchar2(1000) NOT NULL,
@@ -634,7 +634,7 @@ CreateTables()
    -------------------------------
    prompt Creating Table OCI_RESOURCES
 
-   create table OCI_RESOURCES (
+   create table if not exists OCI_RESOURCES (
       RESOURCE_ID             VARCHAR2(200) NOT NULL,
       RESOURCE_NAME           VARCHAR2(1000),
       SOURCE_TENANT           VARCHAR2(100),
@@ -694,17 +694,28 @@ SetupApp()
    slog=$LOGDIR/db_creation_user_${DATE}.log
    echo "   Internal LOG=$slog" | tee -a $LOG
    
-   echo "4. Creating USAGE user on ADWC instance and enable APEX Workspace" | tee -a $LOG
+   echo "4. Creating ${database_user} user on ADWC instance and enable APEX Workspace" | tee -a $LOG
    echo "   commands executed:" | tee -a $LOG
    echo "   sqlplus ${DATABASE_ADMIN}/xxxxxxxx@${db_db_name}" | tee -a $LOG
-   echo "   create user usage identified by xxxxxxxxx;" | tee -a $LOG
-   echo "   grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;" | tee -a $LOG
-   echo "   exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');" | tee -a $LOG
+   echo "   create user ${database_user} identified by xxxxxxxxx;" | tee -a $LOG
+   echo "   grant create dimension, connect, resource, dwrole, unlimited tablespace to ${database_user};" | tee -a $LOG
+   echo "   exec apex_instance_admin.add_workspace(p_workspace => '${database_user}', p_primary_schema => '${database_user}');" | tee -a $LOG
    
-   echo "set lines 199 trimsp on pages 0 feed on
-   create user usage identified by ${db_app_password};
-   grant create dimension, connect, resource, dwrole, unlimited tablespace to usage;
-   exec apex_instance_admin.add_workspace(p_workspace => 'USAGE', p_primary_schema => 'USAGE');
+   echo "set lines 199 trimsp on pages 0 feed on serveroutput on
+   create user if not exists ${database_user} identified by ${db_app_password};
+   grant create dimension, connect, resource, dwrole, unlimited tablespace to ${database_user};
+   exec apex_instance_admin.add_workspace(p_workspace => '${database_user}', p_primary_schema => '${database_user}');
+
+   DECLARE
+     l_role_exists NUMBER;
+   BEGIN
+     SELECT COUNT(*) INTO l_role_exists FROM DBA_ROLES WHERE ROLE = 'OCIRA_RO';
+     IF l_role_exists > 0 THEN
+       EXECUTE IMMEDIATE 'GRANT OCIRA_RO TO ${database_user}';
+       DBMS_OUTPUT.PUT_LINE('Role OCIRA_RO granted successfully.');
+     END IF;
+   END;
+/   
 " | sqlplus -s ${DATABASE_ADMIN}/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
    if (( `grep ORA- $slog | egrep -v 'ORA-01920|ORA-20987|06512'| wc -l` > 0 )); then
@@ -919,17 +930,16 @@ SetupOL8Packages()
    echo "Completed." | tee -a $LOG
 
    ###########################################
-   # Install Oracle Instant Client
-   ###########################################
-                  
-   export RPM_BAS=oracle-instantclient19.27-basic-19.27.0.0.0-1.x86_64
-   export RPM_SQL=oracle-instantclient19.27-sqlplus-19.27.0.0.0-1.x86_64
-   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1927000/
-   export RPM_LOC=/usr/lib/oracle/19.27
+   # Install Oracle Instant Client 23ai
+   ###########################################                  
+   export RPM_BAS=oracle-instantclient-basic-23.9.0.25.07-1.el8.x86_64
+   export RPM_SQL=oracle-instantclient-sqlplus-23.9.0.25.07-1.el8.x86_64
+   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/2390000/
+   export RPM_LOC=/usr/lib/oracle/23.9
 
    echo "" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
-   echo "# 2. Install Oracle Instant Client 19c" | tee -a $LOG
+   echo "# 2. Install Oracle Instant Client 23ai" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
    sudo dnf install -y libnsl | tee -a $LOG
 
