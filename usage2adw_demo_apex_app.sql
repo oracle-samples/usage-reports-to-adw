@@ -39,7 +39,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 -- Application Export:
 --   Application:     100
 --   Name:            OCI Usage and Cost Report
---   Date and Time:   02:22 Sunday September 28, 2025
+--   Date and Time:   11:22 Sunday September 28, 2025
 --   Exported By:     USAGE
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -138,7 +138,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_value_01=>'OCI Usage and Cost Report'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
-,p_version_scn=>45600936386311
+,p_version_scn=>45604023430710
 ,p_print_server_type=>'INSTANCE'
 ,p_file_storage=>'DB'
 ,p_is_pwa=>'N'
@@ -72866,9 +72866,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P12_INFO'
 ,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_imp.id(107540952833960156)
-,p_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'ShowOCI CSV tables to ADW was not enabled !<br><br>',
-'Please visit <a target=_new href="https://github.com/adizohar/usage_reports_to_adw/blob/main/step_by_step_howto.md">How To Manual</a><br><br>'))
+,p_source=>'Resource Analytics is not enabled on this Autonomous Database!<br><br>'
 ,p_source_type=>'STATIC'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_tag_attributes=>'style="font-weight:bold;font-size:13pt"'
@@ -72877,9 +72875,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_protection_level=>'S'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'format', 'HTML_UNSAFE',
-  'send_on_page_submit', 'Y',
-  'show_line_breaks', 'N')).to_clob
-,p_ai_enabled=>false
+  'send_on_page_submit', 'Y')).to_clob
 );
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(9980700261957006)
