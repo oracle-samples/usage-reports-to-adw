@@ -1,0 +1,360 @@
+#********************************************************************************************
+# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
+# Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
+#********************************************************************************************
+
+title: Usage2ADW
+description: OCI Usage and Cost Reports for Resoource Analytics Version 25.10.01
+schemaVersion: 1.0.0
+version: "20251001"
+locale: "en"
+
+groupings:
+
+- title: "Compartment"
+  variables:
+  - ${compartment_ocid}
+
+- title: "Resource Tags"
+  variables:
+  - ${service_tags}
+
+- title: "Identity Configuration"
+  visible: true
+  variables:
+  - ${option_iam}
+  - ${new_policy_name}
+  - ${new_dynamic_group_name}
+
+- title: "Network Configuration"
+  visible: true
+  variables:
+  - ${network_vcn_compartment_id}
+  - ${network_vcn_id}
+  - ${network_subnet_compartment_id}
+  - ${network_subnet_id}
+
+- title: "Autonomous Database Configuration"
+  visible: true
+  variables:
+  - ${db_compartment_id}
+  - ${db_id}
+  - ${db_secret_compartment_id}
+  - ${db_secret_id}
+
+- title: "Load Balancer Configuration"
+  visible: true
+  variables:
+  - ${option_loadbalancer}
+  - ${loadbalancer_name}
+  - ${loadbalancer_subnet_compartment_id}
+  - ${loadbalancer_subnet_id}
+  - ${loadbalancer_network_nsg_name}
+
+- title: "Instance Configuration"
+  variables:
+  - ${instance_availability_domain}
+  - ${instance_name}
+  - ${instance_shape}
+  - ${ssh_public_key}
+  - ${extract_from_date}
+  - ${extract_tag1_special_key}
+  - ${extract_tag2_special_key}
+  - ${extract_tag3_special_key}
+  - ${extract_tag4_special_key}
+
+variables:
+
+  ###################################################
+  # Main Menu
+  ###################################################
+  compartment_ocid:
+    title: Stack Compartment
+    description: Choose the compartment where all the provisioned resources will be deployed *** Deployment must be at Home Region ***
+    type: oci:identity:compartment:id
+    required: true
+
+  service_tags:
+    title: Add Tags
+    type: oci:identity:tag:value
+    required: false
+
+  ###################################################
+  # Identity Configuration
+  ###################################################
+  option_iam:
+    title: Identity Options
+    description: IAM Dynamic Group and Policies can be created for you under the root compartment, it required Admin access.
+    visible: true
+    type: enum
+    enum:
+     - New IAM Dynamic Group and Policy will be created
+     - I have already created Dynamic Group and Policy per the documentation
+    default: I have already created Dynamic Group and Policy per the documentation
+    required: true
+
+  new_dynamic_group_name:
+    title: Dynamic Group Name
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9-_]+$
+    type: string
+    maxLength: 30
+    default: Usage2ADW_DynamicGroup
+    visible:
+      eq:
+       - ${option_iam}
+       - New IAM Dynamic Group and Policy will be created
+
+  new_policy_name:
+    title: Policy Name
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9-_]+$
+    type: string
+    maxLength: 30
+    default: Usage2ADW_Policy
+    visible:
+      eq:
+       - ${option_iam}
+       - New IAM Dynamic Group and Policy will be created
+
+  ###################################################
+  # Network Configuration
+  ###################################################
+  network_vcn_compartment_id:
+    title: VCN Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible: true
+
+  network_vcn_id:
+    title: VCN
+    type: oci:core:vcn:id
+    dependsOn:
+      compartmentId: ${network_vcn_compartment_id}
+    required: true
+    visible: true
+
+  network_subnet_compartment_id:
+    title: Subnet Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible: true
+
+  network_subnet_id:
+    title: Subnet
+    type: oci:core:subnet:id
+    dependsOn:
+      compartmentId: ${network_subnet_compartment_id}
+      vcnId: ${network_vcn_id}
+    required: true
+    visible: true
+
+
+  ###################################################
+  # Database Configuration
+  ###################################################
+  db_compartment_id:
+    title: Autonomous Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible: true
+
+  db_id:
+    title: Resource Analytics Autonomous Database
+    type: oci:database:autonomousdatabase:id
+    dependsOn:
+      compartmentId: ${db_compartment_id}
+    required: true
+    visible: true
+
+  db_secret_compartment_id:
+    title: Secret Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible: true
+
+  db_secret_id:
+    title: Secret Id
+    description: Provide database Admin password secret id should be created under KMS Vault.
+    type: oci:kms:secret:id
+    dependsOn:
+      compartmentId: ${db_secret_compartment_id}
+    required: true
+    visible: true
+
+  ###################################################
+  # Load Balancer Configuration
+  ###################################################
+  option_loadbalancer:
+    title: Load Balancer Options
+    description: Public Load Balancer can be provisioned to access the Private End-Point.
+    type: enum
+    enum:
+     - Provision Public Load Balancer
+     - No Public Load Balancer
+    default: No Public Load Balancer
+    required: true
+
+  loadbalancer_name:
+    title: Load Balancer Name
+    description: Choose your Load Balancer Name.
+    type: string
+    maxLength: 30
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9-_]+$
+    default: Usage2ADW_LB
+    visible:
+      eq:
+       - ${option_loadbalancer}
+       - Provision Public Load Balancer
+
+  loadbalancer_subnet_compartment_id:
+    title: Load Balancer Public Subnet Compartment
+    type: oci:identity:compartment:id
+    default: ${compartment_ocid}
+    required: true
+    visible:
+      eq:
+       - ${option_loadbalancer}
+       - Provision Public Load Balancer
+
+  loadbalancer_subnet_id:
+    title: Load Balancer Public Subnet
+    type: oci:core:subnet:id
+    dependsOn:
+      compartmentId: ${loadbalancer_subnet_compartment_id}
+      vcnId: ${network_vcn_id}
+      hidePrivateSubnet: true
+    required: true
+    visible:
+      eq:
+       - ${option_loadbalancer}
+       - Provision Public Load Balancer
+
+  loadbalancer_network_nsg_name:
+    title: Network Security Group
+    description: Choose your Network Security Group Name for the Load Balancer and attach later manually to ADB.
+    type: string
+    maxLength: 30
+    required: true
+    pattern: ^[A-Za-z][A-Za-z0-9-_]+$
+    default: Usage2ADW_NSG_For_RA
+    visible:
+      eq:
+       - ${option_loadbalancer}
+       - Provision Public Load Balancer
+
+  ###########################
+  # instance
+  ###########################
+  instance_name: 
+    title: Instance Name
+    description: Provide the instance name
+    type: string  
+    minLength: 1
+    maxLength: 12
+    pattern: ^[A-Za-z][A-Za-z0-9]+$
+    default: Usage2AdwVM
+    required: true   
+
+  ssh_public_key:
+    type: oci:core:ssh:publickey
+    title: SSH Public Key
+    description: Use public key to secure your VM, Private key pair will be needed later.
+    required: true
+  
+  instance_shape:
+    title: Compute Shape
+    description: The shape for the usage2adw compute instances
+    type: enum
+    enum:
+    - VM.Standard.E3.Flex
+    - VM.Standard.E4.Flex
+    - VM.Standard.E5.Flex
+    - VM.Optimized3.Flex
+    - VM.Standard3.Flex
+    default: VM.Standard3.Flex
+    required: true
+    visible: true
+
+  instance_availability_domain:
+    title: Availability Domain
+    description: The name of the availability domain in which to create compute instances, must be at home region
+    type: oci:identity:availabilitydomain:name
+    required: true
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+
+  extract_from_date:
+    title: Extract usage from date
+    description: Please specify the date to extract from, in format (YYYY-MM)
+    type: string
+    default: "2025-01"
+    pattern: "^(2019|202[0-9])-(0[0-9]|1[0-2])$"
+    required: true
+    visible: true
+
+  extract_tag1_special_key:
+    title: Extract Tag Key 1 to special tag column
+    description: Please specify the tag key 1 to load to Tag Special 1 column
+    type: string
+    default: "Oracle-Tags.CreatedBy"
+    required: true
+    visible: true
+
+  extract_tag2_special_key:
+    title: Extract Tag Key 2 to special tag column
+    description: Please specify the tag key 2 to load to Tag Special 2 column
+    type: string
+    default: "Oracle-Tags.Project"
+    required: true
+    visible: true
+
+  extract_tag3_special_key:
+    title: Extract Tag Key 3 to special tag column
+    description: Please specify the tag key 3 to load to Tag Special 3 column
+    type: string
+    default: "Core.Project"
+    required: true
+    visible: true
+
+  extract_tag4_special_key:
+    title: Extract Tag Key 4 to special tag column
+    description: Please specify the tag key 4 to load to Tag Special 4 column
+    type: string
+    default: "Core.Budget"
+    required: true
+    visible: true
+
+    ###########################
+  # Connections Variables
+  ###########################
+  tenancy_ocid:
+     title: Tenancy ID
+     description: The Oracle Cloud Identifier (OCID) for your tenancy.
+     type: string
+     required: true
+     visible: false
+  
+  region:
+     title: Region
+     description: The region in which to create all resources.
+     type: oci:identity:region:name
+     required: true
+     visible: false
+
+  user_ocid:
+     title: User ID
+     description: The Oracle Cloud Identifier (OCID) for the user
+     type: string
+     visible: false
+
+  fingerprint:
+     title: Private Key Fingerprint
+     type: string
+     visible: false
+

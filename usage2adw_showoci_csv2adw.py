@@ -122,7 +122,7 @@ import os
 import oci
 import base64
 
-version = "25.05.08"
+version = "25.10.01"
 cmd = None
 file_num = 0
 
