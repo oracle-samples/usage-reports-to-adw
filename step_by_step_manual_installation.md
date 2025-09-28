@@ -99,13 +99,13 @@ python3 -m pip install --upgrade oci oracledb requests
 ```
 # Please refer to the download site for Manual installation = https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
 
-4. install oracle instant client 19
-sudo dnf install -y libnsl
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1927000/oracle-instantclient19.27-basic-19.27.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1927000/oracle-instantclient19.27-sqlplus-19.27.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1927000/oracle-instantclient19.27-tools-19.27.0.0.0-1.x86_64.rpm
+4. install oracle instant clienoracle-instantclient-basic-23.9.0.25.07-1.el8.x86_64
+sudo dnf install -y lioracle-instantclient-basic-23.9.0.25.07-1.el8.x86_64
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/2390000/oracle-instantclient-basic-23.9.0.25.07-1.el8.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/2390000/oracle-instantclient-sqlplus-23.9.0.25.07-1.el8.x86_64.rpm
+sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/2390000/oracle-instantclient-tools-23.9.0.25.07-1.el8.x86_64.rpm
 sudo rm -f /usr/lib/oracle/current
-sudo ln -s /usr/lib/oracle/19.27 /usr/lib/oracle/current
+sudo ln -s /usr/lib/oracle/23 /usr/lib/oracle/current
 
 # setup oracle home variables
 # Add the below to $HOME/.bashrc:
