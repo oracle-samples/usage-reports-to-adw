@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+25.10.01 - 2025.10.01
+=====================
+* Change client to 23ai
+* Added terraform to support Resource Analytics
+
+=====================
 25.07.15 - 2025.07.15
 =====================
 * Change database to 23ai

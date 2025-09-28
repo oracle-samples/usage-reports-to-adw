@@ -60,11 +60,13 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 
 1. [Step by Step using Resource Management (Terraform)](step_by_step_terraform.md)
 
-2. [Step by Step Installation](step_by_step_installation.md)
+2. [Step by Step using Resource Management (Terraform) for Resource Analytics](step_by_step_terraform_for_ra.md)
 
-3. [Step by Step Manual Installation](step_by_step_manual_installation.md)
+3. [Step by Step Installation](step_by_step_installation.md)
 
-4. [Step by Step How to File](step_by_step_howto.md)
+4. [Step by Step Manual Installation](step_by_step_manual_installation.md)
+
+5. [Step by Step How to File](step_by_step_howto.md)
 
 ## OCI SDK Modules and API used
 
