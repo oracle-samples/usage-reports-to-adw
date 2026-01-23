@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- Name: OCI Usage and Cost Report
--- Copyright (c) 2025 Oracle and/or its affiliates.
+-- Copyright (c) 2026 Oracle and/or its affiliates.
 -- Licensed under the Universal Permissive License v 1.0 
 -- as shown at https://oss.oracle.com/licenses/upl/
 --------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ whenever sqlerror exit sql.sqlcode rollback
 begin
 wwv_flow_imp.import_begin (
  p_version_yyyy_mm_dd=>'2024.11.30'
-,p_release=>'24.2.8'
+,p_release=>'24.2.11'
 ,p_default_workspace_id=>9260632173680887
 ,p_default_application_id=>100
 ,p_default_id_offset=>9386901293850880
@@ -39,7 +39,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 -- Application Export:
 --   Application:     100
 --   Name:            OCI Usage and Cost Report
---   Date and Time:   11:22 Sunday September 28, 2025
+--   Date and Time:   15:27 Friday January 23, 2026
 --   Exported By:     USAGE
 --   Flashback:       0
 --   Export Type:     Application Export
@@ -74,7 +74,7 @@ prompt APPLICATION 100 - OCI Usage and Cost Report
 --       Reports:
 --       E-Mail:
 --     Supporting Objects:  Included
---   Version:         24.2.8
+--   Version:         24.2.11
 --   Instance ID:     9260462575368744
 --
 
@@ -115,7 +115,7 @@ wwv_imp_workspace.create_flow(
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
-,p_flow_version=>'Usage2ADW 25.10.01'
+,p_flow_version=>'Usage2ADW 26.01.23'
 ,p_flow_status=>'AVAILABLE_W_EDIT_LINK'
 ,p_flow_unavailable_text=>'This application is currently unavailable at this time.'
 ,p_exact_substitutions_only=>'Y'
@@ -138,7 +138,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_value_01=>'OCI Usage and Cost Report'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
 ,p_files_version=>3
-,p_version_scn=>45604023430710
+,p_version_scn=>46149592207036
 ,p_print_server_type=>'INSTANCE'
 ,p_file_storage=>'DB'
 ,p_is_pwa=>'N'
@@ -1126,7 +1126,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P1_VERSION'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(87710367954785264)
-,p_item_default=>'25.10.01'
+,p_item_default=>'26.01.23'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_protection_level=>'S'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
@@ -12938,7 +12938,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'display_as', 'POPUP',
   'max_date', 'STATIC',
-  'max_static', '31-DEC-2025',
+  'max_static', '31-DEC-2035',
   'min_date', 'STATIC',
   'min_static', '01-JAN-2018',
   'multiple_months', 'N',
@@ -12964,7 +12964,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'display_as', 'POPUP',
   'max_date', 'STATIC',
-  'max_static', '31-DEC-2025',
+  'max_static', '31-DEC-2035',
   'min_date', 'STATIC',
   'min_static', '01-JAN-2018',
   'multiple_months', 'N',
