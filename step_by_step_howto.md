@@ -6,7 +6,7 @@
 [cost analysis](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/costanalysisoverview.htm) 
 and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm) features should be used instead.**
 
-**Developed by Adi Zohar, 2020-2024**
+**Developed by Adi Zohar, 2020-2026**
 
 ## Content
 [1. How to create additional APEX End User Accounts](#1-how-to-create-additional-apex-end-user-accounts)
@@ -191,15 +191,16 @@ If you deployed usage2adw before Jan 2022 you may need to download new Oracle In
 ## 6. How to upgrade Oracle Instant Client to Version 19.26 (Jan 2025)
 
 ```
-# If Oracle Linux 8 please run the below to install glibc:
+# If Oracle Linux 9 please run the below to install glibc:
 sudo dnf install -y libnsl
 
-# Install 19.26:
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1926000/oracle-instantclient19.26-basic-19.26.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1926000/oracle-instantclient19.26-sqlplus-19.26.0.0.0-1.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/1926000/oracle-instantclient19.26-tools-19.26.0.0.0-1.x86_64.rpm
+# Install 23.26:
+sudo dnf install -y oracle-instantclient-release-23ai-el9
+sudo dnf install -y oracle-instantclient-sqlplus
+sudo dnf install -y oracle-instantclient-tools
+
 sudo rm -f /usr/lib/oracle/current
-sudo ln -s /usr/lib/oracle/19.26 /usr/lib/oracle/current
+sudo ln -s /usr/lib/oracle/23 /usr/lib/oracle/current
 
 # Check by running the application
 $HOME/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh

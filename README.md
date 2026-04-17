@@ -14,7 +14,7 @@ and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/
 For application issues, please open ticket at [github issues](https://github.com/oracle-samples/usage-reports-to-adw/issues) 
 
 
-**Developed by Adi Zohar, 2020-2025**
+**Developed by Adi Zohar, 2020-2026**
 
 ## Documentation
 
@@ -123,7 +123,7 @@ Please consult the [security guide](./SECURITY.md) for our responsible security 
 
 ## License
 
-Copyright (c) 2025, Oracle and/or its affiliates. 
+Copyright (c) 2026, Oracle and/or its affiliates. 
 Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 
 See [LICENSE](./LICENSE.txt) for details.

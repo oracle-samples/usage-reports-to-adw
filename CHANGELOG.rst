@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+26.05.01 - 2026.05.01
+=====================
+* Amended for Oracle Linux 9 (OL9)
+
+=====================
 25.10.01 - 2025.10.01
 =====================
 * Change client to 23ai

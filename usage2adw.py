@@ -72,7 +72,7 @@ import requests
 import time
 import base64
 
-version = "26.01.23"
+version = "26.05.01"
 work_report_dir = os.curdir + "/work_report_dir"
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client

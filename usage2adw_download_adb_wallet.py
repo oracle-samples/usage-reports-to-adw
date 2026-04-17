@@ -40,7 +40,7 @@ import gzip
 import shutil
 import base64
 
-version = "26.03.26"
+version = "26.05.01"
 
 
 ##########################################################################
@@ -238,7 +238,7 @@ def main_process():
             os.makedirs(wallet_folder, exist_ok=True)
             print("Folder Created")
 
-            # 
+            #
             # gunzip Wallet
             print(f'\nGunzip Wallet to {wallet_zipfile}')
             section = f'Gunzip wallet to {wallet_zipfile}'
@@ -247,7 +247,7 @@ def main_process():
                     shutil.copyfileobj(f_in, f_out)
             print(f'Wallet gunzipped to {wallet_zipfile}')
 
-            # 
+            #
             # unzip Wallet
             print(f'\nUnzip Wallet to {wallet_folder}')
             section = f'unzip wallet to {wallet_folder}'
