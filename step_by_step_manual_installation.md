@@ -17,8 +17,8 @@ and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/
 OCI -> Menu -> Compute -> Instances
 Create Instance
 --> Name = UsageVM
---> Image = Oracle Linux 8
---> Shape = VM.Flex.E4 or Higher
+--> Image = Oracle Linux 9
+--> Shape = VM.Flex.E5 or Higher
 --> Choose your network VCN and Subnet (any type of VCN and Subnet)
 --> Assign public IP -  Optional if on public subnet
 --> Add your public SSH key
@@ -87,7 +87,7 @@ ssh opc@UsageVM
 
 ```
 sudo dnf module install python39
-sudo alternatives --set python3 /usr/bin/python3.9
+sudo dnf module install python39-pip
 
 # Install Python required packages
 python3 -m pip install --upgrade pip
@@ -99,11 +99,11 @@ python3 -m pip install --upgrade oci oracledb requests
 ```
 # Please refer to the download site for Manual installation = https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
 
-4. install oracle instant clienoracle-instantclient-basic-23.9.0.25.07-1.el8.x86_64
-sudo dnf install -y lioracle-instantclient-basic-23.9.0.25.07-1.el8.x86_64
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/2390000/oracle-instantclient-basic-23.9.0.25.07-1.el8.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/2390000/oracle-instantclient-sqlplus-23.9.0.25.07-1.el8.x86_64.rpm
-sudo rpm -i --force --nodeps https://download.oracle.com/otn_software/linux/instantclient/2390000/oracle-instantclient-tools-23.9.0.25.07-1.el8.x86_64.rpm
+sudo dnf install -y libnsl
+sudo dnf install -y oracle-instantclient-release-23ai-el9
+sudo dnf install -y oracle-instantclient-sqlplus
+sudo dnf install -y oracle-instantclient-stools
+
 sudo rm -f /usr/lib/oracle/current
 sudo ln -s /usr/lib/oracle/23 /usr/lib/oracle/current
 

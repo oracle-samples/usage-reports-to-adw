@@ -1,6 +1,6 @@
 #!/bin/bash
 #############################################################################################################################
-# Copyright (c) 2025, Oracle and/or its affiliates.                                                       
+# Copyright (c) 2026, Oracle and/or its affiliates.                                                       
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
 #
 # focus2adw main Setup script
@@ -19,7 +19,7 @@
 source ~/.bashrc > /dev/null 2>&1
 
 # Application Variables
-export VERSION=25.07.01
+export VERSION=26.05.01
 export APPDIR=/home/opc/focus_reports_to_adw
 export CREDFILE=$APPDIR/config.user
 export LOGDIR=$APPDIR/log
@@ -55,8 +55,8 @@ Help()
    echo "    -create_tables      | Create focus2adw Tables"
    echo "    -truncate_tables    | Truncate focus2adw Tables"
    echo "    -setup_credential   | Setup focus2adw Credentials"
-   echo "    -setup_ol8_packages | Setup Oracle Linux 8 Packages - for manual installation"
-   echo "    -setup_full         | Setup Oracle Linux 8 Packages + Setup Application"
+   echo "    -setup_ol9_packages | Setup Oracle Linux 9 Packages - for manual installation"
+   echo "    -setup_full         | Setup Oracle Linux 9 Packages + Setup Application"
    echo "    -check_passwords    | Check config.user file"
    echo "    -download_wallet    | Generate Wallet from ADB and Extract to ADWCUSG folder"
    echo "}"
@@ -904,14 +904,14 @@ TruncateTables()
 }
 
 ########################################################################################################
-# SetupOL8Packages
+# SetupOL9Packages
 ########################################################################################################
-SetupOL8Packages()
+SetupOL9Packages()
 {
    cd $HOME
 
    echo "###########################################################################" >> $LOG
-   echo "# Setup OL8 Packages at `date`" >> $LOG
+   echo "# Setup OL9 Packages at `date`" >> $LOG
    echo "###########################################################################" >> $LOG
 
    ###########################################
@@ -921,8 +921,8 @@ SetupOL8Packages()
    echo "########################################################################" | tee -a $LOG
    echo "# 1. Install Python3 and Python OCI Packages, Can take a moment." | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
-   sudo dnf -y module install python39 | tee -a $LOG
-   sudo alternatives --set python3 /usr/bin/python3.9 | tee -a $LOG
+   sudo dnf -y install python3.9 | tee -a $LOG
+   sudo dnf -y install python3.9-pip | tee -a $LOG
 
    python3 -m pip install --upgrade pip | tee -a $LOG
    python3 -m pip install --upgrade oci | tee -a $LOG
@@ -931,38 +931,20 @@ SetupOL8Packages()
 
    echo "Completed." | tee -a $LOG
 
-   ###########################################
-   # Install Oracle Instant Client
-   ###########################################
-   export RPM_BAS=oracle-instantclient19.27-basic-19.27.0.0.0-1.x86_64
-   export RPM_SQL=oracle-instantclient19.27-sqlplus-19.27.0.0.0-1.x86_64
-   export RPM_LNK=https://download.oracle.com/otn_software/linux/instantclient/1927000/
-   export RPM_LOC=/usr/lib/oracle/19.27
-
+  ###########################################
+   # Install Oracle Instant Client 26ai
+   ###########################################                  
    echo "" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
-   echo "# 2. Install Oracle Instant Client 19c" | tee -a $LOG
+   echo "# 2. Install Oracle Instant Client 26ai" | tee -a $LOG
    echo "########################################################################" | tee -a $LOG
    sudo dnf install -y libnsl | tee -a $LOG
+   sudo dnf install -y oracle-instantclient-release-23ai-el9 | tee -a $LOG
+   sudo dnf install -y oracle-instantclient-sqlplus | tee -a $LOG
+   sudo dnf install -y oracle-instantclient-stools | tee -a $LOG
 
-   echo "Installing ${RPM_BAS}.rpm" | tee -a $LOG
-   sudo rpm -i ${RPM_LNK}${RPM_BAS}.rpm | tee -a $LOG
-
-   echo "Installing ${RPM_SQL}.rpm" | tee -a $LOG
-   sudo rpm -i ${RPM_LNK}${RPM_SQL}.rpm | tee -a $LOG
-
-   sudo rm -f /usr/lib/oracle/current | tee -a $LOG
-   sudo ln -s $RPM_LOC /usr/lib/oracle/current | tee -a $LOG
-
-   # Check if installed
-   echo "Check Installation... " | tee -a $LOG
-   rpm -q $RPM_BAS $RPM_SQL | tee -a $LOG
-   if [ $? -eq 0 ]; then
-      echo "   Completed." | tee -a $LOG
-   else
-      echo "   Error installing oracle instant client, need to perform it manually, Abort, log=$LOG" | tee -a $LOG
-      exit 1
-   fi
+   sudo rm -f /usr/lib/oracle/current
+   sudo ln -s /usr/lib/oracle/23 /usr/lib/oracle/current
 
    ###########################################
    # Setup .bashrc profile
@@ -1016,17 +998,17 @@ SetupOL8Packages()
    echo "Completed." | tee -a $LOG
 
    echo "###########################################################################" | tee -a $LOG
-   echo "# End SetupOL8Packages Process at `date`" | tee -a $LOG
+   echo "# End SetupOL9Packages Process at `date`" | tee -a $LOG
    echo "###########################################################################" | tee -a $LOG
    echo "" | tee -a $LOG
 }
 
 ########################################################################################################
-# SetupOL8Packages
+# SetupOL9Packages
 ########################################################################################################
 SetupFull()
 {
-   SetupOL8Packages
+   SetupOL9Packages
    unset focus2adw_param
 
    echo "###########################################################################" | tee -a $LOG
@@ -1080,7 +1062,7 @@ case $focus2adw_param in
     -drop_tables        ) DropTables ;;
     -truncate_tables    ) TruncateTables ;;
     -setup_credential   ) SetupCredential ;;
-    -setup_ol8_packages ) SetupOL8Packages ;;
+    -setup_ol9_packages ) SetupOL9Packages ;;
     -setup_full         ) SetupFull ;;
     -check_passwords    ) ReadVariablesFromCredfile 1 ;;
     -download_wallet    ) ReadVariablesFromCredfile 1; GenerateWalletFromADB 2 ;;

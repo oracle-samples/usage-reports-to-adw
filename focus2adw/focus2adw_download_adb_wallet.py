@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 ##########################################################################
-# Copyright (c) 2025, Oracle and/or its affiliates.
+# Copyright (c) 2026, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/
 #
 # DISCLAIMER This is not an official Oracle application,  It does not supported by Oracle Support,
@@ -36,7 +36,7 @@ import sys
 import shutil
 import base64
 
-version = "25.07.01"
+version = "26.05.01"
 
 
 ##########################################################################

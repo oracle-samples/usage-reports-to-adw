@@ -9,15 +9,15 @@ Oracle Application Express (APEX) will be used for reporting.
 [cost analysis](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/costanalysisoverview.htm) 
 and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm) features should be used instead.**
 
-**Developed by Adi Zohar, 2020-2024**
+**Developed by Adi Zohar, 2020-2026**
 
 ## 1. Deploy VM Compute instance to run the python script
 ```
    OCI -> Menu -> Compute -> Instances
    Create Instance
    --> Name = UsageVM
-   --> Image = Oracle Linux 8
-   --> Shape = VM.Flex.E4 or Higher
+   --> Image = Oracle Linux 9
+   --> Shape = VM.Flex.E5 or Higher
    --> Choose your network VCN and Subnet (any type of VCN and Subnet)
    --> Assign public IP -  Optional if on public subnet
    --> Add your public SSH key
@@ -174,5 +174,5 @@ Please Visit [How To File](step_by_step_howto.md)
 
 ## License
 
-Copyright (c) 2025, Oracle and/or its affiliates.
+Copyright (c) 2026, Oracle and/or its affiliates.
 Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
