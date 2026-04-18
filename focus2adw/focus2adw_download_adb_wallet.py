@@ -5,7 +5,7 @@
 #
 # DISCLAIMER This is not an official Oracle application,  It does not supported by Oracle Support,
 #
-# focus2adw_download_adb_wallet.py
+# usage2adw_download_adb_wallet.py
 #
 # @author: Adi Zohar
 #
@@ -14,10 +14,13 @@
 # coding: utf-8
 ##########################################################################
 # This script required policy to allow to generate ADB Wallet
-#   Allow group FocusDownloadGroup to read autonomous-database in compartment {APPCOMP}
-#   Allow group FocusDownloadGroup to read secret-bundles in compartment {APPCOMP}
+#   Allow group UsageDownloadGroup to read autonomous-database in compartment {APPCOMP}
+#   Allow group UsageDownloadGroup to read secret-bundles in compartment {APPCOMP}
 #
 ##########################################################################
+#
+# 2026-03-26 It seems OCI changed the downloaded wallet to gzip (Gzip the Zip), added changes
+#
 #
 # Modules Included:
 # - oci.database.DatabaseClient
@@ -33,6 +36,7 @@ import argparse
 import datetime
 import oci
 import sys
+import gzip
 import shutil
 import base64
 
@@ -181,6 +185,7 @@ def main_process():
     config, signer = create_signer(cmd)
 
     wallet_zipfile = cmd.zipfile
+    wallet_gzipfile = wallet_zipfile + ".gzip"
     wallet_folder = cmd.folder
     wallet_folder_abs_path = os.path.abspath(wallet_folder)
     database_id = cmd.dbid
@@ -208,7 +213,7 @@ def main_process():
 
         try:
             section = "Generating Wallet"
-            print("\nGenerating Wallet to " + wallet_zipfile)
+            print("\nGenerating Wallet to " + wallet_gzipfile)
             generateAutonomousDatabaseWalletDetails = oci.database.models.GenerateAutonomousDatabaseWalletDetails(
                 password=wallet_password,
                 generate_type='SINGLE'
@@ -219,9 +224,9 @@ def main_process():
                 generateAutonomousDatabaseWalletDetails
             ).data
 
-            section = f'Store Wallet to {wallet_zipfile}'
+            section = f'Store Wallet to {wallet_gzipfile}'
             # Store Wallet
-            with open(wallet_zipfile, 'wb') as file:
+            with open(wallet_gzipfile, 'wb') as file:
                 for chunk in response_data.raw.stream(1024 * 1024, decode_content=False):
                     file.write(chunk)
 
@@ -233,6 +238,16 @@ def main_process():
             os.makedirs(wallet_folder, exist_ok=True)
             print("Folder Created")
 
+            #
+            # gunzip Wallet
+            print(f'\nGunzip Wallet to {wallet_zipfile}')
+            section = f'Gunzip wallet to {wallet_zipfile}'
+            with gzip.open(wallet_gzipfile, 'rb') as f_in:
+                with open(wallet_zipfile, 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+            print(f'Wallet gunzipped to {wallet_zipfile}')
+
+            #
             # unzip Wallet
             print(f'\nUnzip Wallet to {wallet_folder}')
             section = f'unzip wallet to {wallet_folder}'
@@ -250,7 +265,7 @@ def main_process():
 
         except oci.exceptions.ServiceError as e:
             print("\nError generating wallet, please make sure you have permission to generate wallet !")
-            print("Policy required - Allow groug FocusDownloadGroup to read autonomous-database in compartment XXXXXX")
+            print("Policy required - Allow group UsageDownloadGroup to read autonomous-database in compartment XXXXXX")
             print("\n" + str(e) + "\n")
             raise SystemExit
 
