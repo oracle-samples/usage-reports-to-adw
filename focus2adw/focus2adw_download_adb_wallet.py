@@ -5,7 +5,7 @@
 #
 # DISCLAIMER This is not an official Oracle application,  It does not supported by Oracle Support,
 #
-# usage2adw_download_adb_wallet.py
+# focus2adw_download_adb_wallet.py
 #
 # @author: Adi Zohar
 #
@@ -14,8 +14,8 @@
 # coding: utf-8
 ##########################################################################
 # This script required policy to allow to generate ADB Wallet
-#   Allow group UsageDownloadGroup to read autonomous-database in compartment {APPCOMP}
-#   Allow group UsageDownloadGroup to read secret-bundles in compartment {APPCOMP}
+#   Allow groug FocusDownloadGroup to read autonomous-database in compartment {APPCOMP}
+#   Allow group FocusDownloadGroup to read secret-bundles in compartment {APPCOMP}
 #
 ##########################################################################
 #
@@ -265,7 +265,7 @@ def main_process():
 
         except oci.exceptions.ServiceError as e:
             print("\nError generating wallet, please make sure you have permission to generate wallet !")
-            print("Policy required - Allow group UsageDownloadGroup to read autonomous-database in compartment XXXXXX")
+            print("Policy required - Allow group FocusDownloadGroup to read autonomous-database in compartment XXXXXX")
             print("\n" + str(e) + "\n")
             raise SystemExit
 
