@@ -9,7 +9,7 @@ Oracle Application Express (APEX) will be used for reporting.
 [cost analysis](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/costanalysisoverview.htm) 
 and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/usagereportsoverview.htm) features should be used instead.**
 
-**Developed by Adi Zohar, 2020-2024**
+**Developed by Adi Zohar, 2020-2026**
 
 ## 1. Deploy VM Compute instance to run the python script
 
@@ -71,6 +71,7 @@ Create Autonomous Database
 --> ECPU = 2 or OCPU = 1
 --> Storage = 1
 --> Auto Scale = No
+--> Version = 19c or 26ai
 --> (Please choose your own credentials)
 --> Choose Network Access = Allow secure Access from Everywhere (you can use VCN as well which requires NSG)
 --> Choose License Type
