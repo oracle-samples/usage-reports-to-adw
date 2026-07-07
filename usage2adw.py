@@ -72,7 +72,7 @@ import requests
 import time
 import base64
 
-version = "26.05.01"
+version = "26.07.14"
 work_report_dir = os.curdir + "/work_report_dir"
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client
@@ -613,6 +613,7 @@ def update_cost_reference(connection, tag_special_key1, tag_special_key2, tag_sp
 
 ##########################################################################
 # update_public_rates
+# Example: https://apexapps.oracle.com/pls/apex/cetools/api/v1/products/?partNumber=B95634&currencyCode=USD
 ##########################################################################
 def update_public_rates(connection, tenant_name):
     api_url = "https://apexapps.oracle.com/pls/apex/cetools/api/v1/products/?"
@@ -635,6 +636,7 @@ def update_public_rates(connection, tenant_name):
                 for row in rows:
 
                     rate_description = ""
+                    rate_unit_full = []
                     rate_price = None
                     resp = None
 
@@ -657,6 +659,7 @@ def update_public_rates(connection, tenant_name):
 
                     for item in resp.json()['items']:
                         rate_description = item["displayName"]
+                        rate_unit_full = item.get("currencyCodeLocalizations", [])
                         if 'currencyCodeLocalizations' in item:
                             for currency in item['currencyCodeLocalizations']:
                                 if 'prices' in currency:
@@ -664,10 +667,11 @@ def update_public_rates(connection, tenant_name):
                                         if price['model'] == 'PAY_AS_YOU_GO':
                                             rate_price = price['value']
 
-                    if rate_price:
+                    if rate_price is not None:
                         # update database
                         sql = """update OCI_PRICE_LIST set
                         RATE_DESCRIPTION=:rate_description,
+                        RATE_UNIT_FULL=:rate_unit_full,
                         RATE_PAYGO_PRICE=:rate_price,
                         RATE_MONTHLY_FLEX_PRICE=:rate_price,
                         RATE_UPDATE_DATE=sysdate
@@ -677,11 +681,13 @@ def update_public_rates(connection, tenant_name):
                         # only apply paygo cost after 7/13 oracle change rate
                         sql_variables = {
                             "rate_description": rate_description,
+                            "rate_unit_full": rate_unit_full,
                             "rate_price": rate_price,
                             "tenant_name": tenant_name,
                             "cost_product_sku": cost_product_sku
                         }
 
+                        cursor.setinputsizes(rate_unit_full=oracledb.DB_TYPE_JSON)
                         cursor.execute(sql, sql_variables)
                         num_rows += 1
 
@@ -757,6 +763,18 @@ def check_database_table_structure(connection):
                 raise SystemExit
             else:
                 print("   Cost Tables exist")
+
+            # Add columns introduced after the initial table creation.
+            sql = """select count(*) from user_tab_columns
+                     where table_name = 'OCI_PRICE_LIST'
+                     and column_name = 'RATE_UNIT_FULL'"""
+            cursor.execute(sql)
+            val, = cursor.fetchone()
+
+            if val == 0:
+                print("   Adding RATE_UNIT_FULL column to OCI_PRICE_LIST")
+                cursor.execute("alter table OCI_PRICE_LIST add RATE_UNIT_FULL JSON")
+                connection.commit()
 
     except oracledb.DatabaseError as e:
         print("\nError manipulating database at check_database_table_structures() - " + str(e) + "\n")

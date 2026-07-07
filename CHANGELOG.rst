@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+26.07.07 - 2026.07.07
+=====================
+* Added RATE_UNIT_FULL JSON column to OCI_PRICE_LIST, populated with currencyCodeLocalizations from the Oracle public pricing API
+* Added automatic creation of RATE_UNIT_FULL for existing OCI_PRICE_LIST tables
+
+=====================
 26.05.01 - 2026.05.01
 =====================
 * Amended for Oracle Linux 9 (OL9)
