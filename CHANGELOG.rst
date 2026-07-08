@@ -9,6 +9,7 @@ The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 =====================
 * Added RATE_UNIT_FULL JSON column to OCI_PRICE_LIST, populated with currencyCodeLocalizations from the Oracle public pricing API
 * Added automatic creation of RATE_UNIT_FULL for existing OCI_PRICE_LIST tables
+* Added optional ``-loadsub`` loading of OCI subscription and commitment data into OCI_SUBSCRIPTION and OCI_SUBSCRIPTION_COMMIT
 
 =====================
 26.05.01 - 2026.05.01

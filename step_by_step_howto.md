@@ -37,6 +37,8 @@ and [usage reports](https://docs.oracle.com/en-us/iaas/Content/Billing/Concepts/
 
 [13. Sample of database queries](#13-sample-of-database-queries)
 
+[14. How to load subscription and commitment information](#14-how-to-load-subscription-and-commitment-information)
+
 
 ## 1. How to create additional APEX End User Accounts
 
@@ -578,7 +580,7 @@ Login to VM
 
 ```
 python3 usage2adw.py
-usage: usage2adw.py [-h] [-c CONFIG] [-t PROFILE] [-f FILEID] [-ts TAGSPECIAL] [-ts2 TAGSPECIAL2] [-d FILEDATE] [-p PROXY] [-su] [-sc] [-sr] [-ip] [-du DUSER] [-dn DNAME]
+usage: usage2adw.py [-h] [-c CONFIG] [-t PROFILE] [-f FILEID] [-ts TAGSPECIAL] [-ts2 TAGSPECIAL2] [-d FILEDATE] [-p PROXY] [-su] [-sc] [-sr] [-loadsub] [-ip] [-du DUSER] [-dn DNAME]
                     [-ds DSECRET_ID] [-dst DSECRET_PROFILE] [--force] [--version]
 
 optional arguments:
@@ -594,6 +596,7 @@ optional arguments:
   -p PROXY              Set Proxy (i.e. www-proxy-server.com:80)
   -sc                   Skip Load Cost Files
   -sr                   Skip Public Rate API
+  -loadsub              Load subscription and commitment information
   -ip                   Use Instance Principals for Authentication
   -du DUSER             ADB User
   -dn DNAME             ADB Name
@@ -700,7 +703,63 @@ order by 1,2;
 
 ```
 
+## 14. How to load subscription and commitment information
+
+The `-loadsub` flag loads the current Universal Credit subscription information and active subscribed services into `OCI_SUBSCRIPTION`. Their commitment information is loaded into `OCI_SUBSCRIPTION_COMMIT`.
+
+### 14.1. Update the OCI policy
+
+In the OCI Console, open **Identity & Security -> Policies**, select the policy used by the Usage2ADW compute instance, and add these statements:
+
+```
+Allow dynamic-group UsageDownloadGroup to inspect subscribed-services in tenancy
+Allow dynamic-group UsageDownloadGroup to inspect organizations-subscription in tenancy
+```
+
+Replace `UsageDownloadGroup` if your Usage2ADW instance belongs to a differently named dynamic group. If Usage2ADW uses a user OCI configuration profile instead of instance principals, grant the same permissions to that user's group:
+
+```
+Allow group UsageDownloadGroup to inspect subscribed-services in tenancy
+Allow group UsageDownloadGroup to inspect organizations-subscription in tenancy
+```
+
+### 14.2. Create the subscription tables
+
+Log in to the Usage2ADW VM and run the setup script. This creates `OCI_SUBSCRIPTION` and `OCI_SUBSCRIPTION_COMMIT` along with any other missing Usage2ADW tables.
+
+```
+cd /home/opc/usage_reports_to_adw
+./usage2adw_setup.sh -create_tables
+```
+
+### 14.3. Enable subscription loading in the daily script
+
+Edit the daily runner:
+
+```
+vi /home/opc/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
+```
+
+In the `run_report()` function, find the command that runs `usage2adw.py` and add `-loadsub` after `$tenant`:
+
+```
+python3 $APPDIR/usage2adw.py $tenant -loadsub -du $DATABASE_USER -ds $DATABASE_SECRET_ID -dst $DATABASE_SECRET_TENANT -dn $DATABASE_NAME -d $EXTRACT_DATE -ts "${TAG1}" -ts2 "${TAG2}" -ts3 "${TAG3}" -ts4 "${TAG4}" $6 | tee -a $OUTPUT_FILE
+```
+
+Subscription and commitment information is loaded only when `-loadsub` is present. Run the script once to verify the new load:
+
+```
+/home/opc/usage_reports_to_adw/shell_scripts/run_multi_daily_usage2adw.sh
+```
+
+The output should report the number of subscriptions and commitments loaded. You can also verify the tables from SQL:
+
+```
+select count(*) from OCI_SUBSCRIPTION;
+select count(*) from OCI_SUBSCRIPTION_COMMIT;
+```
+
 ## License
 
-Copyright (c) 2025, Oracle and/or its affiliates. 
+Copyright (c) 2026, Oracle and/or its affiliates. 
 Licensed under the Universal Permissive License v 1.0 as shown at  https://oss.oracle.com/licenses/upl/ 
