@@ -85,6 +85,8 @@ PolicyRequirement()
    echo "#     Allow dynamic-group UsageDownloadGroup to read secret-bundles in compartment XXXXXXXX"
    echo "#     Allow dynamic-group UsageDownloadGroup to inspect compartments in tenancy"
    echo "#     Allow dynamic-group UsageDownloadGroup to inspect tenancies in tenancy"
+   echo "#     Allow dynamic-group UsageDownloadGroup to inspect subscribed-services in tenancy"
+   echo "#     Allow dynamic-group UsageDownloadGroup to inspect organizations-subscription in tenancy"
    echo "#########################################################################################################################"
    echo ""
 
@@ -643,6 +645,80 @@ CreateTables()
       LAST_LOADED             DATE,
       CONSTRAINT OCI_RESOURCES_PK PRIMARY KEY (RESOURCE_ID) USING INDEX
    );
+
+   -------------------------------
+   -- OCI_SUBSCRIPTION
+   -------------------------------
+   prompt Creating Table OCI_SUBSCRIPTION
+
+   create table OCI_SUBSCRIPTION (
+      TENANT_ID                    VARCHAR2(1000) NOT NULL,
+      TENANT_NAME                  VARCHAR2(100),
+      SUBSCRIPTION_ID              VARCHAR2(255),
+      SERVICE_NAME                 VARCHAR2(1000),
+      CURRENCY                     VARCHAR2(100),
+      SUBSCRIPTION_TIME_START      DATE,
+      SUBSCRIPTION_TIME_END        DATE,
+      SUBSCRIPTION_STATUS          VARCHAR2(100),
+      SUBSCRIPTION_TOTAL_VALUE     NUMBER,
+      SUBSCRIBED_SERVICE_ID        VARCHAR2(255) NOT NULL,
+      SERVICE_STATUS               VARCHAR2(100),
+      SERVICE_TIME_START           DATE,
+      SERVICE_TIME_END             DATE,
+      TERM_VALUE                   NUMBER,
+      ADMIN_EMAIL                  VARCHAR2(320),
+      BUYER_EMAIL                  VARCHAR2(320),
+      AGREEMENT_ID                 VARCHAR2(255),
+      AGREEMENT_NAME               VARCHAR2(1000),
+      AGREEMENT_TIME_END           DATE,
+      BILL_TO_CUSTOMER             VARCHAR2(1000),
+      END_USER_CUSTOMER            VARCHAR2(1000),
+      SERVICE_TO_CUSTOMER          VARCHAR2(1000),
+      BILLING_FREQUENCY            VARCHAR2(100),
+      CSI                          VARCHAR2(255),
+      OPERATION_TYPE               VARCHAR2(100),
+      ORDER_TYPE                   VARCHAR2(100),
+      ORDER_NUMBER                 VARCHAR2(255),
+      PAYMENT_METHOD               VARCHAR2(100),
+      PAYMENT_NUMBER               VARCHAR2(255),
+      PRICING_MODEL                VARCHAR2(100),
+      PRODUCT_NUMBER               VARCHAR2(255),
+      PRODUCT_NAME                 VARCHAR2(1000),
+      IS_PAYG                      VARCHAR2(10),
+      IS_HAVING_USAGE              VARCHAR2(10),
+      IS_VARIABLE_COMMITMENT       VARCHAR2(10),
+      ORIGINAL_PROMO_AMOUNT        NUMBER,
+      FUNDED_ALLOCATION_VALUE      NUMBER,
+      LINE_NET_AMOUNT              NUMBER,
+      TOTAL_VALUE                  NUMBER,
+      USED_AMOUNT                  NUMBER,
+      AVAILABLE_AMOUNT             NUMBER,
+      LAST_LOADED                  DATE,
+      AGENT_VERSION                VARCHAR2(30),
+      CONSTRAINT OCI_SUBSCRIPTION_PK PRIMARY KEY (TENANT_ID, SUBSCRIBED_SERVICE_ID) USING INDEX
+   );
+
+   -------------------------------
+   -- OCI_SUBSCRIPTION_COMMIT
+   -------------------------------
+   prompt Creating Table OCI_SUBSCRIPTION_COMMIT
+
+   create table OCI_SUBSCRIPTION_COMMIT (
+      TENANT_ID                    VARCHAR2(1000) NOT NULL,
+      TENANT_NAME                  VARCHAR2(100),
+      SUBSCRIBED_SERVICE_ID        VARCHAR2(255) NOT NULL,
+      TIME_START                   DATE NOT NULL,
+      TIME_END                     DATE NOT NULL,
+      FUNDED_ALLOCATION_VALUE      NUMBER,
+      QUANTITY                     NUMBER,
+      USED_AMOUNT                  NUMBER,
+      AVAILABLE_AMOUNT             NUMBER,
+      LAST_LOADED                  DATE,
+      AGENT_VERSION                VARCHAR2(30),
+      CONSTRAINT OCI_SUB_COMMIT_PK PRIMARY KEY (TENANT_ID, SUBSCRIBED_SERVICE_ID, TIME_START, TIME_END) USING INDEX,
+      CONSTRAINT OCI_SUB_COMMIT_FK FOREIGN KEY (TENANT_ID, SUBSCRIBED_SERVICE_ID)
+         REFERENCES OCI_SUBSCRIPTION (TENANT_ID, SUBSCRIBED_SERVICE_ID)
+   );
    
 " | sqlplus -s ${database_user}/${db_app_password}@${db_db_name} | tee -a $slog >> $LOG
 
@@ -805,6 +881,11 @@ DropTables()
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
    select to_char(sysdate,'YYYY-MM-DD HH24:MI') current_date from dual;
 
+   prompt Dropping Table OCI_SUBSCRIPTION_COMMIT
+   drop table OCI_SUBSCRIPTION_COMMIT;
+   prompt Dropping Table OCI_SUBSCRIPTION
+   drop table OCI_SUBSCRIPTION;
+
    prompt Dropping Table OCI_TENANT
    drop table OCI_TENANT ;
 
@@ -866,6 +947,11 @@ TruncateTables()
    echo "Internal LOG=$slog" | tee -a $LOG
    echo "set echo on serveroutput on time on lines 199 trimsp on pages 1000 verify off
    select to_char(sysdate,'YYYY-MM-DD HH24:MI') current_date from dual;
+
+   prompt Truncating Table OCI_SUBSCRIPTION_COMMIT
+   truncate table OCI_SUBSCRIPTION_COMMIT;
+   prompt Truncating Table OCI_SUBSCRIPTION
+   truncate table OCI_SUBSCRIPTION;
 
    prompt Truncating Table OCI_TENANT
    truncate table OCI_TENANT ;

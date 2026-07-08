@@ -75,6 +75,9 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 - ObjectStorageClient.list_objects - Policy OBJECT_INSPECT
 - ObjectStorageClient.get_object   - Policy OBJECT_READ
 - SecretsClient.get_secret_bundle  - Policy SECRET_BUNDLE_READ
+- OrganizationSubscriptionClient.list_organization_subscriptions - Policy ORGANIZATIONS_SUBSCRIPTION_INSPECT (with `-loadsub`)
+- SubscribedServiceClient.list_subscribed_services - Policy SUBSCRIBED_SERVICE_INSPECT (with `-loadsub`)
+- CommitmentClient.list_commitments - Policy SUBSCRIBED_SERVICE_INSPECT (with `-loadsub`)
 
 - Rest API Used - [Accessing List Pricing](https://docs.oracle.com/en-us/iaas/Content/GSG/Tasks/signingup_topic-Estimating_Costs.htm#accessing_list_pricing)
 
@@ -87,6 +90,8 @@ More information can be found at [usagereportsoverview.htm](https://docs.cloud.o
 - OCI_PRICE_LIST - Has the price list and the cost per product
 - OCI_LOAD_STATUS - Has the load file statistics
 - OCI_TENANT - Has the display name of the child tenants (Manual Update)
+- OCI_SUBSCRIPTION - Current Universal Credit subscription and active subscribed-service information (loaded with `-loadsub`)
+- OCI_SUBSCRIPTION_COMMIT - Current commitment information for subscribed services (loaded with `-loadsub`)
 
 ## 3rd Party Dependencies including tested versions
 

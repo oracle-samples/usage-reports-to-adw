@@ -46,19 +46,25 @@
 # - ObjectStorageClient.list_objects          - Policy OBJECT_INSPECT
 # - ObjectStorageClient.get_object            - Policy OBJECT_READ
 # - SecretsClient.get_secret_bundle           - Policy SECRET_BUNDLE_READ
+# For loadSub
+# - OrganizationSubscriptionClient.list_organization_subscriptions - Policy ORGANIZATIONS_SUBSCRIPTION_INSPECT
+# - SubscribedServiceClient.list_subscribed_services               - Policy SUBSCRIBED_SERVICE_INSPECT
+# - CommitmentClient.list_commitments                              - Policy SUBSCRIBED_SERVICE_INSPECT
 #
 # Meter API for Public Rate:
 # - https://apexapps.oracle.com/pls/apex/cetools/api/v1/products/?currencyCode=USD
 #
 ##########################################################################
 # Tables used:
-# - OCI_COST           - Raw data of the cost reports
-# - OCI_COST_STATS     - Summary Stats of the Cost Report for quick query if only filtered by tenant and date
-# - OCI_COST_TAG_KEYS  - Tag keys of the cost reports
-# - OCI_COST_REFERENCE - Reference table of the cost filter keys - SERVICE, REGION, COMPARTMENT, PRODUCT, SUBSCRIPTION
-# - OCI_PRICE_LIST     - Hold the price list and the cost per product
-# - OCI_LOAD_STATUS    - Load Statistics table
-# - OCI_TENANT         - tenant information
+# - OCI_COST                - Raw data of the cost reports
+# - OCI_COST_STATS          - Summary Stats of the Cost Report for quick query if only filtered by tenant and date
+# - OCI_COST_TAG_KEYS       - Tag keys of the cost reports
+# - OCI_COST_REFERENCE      - Reference table of the cost filter keys - SERVICE, REGION, COMPARTMENT, PRODUCT, SUBSCRIPTION
+# - OCI_PRICE_LIST          - Hold the price list and the cost per product
+# - OCI_LOAD_STATUS         - Load Statistics table
+# - OCI_TENANT              - tenant information
+# - OCI_SUBSCRIPTION        - Subscription and subscribed-service information
+# - OCI_SUBSCRIPTION_COMMIT - Commitment information for subscribed services
 ##########################################################################
 import sys
 import argparse
@@ -72,7 +78,7 @@ import requests
 import time
 import base64
 
-version = "26.07.14"
+version = "26.07.15"
 work_report_dir = os.curdir + "/work_report_dir"
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client
@@ -323,6 +329,7 @@ def set_parser_arguments():
     parser.add_argument('-su', action='store_true', default=False, dest='skip_usage', help='Not in use, keeping for backward compatibility')
     parser.add_argument('-sc', action='store_true', default=False, dest='skip_cost', help='Skip Load Cost Files')
     parser.add_argument('-sr', action='store_true', default=False, dest='skip_rate', help='Skip Public Rate API')
+    parser.add_argument('-loadsub', action='store_true', default=False, dest='load_subscription', help='Load subscription and commitment information')
     parser.add_argument('-ip', action='store_true', default=False, dest='instance_principals', help='Use Instance Principals for Authentication')
     parser.add_argument('-bn', default="", dest='bucket_name', help='Override Bucket Name for Cost and Usage Files')
     parser.add_argument('-ns', default="bling", dest='namespace_name', help='Override Namespace Name for Cost and Usage Files (default=bling)')
@@ -746,7 +753,7 @@ def update_oci_tenant_with_tenant_ids(connection, tenant_name, short_tenant_id):
 ##########################################################################
 # Check Table Structure Cost
 ##########################################################################
-def check_database_table_structure(connection):
+def check_database_table_structure(connection, load_subscription=False):
     try:
         # open cursor
         with connection.cursor() as cursor:
@@ -763,6 +770,16 @@ def check_database_table_structure(connection):
                 raise SystemExit
             else:
                 print("   Cost Tables exist")
+
+            if load_subscription:
+                sql = "select count(*) from user_tables where table_name in ('OCI_SUBSCRIPTION','OCI_SUBSCRIPTION_COMMIT')"
+                cursor.execute(sql)
+                val, = cursor.fetchone()
+                if val < 2:
+                    print("   Subscription tables were not created, please run usage2adw_setup.sh -create_tables !")
+                    print("   Aborting !")
+                    raise SystemExit
+                print("   Subscription Tables exist")
 
             # Add columns introduced after the initial table creation.
             sql = """select count(*) from user_tab_columns
@@ -782,6 +799,162 @@ def check_database_table_structure(connection):
 
     except Exception as e:
         raise Exception("\nError manipulating database at check_database_table_structures() - " + str(e))
+
+
+##########################################################################
+# Load subscriptions and commitments
+##########################################################################
+def load_subscription_data(connection, config, signer, cmd, tenancy):
+    """Load a current snapshot of UCC subscriptions, active services, and commits."""
+    start_time = time.time()
+    subscription_rows = []
+    commit_rows = []
+    tenant_name = str(tenancy.name)
+    tenant_id = str(tenancy.id)[-6:]
+
+    def numeric_value(value):
+        return None if value is None or str(value).lower() == 'null' else value
+
+    try:
+        print("\nLoading Subscription and Commitment Information...")
+        organization_client = oci.onesubscription.OrganizationSubscriptionClient(config, signer=signer)
+        subscribed_service_client = oci.onesubscription.SubscribedServiceClient(config, signer=signer)
+        commitment_client = oci.onesubscription.CommitmentClient(config, signer=signer)
+
+        if cmd.proxy:
+            proxies = {'https': cmd.proxy}
+            organization_client.base_client.session.proxies = proxies
+            subscribed_service_client.base_client.session.proxies = proxies
+            commitment_client.base_client.session.proxies = proxies
+
+        subscriptions = organization_client.list_organization_subscriptions(tenancy.id).data
+        subscriptions = [sub for sub in subscriptions if 'Universal' in str(sub.service_name)]
+
+        for sub in subscriptions:
+            services = subscribed_service_client.list_subscribed_services(tenancy.id, sub.id).data
+            for service in services:
+                # if service.status != 'ACTIVE':
+                #    continue
+
+                product = service.product
+                subscription_rows.append({
+                    'tenant_id': tenant_id,
+                    'tenant_name': tenant_name,
+                    'subscription_id': sub.id,
+                    'service_name': sub.service_name,
+                    'currency': sub.currency.iso_code if sub.currency else None,
+                    'subscription_time_start': sub.time_start,
+                    'subscription_time_end': sub.time_end,
+                    'subscription_status': sub.status,
+                    'subscription_total_value': numeric_value(sub.total_value),
+                    'subscribed_service_id': service.id,
+                    'service_status': service.status,
+                    'service_time_start': service.time_start,
+                    'service_time_end': service.time_end,
+                    'term_value': numeric_value(service.term_value),
+                    'admin_email': service.admin_email,
+                    'buyer_email': service.buyer_email,
+                    'agreement_id': service.agreement_id,
+                    'agreement_name': service.agreement_name,
+                    'agreement_time_end': service.time_agreement_end,
+                    'bill_to_customer': service.bill_to_customer.name if service.bill_to_customer else None,
+                    'end_user_customer': service.end_user_customer.name if service.end_user_customer else None,
+                    'service_to_customer': service.service_to_customer.name if service.service_to_customer else None,
+                    'billing_frequency': service.billing_frequency,
+                    'csi': service.csi,
+                    'operation_type': service.operation_type,
+                    'order_type': service.order_type,
+                    'order_number': service.order_number,
+                    'payment_method': service.payment_method,
+                    'payment_number': service.payment_number,
+                    'pricing_model': service.pricing_model,
+                    'product_number': product.part_number if product else None,
+                    'product_name': product.name if product else None,
+                    'is_payg': str(service.is_payg) if service.is_payg is not None else None,
+                    'is_having_usage': str(service.is_having_usage) if service.is_having_usage is not None else None,
+                    'is_variable_commitment': str(service.is_variable_commitment) if service.is_variable_commitment is not None else None,
+                    'original_promo_amount': numeric_value(service.original_promo_amount),
+                    'funded_allocation_value': numeric_value(service.funded_allocation_value),
+                    'line_net_amount': numeric_value(service.line_net_amount),
+                    'total_value': numeric_value(service.total_value),
+                    'used_amount': numeric_value(service.used_amount),
+                    'available_amount': numeric_value(service.available_amount),
+                    'agent_version': version
+                })
+
+                try:
+                    commits = commitment_client.list_commitments(service.id, compartment_id=tenancy.id).data
+                    for commit in commits:
+                        commit_rows.append({
+                            'tenant_id': tenant_id,
+                            'tenant_name': tenant_name,
+                            'subscribed_service_id': service.id,
+                            'time_start': commit.time_start,
+                            'time_end': commit.time_end,
+                            'funded_allocation_value': numeric_value(commit.funded_allocation_value),
+                            'quantity': numeric_value(commit.quantity),
+                            'used_amount': numeric_value(commit.used_amount),
+                            'available_amount': numeric_value(commit.available_amount),
+                            'agent_version': version
+                        })
+                except oci.exceptions.ServiceError as e:
+                    print("   Unable to load commitments for " + str(service.id) + ": " + str(e.code))
+
+        subscription_sql = """INSERT INTO OCI_SUBSCRIPTION (
+            TENANT_ID, TENANT_NAME, SUBSCRIPTION_ID, SERVICE_NAME, CURRENCY,
+            SUBSCRIPTION_TIME_START, SUBSCRIPTION_TIME_END, SUBSCRIPTION_STATUS, SUBSCRIPTION_TOTAL_VALUE,
+            SUBSCRIBED_SERVICE_ID, SERVICE_STATUS, SERVICE_TIME_START, SERVICE_TIME_END, TERM_VALUE,
+            ADMIN_EMAIL, BUYER_EMAIL, AGREEMENT_ID, AGREEMENT_NAME, AGREEMENT_TIME_END,
+            BILL_TO_CUSTOMER, END_USER_CUSTOMER, SERVICE_TO_CUSTOMER, BILLING_FREQUENCY, CSI,
+            OPERATION_TYPE, ORDER_TYPE, ORDER_NUMBER, PAYMENT_METHOD, PAYMENT_NUMBER, PRICING_MODEL,
+            PRODUCT_NUMBER, PRODUCT_NAME, IS_PAYG, IS_HAVING_USAGE, IS_VARIABLE_COMMITMENT,
+            ORIGINAL_PROMO_AMOUNT, FUNDED_ALLOCATION_VALUE, LINE_NET_AMOUNT, TOTAL_VALUE,
+            USED_AMOUNT, AVAILABLE_AMOUNT, LAST_LOADED, AGENT_VERSION)
+            VALUES (
+            :tenant_id, :tenant_name, :subscription_id, :service_name, :currency,
+            :subscription_time_start, :subscription_time_end, :subscription_status, :subscription_total_value,
+            :subscribed_service_id, :service_status, :service_time_start, :service_time_end, :term_value,
+            :admin_email, :buyer_email, :agreement_id, :agreement_name, :agreement_time_end,
+            :bill_to_customer, :end_user_customer, :service_to_customer, :billing_frequency, :csi,
+            :operation_type, :order_type, :order_number, :payment_method, :payment_number, :pricing_model,
+            :product_number, :product_name, :is_payg, :is_having_usage, :is_variable_commitment,
+            :original_promo_amount, :funded_allocation_value, :line_net_amount, :total_value,
+            :used_amount, :available_amount, SYSDATE, :agent_version)"""
+
+        commit_sql = """INSERT INTO OCI_SUBSCRIPTION_COMMIT (
+            TENANT_ID, TENANT_NAME, SUBSCRIBED_SERVICE_ID, TIME_START, TIME_END, FUNDED_ALLOCATION_VALUE,
+            QUANTITY, USED_AMOUNT, AVAILABLE_AMOUNT, LAST_LOADED, AGENT_VERSION)
+            VALUES (:tenant_id, :tenant_name, :subscribed_service_id, :time_start, :time_end, :funded_allocation_value,
+            :quantity, :used_amount, :available_amount, SYSDATE, :agent_version)"""
+
+        with connection.cursor() as cursor:
+            tenant_values = {
+                'tenant_id': tenant_id,
+                'full_tenant_id': str(tenancy.id),
+                'tenant_name': tenant_name
+            }
+            cursor.execute(
+                """DELETE FROM OCI_SUBSCRIPTION_COMMIT
+                   WHERE TENANT_ID=:full_tenant_id
+                      OR (TENANT_ID=:tenant_id AND (TENANT_NAME=:tenant_name OR TENANT_NAME IS NULL))""",
+                tenant_values
+            )
+            cursor.execute(
+                """DELETE FROM OCI_SUBSCRIPTION
+                   WHERE TENANT_NAME=:tenant_name
+                     AND TENANT_ID IN (:tenant_id, :full_tenant_id)""",
+                tenant_values
+            )
+            if subscription_rows:
+                cursor.executemany(subscription_sql, subscription_rows)
+            if commit_rows:
+                cursor.executemany(commit_sql, commit_rows)
+        connection.commit()
+        print("   Loaded " + str(len(subscription_rows)) + " subscriptions and " + str(len(commit_rows)) + " commitments" + get_time_elapsed(start_time))
+
+    except Exception as e:
+        connection.rollback()
+        raise Exception("Error loading subscription information: " + str(e))
 
 
 #########################################################################
@@ -1158,7 +1331,7 @@ def main_process():
 
                 # Check tables structure
                 print("\nChecking Database Structure...")
-                check_database_table_structure(connection)
+                check_database_table_structure(connection, cmd.load_subscription)
 
                 ###############################
                 # enable hints
@@ -1223,6 +1396,13 @@ def main_process():
                 update_oci_tenant_with_tenant_ids(connection, tenancy.name, short_tenant_id)
                 if not cmd.skip_rate:
                     update_public_rates(connection, tenancy.name)
+
+            #############################
+            # if -loadsub specified
+            # load_subscription
+            #############################
+            if cmd.load_subscription:
+                load_subscription_data(connection, config, signer, cmd, tenancy)
 
     except oracledb.DatabaseError as e:
         print("\nError manipulating database - " + str(e) + "\n")
