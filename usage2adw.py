@@ -78,8 +78,9 @@ import requests
 import time
 import base64
 
-version = "26.07.15"
+version = "26.08.06"
 work_report_dir = os.curdir + "/work_report_dir"
+billing_namespace = 'bling'
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client
 oracledb.init_oracle_client()
@@ -330,9 +331,10 @@ def set_parser_arguments():
     parser.add_argument('-sc', action='store_true', default=False, dest='skip_cost', help='Skip Load Cost Files')
     parser.add_argument('-sr', action='store_true', default=False, dest='skip_rate', help='Skip Public Rate API')
     parser.add_argument('-loadsub', action='store_true', default=False, dest='load_subscription', help='Load subscription and commitment information')
+    parser.add_argument('-internal', action='store_true', default=False, dest='internal', help='Load Data from Internal Namespace')
     parser.add_argument('-ip', action='store_true', default=False, dest='instance_principals', help='Use Instance Principals for Authentication')
     parser.add_argument('-bn', default="", dest='bucket_name', help='Override Bucket Name for Cost and Usage Files')
-    parser.add_argument('-ns', default="bling", dest='namespace_name', help='Override Namespace Name for Cost and Usage Files (default=bling)')
+    parser.add_argument('-ns', default=billing_namespace, dest='namespace_name', help='Override Namespace Name for Cost and Usage Files (default=' + billing_namespace + ')')
     parser.add_argument('-du', default="", dest='duser', help='ADB User')
     parser.add_argument('-dn', default="", dest='dname', help='ADB Name')
     parser.add_argument('-ds', default="", dest='dsecret_id', help='ADB Secret Id')
@@ -1254,9 +1256,12 @@ def main_process():
 
     ############################################
     # namnespace and bucket name
+    # use axvl7chrr9th namespace in case internal
     ############################################
     costusage_bucket_name = ""
     costusage_namespace_name = cmd.namespace_name
+    if costusage_namespace_name == billing_namespace and cmd.internal:
+        costusage_namespace_name = "axvl7chrr9th"
 
     ############################################
     # Start
@@ -1296,7 +1301,10 @@ def main_process():
                 tenancy_home_region = str(reg.region_name)
 
         # cost usage bucket name
+        # if internal add internal- prefix to the bucket name
         costusage_bucket_name = cmd.bucket_name if cmd.bucket_name else str(tenancy.id)
+        if not cmd.bucket_name and cmd.internal:
+            costusage_bucket_name = "internal-" + costusage_bucket_name
 
         print("   Tenant Name  : " + str(tenancy.name))
         print("   Tenant Id    : " + tenancy.id)
