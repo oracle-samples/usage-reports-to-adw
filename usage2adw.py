@@ -78,9 +78,15 @@ import requests
 import time
 import base64
 
-version = "26.08.06"
+version = "26.08.07"
 work_report_dir = os.curdir + "/work_report_dir"
-billing_namespace = 'bling'
+customer_billing_namespace = 'bling'
+internal_billing_namespace = 'axvl7chrr9th'
+
+customer_file_prefixes = [ "reports/cost-csv/" ]
+internal_file_prefixes = [ "reports/cost-csv/00" , "reports/cost-csv/oc" ]
+
+DEBUG = False
 
 # Init the Oracle Thick Client Library in order to use sqlnet.ora and instant client
 oracledb.init_oracle_client()
@@ -334,7 +340,7 @@ def set_parser_arguments():
     parser.add_argument('-internal', action='store_true', default=False, dest='internal', help='Load Data from Internal Namespace')
     parser.add_argument('-ip', action='store_true', default=False, dest='instance_principals', help='Use Instance Principals for Authentication')
     parser.add_argument('-bn', default="", dest='bucket_name', help='Override Bucket Name for Cost and Usage Files')
-    parser.add_argument('-ns', default=billing_namespace, dest='namespace_name', help='Override Namespace Name for Cost and Usage Files (default=' + billing_namespace + ')')
+    parser.add_argument('-ns', default=customer_billing_namespace, dest='namespace_name', help='Override Namespace Name for Cost and Usage Files (default=' + customer_billing_namespace + ')')
     parser.add_argument('-du', default="", dest='duser', help='ADB User')
     parser.add_argument('-dn', default="", dest='dname', help='ADB Name')
     parser.add_argument('-ds', default="", dest='dsecret_id', help='ADB Secret Id')
@@ -1256,12 +1262,16 @@ def main_process():
 
     ############################################
     # namnespace and bucket name
-    # use axvl7chrr9th namespace in case internal
     ############################################
+    file_run_prefixes = customer_file_prefixes
     costusage_bucket_name = ""
     costusage_namespace_name = cmd.namespace_name
-    if costusage_namespace_name == billing_namespace and cmd.internal:
-        costusage_namespace_name = "axvl7chrr9th"
+
+    # If Internal run, fix the namespace (if not changed using flag) and the prefixes
+    if cmd.internal:
+        file_run_prefixes = internal_file_prefixes
+        if costusage_namespace_name == customer_billing_namespace:
+            costusage_namespace_name = internal_billing_namespace
 
     ############################################
     # Start
@@ -1329,75 +1339,90 @@ def main_process():
     # connect to database
     ############################################
     max_cost_file_name = ""
+    total_files_loaded = 0
+
     try:
         print("\nConnecting to database " + cmd.dname)
         with oracledb.connect(user=cmd.duser, password=dbpass, dsn=cmd.dname) as connection:
-
-            # Open Cursor
-            with connection.cursor() as cursor:
-                print("   Connected")
-
-                # Check tables structure
-                print("\nChecking Database Structure...")
-                check_database_table_structure(connection, cmd.load_subscription)
-
-                ###############################
-                # enable hints
-                ###############################
-                sql = "ALTER SESSION SET OPTIMIZER_IGNORE_HINTS=FALSE"
-                cursor.execute(sql)
-                sql = "ALTER SESSION SET OPTIMIZER_IGNORE_PARALLEL_HINTS=FALSE"
-                cursor.execute(sql)
-
-                ###############################
-                # fetch max file id processed
-                ###############################
-                print("\nChecking Last Loaded Files... started at " + get_current_date_time())
-
-                sql = "select nvl(max(file_name),'0') as max_file_name from OCI_LOAD_STATUS a where TENANT_NAME=:tenant_name"
-                cursor.execute(sql, tenant_name=str(tenancy.name))
-                max_cost_file_name, = cursor.fetchone()
-                print("   Max Cost File Name Processed = " + str(max_cost_file_name))
-
-                print("Completed Checking at " + get_current_date_time())
-
-            ############################################
-            # Download Usage, cost and insert to database
-            ############################################
-
-            print("\nConnecting to Object Storage Service...")
-
-            object_storage = oci.object_storage.ObjectStorageClient(config, signer=signer)
-            if cmd.proxy:
-                object_storage.base_client.session.proxies = {'https': cmd.proxy}
             print("   Connected")
 
-            #############################
-            # Handle Cost Usage
-            #############################
-            cost_num = 0
-            if not cmd.skip_cost:
-                print("\nHandling Cost Report... started at " + get_current_date_time())
-                objects = oci.pagination.list_call_get_all_results(
-                    object_storage.list_objects,
-                    costusage_namespace_name,
-                    costusage_bucket_name,
-                    fields="timeCreated,size",
-                    prefix="reports/cost-csv/",
-                    start=max_cost_file_name + "-next"
-                ).data
+            # Check tables structure
+            print("\nChecking Database Structure...")
+            check_database_table_structure(connection, cmd.load_subscription)
 
-                total_files = len(objects.objects)
-                print("Total " + str(total_files) + " cost files found to scan...")
-                for index, object_file in enumerate(objects.objects, start=1):
-                    cost_num += load_cost_file(connection, object_storage, object_file, max_cost_file_name, cmd, tenancy, compartments, index, total_files, costusage_namespace_name, costusage_bucket_name)
-                print("\n   Total " + str(cost_num) + " Cost Files Loaded, completed at " + get_current_date_time())
+
+            # Loop on prefixes, internal may have 2 or more prefixes to scan for cost files
+            for prefix in file_run_prefixes:
+                print_header("Running on Billing File with Prefix: '" + prefix + "'", 0)
+
+                # Open Cursor
+                with connection.cursor() as cursor:
+
+                    ###############################
+                    # enable hints
+                    ###############################
+                    sql = "ALTER SESSION SET OPTIMIZER_IGNORE_HINTS=FALSE"
+                    cursor.execute(sql)
+                    sql = "ALTER SESSION SET OPTIMIZER_IGNORE_PARALLEL_HINTS=FALSE"
+                    cursor.execute(sql)
+
+                    ###############################
+                    # fetch max file id processed
+                    ###############################
+                    print("\nChecking Last Loaded Files... started at " + get_current_date_time() + " for prefix: '" + prefix + "'")
+
+                    sql = "select nvl(max(file_name),'0') as max_file_name from OCI_LOAD_STATUS a where TENANT_NAME=:tenant_name and file_name like '" + prefix + "%'"
+                    if DEBUG:
+                        print ("   DEBUG SQL = " + sql)
+
+                    cursor.execute(sql, tenant_name=str(tenancy.name))
+                    max_cost_file_name, = cursor.fetchone()
+                    print("   Max Cost File Name Processed = " + str(max_cost_file_name))
+
+                    print("Completed Checking at " + get_current_date_time())
+
+                ############################################
+                # Download Cost Files and insert to database
+                ############################################
+
+                print("\nConnecting to Object Storage Service...")
+
+                object_storage = oci.object_storage.ObjectStorageClient(config, signer=signer)
+                if cmd.proxy:
+                    object_storage.base_client.session.proxies = {'https': cmd.proxy}
+                print("   Connected")
+
+                #############################
+                # Handle Cost Files
+                #############################
+                cost_num = 0
+                if not cmd.skip_cost:
+                    print("\nHandling Cost Report... started at " + get_current_date_time())
+                    objects = oci.pagination.list_call_get_all_results(
+                        object_storage.list_objects,
+                        costusage_namespace_name,
+                        costusage_bucket_name,
+                        fields="timeCreated,size",
+                        prefix=prefix,
+                        start=max_cost_file_name + "-next"
+                    ).data
+
+                    total_files = len(objects.objects)
+                    print("Total " + str(total_files) + " cost files found to scan...")
+                    for index, object_file in enumerate(objects.objects, start=1):
+                        cost_num += load_cost_file(connection, object_storage, object_file, max_cost_file_name, cmd, tenancy, compartments, index, total_files, costusage_namespace_name, costusage_bucket_name)
+                    print("\n   Total " + str(cost_num) + " Cost Files Loaded, completed at " + get_current_date_time())
+
+                    total_files_loaded += cost_num
+
+            # end of prefix loop
+            print("Total overall " + str(total_files_loaded) + " cost files loaded...")
 
             #############################
             # Update oci_cost_stats if
             # there were files
             #############################
-            if cost_num > 0 or cmd.force:
+            if total_files_loaded > 0 or cmd.force:
                 update_cost_stats(connection, tenancy.name)
                 update_price_list(connection, tenancy.name)
                 update_cost_reference(connection, cmd.tagspecial, cmd.tagspecial2, cmd.tagspecial3, cmd.tagspecial4, tenancy.name)

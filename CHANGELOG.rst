@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+26.08.07 - 2026.08.07
+=====================
+* Added support for multiple prefixes to load cost files from OCI Object Storage, allowing for more flexible file organization and processing.
+* Added support for internal cost files from different namespace with -internal flag
+
+=====================
 26.07.07 - 2026.07.07
 =====================
 * Added RATE_UNIT_FULL JSON column to OCI_PRICE_LIST, populated with currencyCodeLocalizations from the Oracle public pricing API
