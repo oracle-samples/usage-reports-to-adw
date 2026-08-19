@@ -83,8 +83,8 @@ work_report_dir = os.curdir + "/work_report_dir"
 customer_billing_namespace = 'bling'
 internal_billing_namespace = 'axvl7chrr9th'
 
-customer_file_prefixes = [ "reports/cost-csv/" ]
-internal_file_prefixes = [ "reports/cost-csv/00" , "reports/cost-csv/oc" ]
+customer_file_prefixes = ["reports/cost-csv/"]
+internal_file_prefixes = ["reports/cost-csv/00" , "reports/cost-csv/oc"]
 
 DEBUG = False
 
@@ -331,6 +331,10 @@ def set_parser_arguments():
     parser.add_argument('-ts2', default="", dest='tagspecial2', help='tag special key 2 to load the data to TAG_SPECIAL2 column')
     parser.add_argument('-ts3', default="", dest='tagspecial3', help='tag special key 3 to load the data to TAG_SPECIAL3 column')
     parser.add_argument('-ts4', default="", dest='tagspecial4', help='tag special key 4 to load the data to TAG_SPECIAL4 column')
+    parser.add_argument('-ts5', default="", dest='tagspecial5', help='tag special key 5 to load the data to TAG_SPECIAL5 column')
+    parser.add_argument('-ts6', default="", dest='tagspecial6', help='tag special key 6 to load the data to TAG_SPECIAL6 column')
+    parser.add_argument('-ts7', default="", dest='tagspecial7', help='tag special key 7 to load the data to TAG_SPECIAL7 column')
+    parser.add_argument('-ts8', default="", dest='tagspecial8', help='tag special key 8 to load the data to TAG_SPECIAL8 column')
     parser.add_argument('-d', default="", dest='filedate', help='Minimum File Date to load (i.e. yyyy-mm-dd)')
     parser.add_argument('-p', default="", dest='proxy', help='Set Proxy (i.e. www-proxy-server.com:80) ')
     parser.add_argument('-su', action='store_true', default=False, dest='skip_usage', help='Not in use, keeping for backward compatibility')
@@ -538,7 +542,7 @@ def update_price_list(connection, tenant_name):
 ##########################################################################
 # update_cost_reference
 ##########################################################################
-def update_cost_reference(connection, tag_special_key1, tag_special_key2, tag_special_key3, tag_special_key4, tenant_name):
+def update_cost_reference(connection, tag_special_key1, tag_special_key2, tag_special_key3, tag_special_key4, tag_special_key5, tag_special_key6, tag_special_key7, tag_special_key8, tenant_name):
     try:
         start_time = time.time()
 
@@ -580,6 +584,14 @@ def update_cost_reference(connection, tag_special_key1, tag_special_key2, tag_sp
                     union all
                     select /*+ parallel(oci_cost,8) full(oci_cost) */ distinct TENANT_NAME, 'TAG_SPECIAL4' as REF_TYPE, TAG_SPECIAL4 as ref_name from OCI_COST  where :tenant_name = TENANT_NAME
                     union all
+                    select /*+ parallel(oci_cost,8) full(oci_cost) */ distinct TENANT_NAME, 'TAG_SPECIAL5' as REF_TYPE, TAG_SPECIAL5 as ref_name from OCI_COST  where :tenant_name = TENANT_NAME
+                    union all
+                    select /*+ parallel(oci_cost,8) full(oci_cost) */ distinct TENANT_NAME, 'TAG_SPECIAL6' as REF_TYPE, TAG_SPECIAL6 as ref_name from OCI_COST  where :tenant_name = TENANT_NAME
+                    union all
+                    select /*+ parallel(oci_cost,8) full(oci_cost) */ distinct TENANT_NAME, 'TAG_SPECIAL7' as REF_TYPE, TAG_SPECIAL7 as ref_name from OCI_COST  where :tenant_name = TENANT_NAME
+                    union all
+                    select /*+ parallel(oci_cost,8) full(oci_cost) */ distinct TENANT_NAME, 'TAG_SPECIAL8' as REF_TYPE, TAG_SPECIAL8 as ref_name from OCI_COST  where :tenant_name = TENANT_NAME
+                    union all
                     select /*+ parallel(oci_cost,8) full(oci_cost) */ distinct TENANT_NAME, 'COST_PRODUCT_SKU' as REF_TYPE, COST_PRODUCT_SKU || ' '||min(PRD_DESCRIPTION) as ref_name from OCI_COST  where :tenant_name = TENANT_NAME
                     group by TENANT_NAME, COST_PRODUCT_SKU
                 ) where ref_name is not null
@@ -607,6 +619,14 @@ def update_cost_reference(connection, tag_special_key1, tag_special_key2, tag_sp
                     select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY3' as REF_TYPE, :tag_special_key3 as ref_name from DUAL where :tag_special_key3 is not null
                     union all
                     select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY4' as REF_TYPE, :tag_special_key4 as ref_name from DUAL where :tag_special_key4 is not null
+                    union all
+                    select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY5' as REF_TYPE, :tag_special_key5 as ref_name from DUAL where :tag_special_key5 is not null
+                    union all
+                    select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY6' as REF_TYPE, :tag_special_key6 as ref_name from DUAL where :tag_special_key6 is not null
+                    union all
+                    select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY7' as REF_TYPE, :tag_special_key7 as ref_name from DUAL where :tag_special_key7 is not null
+                    union all
+                    select :Tenant_Name as Tenant_Name, 'TAG_SPECIAL_KEY8' as REF_TYPE, :tag_special_key8 as ref_name from DUAL where :tag_special_key8 is not null
             ) b
             on (a.Tenant_Name=b.Tenant_Name and a.REF_TYPE=b.REF_TYPE)
             when matched then update set a.ref_name = b.ref_name
@@ -614,7 +634,7 @@ def update_cost_reference(connection, tag_special_key1, tag_special_key2, tag_sp
             values (b.Tenant_Name,b.REF_TYPE,b.REF_NAME)
             """
 
-            cursor.execute(sql, Tenant_Name=tenant_name, tag_special_key1=tag_special_key1, tag_special_key2=tag_special_key2, tag_special_key3=tag_special_key3, tag_special_key4=tag_special_key4)
+            cursor.execute(sql, Tenant_Name=tenant_name, tag_special_key1=tag_special_key1, tag_special_key2=tag_special_key2, tag_special_key3=tag_special_key3, tag_special_key4=tag_special_key4, tag_special_key5=tag_special_key5, tag_special_key6=tag_special_key6, tag_special_key7=tag_special_key7, tag_special_key8=tag_special_key8)
             connection.commit()
             print("   Merge Completed, " + str(cursor.rowcount) + " rows merged" + get_time_elapsed(start_time))
 
@@ -800,6 +820,19 @@ def check_database_table_structure(connection, load_subscription=False):
                 print("   Adding RATE_UNIT_FULL column to OCI_PRICE_LIST")
                 cursor.execute("alter table OCI_PRICE_LIST add RATE_UNIT_FULL JSON")
                 connection.commit()
+
+            # Add special-tag columns introduced after the initial table creation.
+            for column_name in ('TAG_SPECIAL5', 'TAG_SPECIAL6', 'TAG_SPECIAL7', 'TAG_SPECIAL8'):
+                sql = """select count(*) from user_tab_columns
+                         where table_name = 'OCI_COST'
+                         and column_name = :column_name"""
+                cursor.execute(sql, column_name=column_name)
+                val, = cursor.fetchone()
+
+                if val == 0:
+                    print("   Adding " + column_name + " column to OCI_COST")
+                    cursor.execute("alter table OCI_COST add " + column_name + " VARCHAR2(4000)")
+                    connection.commit()
 
     except oracledb.DatabaseError as e:
         print("\nError manipulating database at check_database_table_structures() - " + str(e) + "\n")
@@ -1054,13 +1087,17 @@ def load_cost_file(connection, object_storage, object_file, max_file_name, cmd, 
             TAG_SPECIAL,
             TAG_SPECIAL2,
             TAG_SPECIAL3,
-            TAG_SPECIAL4
+            TAG_SPECIAL4,
+            TAG_SPECIAL5,
+            TAG_SPECIAL6,
+            TAG_SPECIAL7,
+            TAG_SPECIAL8
             ) VALUES (
             :1, :2, to_date(:3,'YYYY-MM-DD HH24:MI'), to_date(:4,'YYYY-MM-DD HH24:MI'), :5,
             :6, :7, :8, :9, :10,
             :11, to_number(:12), to_number(:13) ,:14, :15,
             :16, to_number(:17), to_number(:18), to_number(:19), to_number(:20), to_number(:21), to_number(:22),
-            :23, :24, :25, :26, :27, :28, :29, :30, :31, :32
+            :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36
             ) """
 
             # insert bulk to database
@@ -1083,6 +1120,10 @@ def load_cost_file(connection, object_storage, object_file, max_file_name, cmd, 
                     tag_special2 = ""
                     tag_special3 = ""
                     tag_special4 = ""
+                    tag_special5 = ""
+                    tag_special6 = ""
+                    tag_special7 = ""
+                    tag_special8 = ""
                     tags_data = ""
                     for (key, value) in row.items():
                         if 'tags' in key and len(value) > 0:
@@ -1103,6 +1144,18 @@ def load_cost_file(connection, object_storage, object_file, max_file_name, cmd, 
 
                             if cmd.tagspecial4 and keyadj == cmd.tagspecial4:
                                 tag_special4 = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
+
+                            if cmd.tagspecial5 and keyadj == cmd.tagspecial5:
+                                tag_special5 = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
+
+                            if cmd.tagspecial6 and keyadj == cmd.tagspecial6:
+                                tag_special6 = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
+
+                            if cmd.tagspecial7 and keyadj == cmd.tagspecial7:
+                                tag_special7 = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
+
+                            if cmd.tagspecial8 and keyadj == cmd.tagspecial8:
+                                tag_special8 = valueadj.replace("oracleidentitycloudservice/", "")[0:4000]
 
                             # check if length < 4000 to avoid overflow database column
                             if len(tags_data) + len(keyadj) + len(valueadj) + 2 < 4000:
@@ -1193,7 +1246,11 @@ def load_cost_file(connection, object_storage, object_file, max_file_name, cmd, 
                         tag_special,
                         tag_special2,
                         tag_special3,
-                        tag_special4
+                        tag_special4,
+                        tag_special5,
+                        tag_special6,
+                        tag_special7,
+                        tag_special8
                     )
                     data.append(row_data)
                     num_rows += 1
@@ -1350,7 +1407,6 @@ def main_process():
             print("\nChecking Database Structure...")
             check_database_table_structure(connection, cmd.load_subscription)
 
-
             # Loop on prefixes, internal may have 2 or more prefixes to scan for cost files
             for prefix in file_run_prefixes:
                 print_header("Running on Billing File with Prefix: '" + prefix + "'", 0)
@@ -1373,7 +1429,7 @@ def main_process():
 
                     sql = "select nvl(max(file_name),'0') as max_file_name from OCI_LOAD_STATUS a where TENANT_NAME=:tenant_name and file_name like '" + prefix + "%'"
                     if DEBUG:
-                        print ("   DEBUG SQL = " + sql)
+                        print("   DEBUG SQL = " + sql)
 
                     cursor.execute(sql, tenant_name=str(tenancy.name))
                     max_cost_file_name, = cursor.fetchone()
@@ -1425,7 +1481,7 @@ def main_process():
             if total_files_loaded > 0 or cmd.force:
                 update_cost_stats(connection, tenancy.name)
                 update_price_list(connection, tenancy.name)
-                update_cost_reference(connection, cmd.tagspecial, cmd.tagspecial2, cmd.tagspecial3, cmd.tagspecial4, tenancy.name)
+                update_cost_reference(connection, cmd.tagspecial, cmd.tagspecial2, cmd.tagspecial3, cmd.tagspecial4, cmd.tagspecial5, cmd.tagspecial6, cmd.tagspecial7, cmd.tagspecial8, tenancy.name)
                 update_oci_tenant_with_tenant_ids(connection, tenancy.name, short_tenant_id)
                 if not cmd.skip_rate:
                     update_public_rates(connection, tenancy.name)

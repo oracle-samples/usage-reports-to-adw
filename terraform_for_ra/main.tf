@@ -35,6 +35,10 @@ module "compute" {
     extract_tag2_special_key    = var.extract_tag2_special_key
     extract_tag3_special_key    = var.extract_tag3_special_key
     extract_tag4_special_key    = var.extract_tag4_special_key
+    extract_tag5_special_key    = var.extract_tag5_special_key
+    extract_tag6_special_key    = var.extract_tag6_special_key
+    extract_tag7_special_key    = var.extract_tag7_special_key
+    extract_tag8_special_key    = var.extract_tag8_special_key
     service_tags                = var.service_tags
 
     admin_url                   = module.adb.apex_url

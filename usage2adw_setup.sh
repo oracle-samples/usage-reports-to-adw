@@ -147,6 +147,10 @@ ReadVariablesFromCredfile()
    export extract_tag2_special_key=`grep "^TAG2_SPECIAL" $CREDFILE | sed -s 's/TAG2_SPECIAL=//'`
    export extract_tag3_special_key=`grep "^TAG3_SPECIAL" $CREDFILE | sed -s 's/TAG3_SPECIAL=//'`
    export extract_tag4_special_key=`grep "^TAG4_SPECIAL" $CREDFILE | sed -s 's/TAG4_SPECIAL=//'`
+   export extract_tag5_special_key=`grep "^TAG5_SPECIAL" $CREDFILE | sed -s 's/TAG5_SPECIAL=//'`
+   export extract_tag6_special_key=`grep "^TAG6_SPECIAL" $CREDFILE | sed -s 's/TAG6_SPECIAL=//'`
+   export extract_tag7_special_key=`grep "^TAG7_SPECIAL" $CREDFILE | sed -s 's/TAG7_SPECIAL=//'`
+   export extract_tag8_special_key=`grep "^TAG8_SPECIAL" $CREDFILE | sed -s 's/TAG8_SPECIAL=//'`
    export database_id=`grep "^DATABASE_ID" $CREDFILE | sed -s 's/DATABASE_ID=//'`
    export database_user=`grep "^DATABASE_USER" $CREDFILE | sed -s 's/DATABASE_USER=//'`
    export database_secret_id=`grep "^DATABASE_SECRET_ID" $CREDFILE | sed -s 's/DATABASE_SECRET_ID=//'`
@@ -224,6 +228,10 @@ SetupCredential()
    printf "Please Enter Tag Key 2 to extract as Special Tag (Oracle-Tags.Program): "; read TAG2_SPECIAL
    printf "Please Enter Tag Key 3 to extract as Special Tag (Core.Project): "; read TAG3_SPECIAL
    printf "Please Enter Tag Key 4 to extract as Special Tag (Core.Budget): "; read TAG4_SPECIAL
+   printf "Please Enter Tag Key 5 to extract as Special Tag: (Core.Tag5):"; read TAG5_SPECIAL
+   printf "Please Enter Tag Key 6 to extract as Special Tag: (Core.Tag6):"; read TAG6_SPECIAL
+   printf "Please Enter Tag Key 7 to extract as Special Tag: (Core.Tag7):"; read TAG7_SPECIAL
+   printf "Please Enter Tag Key 8 to extract as Special Tag: (Core.Tag8):"; read TAG8_SPECIAL
 
    if [ -z "$TAG_SPECIAL" ]; then
       TAG_SPECIAL="Oracle-Tags.CreatedBy"
@@ -243,6 +251,10 @@ SetupCredential()
    echo "TAG2_SPECIAL=${TAG2_SPECIAL}" >> $CREDFILE
    echo "TAG3_SPECIAL=${TAG3_SPECIAL}" >> $CREDFILE
    echo "TAG4_SPECIAL=${TAG4_SPECIAL}" >> $CREDFILE
+   echo "TAG5_SPECIAL=${TAG5_SPECIAL}" >> $CREDFILE
+   echo "TAG6_SPECIAL=${TAG6_SPECIAL}" >> $CREDFILE
+   echo "TAG7_SPECIAL=${TAG7_SPECIAL}" >> $CREDFILE
+   echo "TAG8_SPECIAL=${TAG8_SPECIAL}" >> $CREDFILE
    echo "" | tee -a $LOG
    echo "Below Data written to $CREDFILE:" | tee -a $LOG
    cat $CREDFILE | tee -a $LOG
@@ -433,6 +445,14 @@ UpgradeApp()
    ###########################################
    ReadVariablesFromCredfile 3
 
+   # Add special-tag settings introduced after the credential file was created.
+   for tag_number in 5 6 7 8
+   do
+      if ! grep -q "^TAG${tag_number}_SPECIAL=" "$CREDFILE"; then
+         echo "TAG${tag_number}_SPECIAL=" >> "$CREDFILE"
+      fi
+   done
+
    ###########################################
    # Download Files from Git
    ###########################################
@@ -546,7 +566,11 @@ CreateTables()
       TAG_SPECIAL             VARCHAR2(4000),
       TAG_SPECIAL2            VARCHAR2(4000),
       TAG_SPECIAL3            VARCHAR2(4000),
-      TAG_SPECIAL4            VARCHAR2(4000)
+      TAG_SPECIAL4            VARCHAR2(4000),
+      TAG_SPECIAL5            VARCHAR2(4000),
+      TAG_SPECIAL6            VARCHAR2(4000),
+      TAG_SPECIAL7            VARCHAR2(4000),
+      TAG_SPECIAL8            VARCHAR2(4000)
    ) COMPRESS;
 
    CREATE INDEX OCI_COST_1IX ON OCI_COST (TENANT_NAME,USAGE_INTERVAL_START);

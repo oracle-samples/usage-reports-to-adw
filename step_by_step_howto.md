@@ -138,9 +138,10 @@ Login to Usage2adw VM
    cd /home/opc/usage_reports_to_adw/shell_scripts
    vi run_multi_daily_usage2adw.sh
 
-   # scroll to the bottom and add lines per tenant profile, you can specify different tagspecial1 and tagspecial2 if different then the main tenant
-   run_report tenant2 tagspecial1 tagspecial2
-   run_report tenant3 tagspecial1 tagspecial2
+   # scroll to the bottom and add lines per tenant profile. You can specify up to eight
+   # different special tags for each tenant.
+   run_report tenant2 tagspecial1 tagspecial2 tagspecial3 tagspecial4 tagspecial5 tagspecial6 tagspecial7 tagspecial8
+   run_report tenant3 tagspecial1 tagspecial2 tagspecial3 tagspecial4 tagspecial5 tagspecial6 tagspecial7 tagspecial8
 ```
 
 ## 4. How to upgrade the usage2adw application and APEX
@@ -580,7 +581,7 @@ Login to VM
 
 ```
 python3 usage2adw.py
-usage: usage2adw.py [-h] [-c CONFIG] [-t PROFILE] [-f FILEID] [-ts TAGSPECIAL] [-ts2 TAGSPECIAL2] [-d FILEDATE] [-p PROXY] [-su] [-sc] [-sr] [-loadsub] [-ip] [-du DUSER] [-dn DNAME]
+usage: usage2adw.py [-h] [-c CONFIG] [-t PROFILE] [-f FILEID] [-ts TAGSPECIAL] [-ts2 TAGSPECIAL2] [-ts3 TAGSPECIAL3] [-ts4 TAGSPECIAL4] [-ts5 TAGSPECIAL5] [-ts6 TAGSPECIAL6] [-ts7 TAGSPECIAL7] [-ts8 TAGSPECIAL8] [-d FILEDATE] [-p PROXY] [-su] [-sc] [-sr] [-loadsub] [-ip] [-du DUSER] [-dn DNAME]
                     [-ds DSECRET_ID] [-dst DSECRET_PROFILE] [--force] [--version]
 
 optional arguments:
@@ -590,8 +591,12 @@ optional arguments:
   -f FILEID             File Id to load
   -ts TAGSPECIAL        tag special key 1 to load the data to TAG_SPECIAL column
   -ts2 TAGSPECIAL2      tag special key 2 to load the data to TAG_SPECIAL2 column
-  -ts3 TAGSPECIAL2      tag special key 3 to load the data to TAG_SPECIAL3 column
-  -ts4 TAGSPECIAL2      tag special key 4 to load the data to TAG_SPECIAL4 column
+  -ts3 TAGSPECIAL3      tag special key 3 to load the data to TAG_SPECIAL3 column
+  -ts4 TAGSPECIAL4      tag special key 4 to load the data to TAG_SPECIAL4 column
+  -ts5 TAGSPECIAL5      tag special key 5 to load the data to TAG_SPECIAL5 column
+  -ts6 TAGSPECIAL6      tag special key 6 to load the data to TAG_SPECIAL6 column
+  -ts7 TAGSPECIAL7      tag special key 7 to load the data to TAG_SPECIAL7 column
+  -ts8 TAGSPECIAL8      tag special key 8 to load the data to TAG_SPECIAL8 column
   -d FILEDATE           Minimum File Date to load (i.e. yyyy-mm-dd)
   -p PROXY              Set Proxy (i.e. www-proxy-server.com:80)
   -sc                   Skip Load Cost Files
@@ -606,6 +611,8 @@ optional arguments:
   --version             show program's version number and exit
 
 ```
+
+TAG_SPECIAL5 through TAG_SPECIAL8 are loaded into OCI_COST but are not yet supported in the APEX application.
 
 ### Below example of execution
 
