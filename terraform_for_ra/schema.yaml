@@ -62,6 +62,10 @@ groupings:
   - ${extract_tag2_special_key}
   - ${extract_tag3_special_key}
   - ${extract_tag4_special_key}
+  - ${extract_tag5_special_key}
+  - ${extract_tag6_special_key}
+  - ${extract_tag7_special_key}
+  - ${extract_tag8_special_key}
 
 variables:
 
@@ -327,6 +331,38 @@ variables:
     type: string
     default: "Core.Budget"
     required: true
+    visible: true
+
+  extract_tag5_special_key:
+    title: Extract Tag Key 5 to special tag column
+    description: Please specify the tag key 5 to load to Tag Special 5 column
+    type: string
+    default: ""
+    required: false
+    visible: true
+
+  extract_tag6_special_key:
+    title: Extract Tag Key 6 to special tag column
+    description: Please specify the tag key 6 to load to Tag Special 6 column
+    type: string
+    default: ""
+    required: false
+    visible: true
+
+  extract_tag7_special_key:
+    title: Extract Tag Key 7 to special tag column
+    description: Please specify the tag key 7 to load to Tag Special 7 column
+    type: string
+    default: ""
+    required: false
+    visible: true
+
+  extract_tag8_special_key:
+    title: Extract Tag Key 8 to special tag column
+    description: Please specify the tag key 8 to load to Tag Special 8 column
+    type: string
+    default: ""
+    required: false
     visible: true
 
     ###########################

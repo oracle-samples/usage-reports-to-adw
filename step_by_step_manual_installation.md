@@ -204,6 +204,14 @@ This script will ask for:
 5. Extract Start Date
 6. Tag Special Key 1 - Convert extract key to column #1
 7. Tag Special Key 2 - Convert extract key to column #2
+8. Tag Special Key 3 - Convert extract key to column #3
+9. Tag Special Key 4 - Convert extract key to column #4
+10. Tag Special Key 5 - Convert extract key to column #5
+11. Tag Special Key 6 - Convert extract key to column #6
+12. Tag Special Key 7 - Convert extract key to column #7
+13. Tag Special Key 8 - Convert extract key to column #8
+
+Tag Special Keys 5 through 8 are not yet supported in the APEX application.
 
 
 ## 13. Execute the python script - usage2adw.py or setup_usage2adw.sh

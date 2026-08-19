@@ -36,6 +36,10 @@ runcmd:
   - echo "TAG2_SPECIAL=${extract_tag2_special_key}" >> $CRED
   - echo "TAG3_SPECIAL=${extract_tag3_special_key}" >> $CRED
   - echo "TAG4_SPECIAL=${extract_tag4_special_key}" >> $CRED
+  - echo "TAG5_SPECIAL=${extract_tag5_special_key}" >> $CRED
+  - echo "TAG6_SPECIAL=${extract_tag6_special_key}" >> $CRED
+  - echo "TAG7_SPECIAL=${extract_tag7_special_key}" >> $CRED
+  - echo "TAG8_SPECIAL=${extract_tag8_special_key}" >> $CRED
   - chown opc:opc $CRED
 
   # Sleep 80 seconds to wait for the policy and services to be created and synched

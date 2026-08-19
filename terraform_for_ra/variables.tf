@@ -74,4 +74,8 @@ variable "extract_tag1_special_key"     { default = "" }
 variable "extract_tag2_special_key"     { default = "" }
 variable "extract_tag3_special_key"     { default = "" }
 variable "extract_tag4_special_key"     { default = "" }
+variable "extract_tag5_special_key"     { default = "" }
+variable "extract_tag6_special_key"     { default = "" }
+variable "extract_tag7_special_key"     { default = "" }
+variable "extract_tag8_special_key"     { default = "" }
 

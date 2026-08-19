@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <http://keepachangelog.com/>`_.
 
 =====================
+26.08.17 - 2026.08.17
+=====================
+* Expanded special tag support from four to eight tags, adding TAG5_SPECIAL through TAG8_SPECIAL.
+* Added automatic creation of TAG_SPECIAL5 through TAG_SPECIAL8 columns for existing OCI_COST tables.
+* TAG_SPECIAL5 through TAG_SPECIAL8 are not yet supported in the APEX application.
+
+=====================
 26.08.07 - 2026.08.07
 =====================
 * Added support for multiple prefixes to load cost files from OCI Object Storage, allowing for more flexible file organization and processing.

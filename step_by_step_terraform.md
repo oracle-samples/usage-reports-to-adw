@@ -177,6 +177,14 @@ Option to tag the resources
    - Extract Usage From Date - Load Data since which date with format of YYYY-MM (i.e. 2020-08)
    - Extract Tag Key 1 to special tag column 1 - use this tag to load to special column 1 for better filter and report
    - Extract Tag Key 2 to special tag column 2 - use this tag to load to special column 2 for better filter and report
+   - Extract Tag Key 3 to special tag column 3 - use this tag to load to special column 3 for better filter and report
+   - Extract Tag Key 4 to special tag column 4 - use this tag to load to special column 4 for better filter and report
+   - Extract Tag Key 5 to special tag column 5 - use this tag to load to special column 5
+   - Extract Tag Key 6 to special tag column 6 - use this tag to load to special column 6
+   - Extract Tag Key 7 to special tag column 7 - use this tag to load to special column 7
+   - Extract Tag Key 8 to special tag column 8 - use this tag to load to special column 8
+
+   Tag keys 5 through 8 are not yet supported in the APEX application.
 
 ```
 
